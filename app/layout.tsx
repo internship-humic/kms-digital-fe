@@ -19,9 +19,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${plusJakarta.variable} antialiased`}>
-      {/* Menggunakan bg-background (#F8FAFC) dan text-foreground (#3A4858) */}
       <body className="min-h-full flex flex-col bg-background font-sans tracking-tight">
-        {/* Container utama diubah menjadi bg-white agar menonjol dari bg-background */}
         <div className="w-full max-w-md mx-auto min-h-screen bg-white relative shadow-2xl overflow-x-hidden flex flex-col">
           <AuthGuard>{children}</AuthGuard>
         </div>

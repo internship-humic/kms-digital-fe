@@ -6,6 +6,12 @@
   --primary: #004ac6;
   --primary-base: #60a5fa;
   --primary-light: #dbeafe;
+
+  --text-main: #191c1e;
+  --icon-muted: #434655;
+  --border-input: #c3c6d7;
+  --btn-primary: #2563eb;
+  --btn-hover: #1d4ed8;
 }
 
 @theme inline {
@@ -15,6 +21,12 @@
   --color-primary: var(--primary);
   --color-primary-base: var(--primary-base);
   --color-primary-light: var(--primary-light);
+
+  --color-text-main: var(--text-main);
+  --color-icon-muted: var(--icon-muted);
+  --color-border-input: var(--border-input);
+  --color-btn-primary: var(--btn-primary);
+  --color-btn-hover: var(--btn-hover);
 }
 
 body {
@@ -24,5 +36,10 @@ body {
 }
 
 ::-webkit-scrollbar {
+  display: none;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
   display: none;
 }
