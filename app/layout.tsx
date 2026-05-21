@@ -10,7 +10,7 @@ const plusJakarta = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Jaga Cilik",
+  title: "JagaCilik",
   description: "Untuk membantu posyandu",
 };
 
