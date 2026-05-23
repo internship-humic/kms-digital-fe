@@ -32,9 +32,11 @@ export default function RegisterPage() {
           priority
           className="mb-6 h-16 w-auto object-contain sm:h-20"
         />
-        <h1 className="mb-2 text-2xl font-bold text-text-main">Buat Akun</h1>
-        <p className="max-w-[280px] text-center text-sm text-text-main/70">
-          Lengkapi data diri untuk mendaftar di JagaCilik
+        <h1 className="mb-2 text-2xl font-bold text-text-main">
+          Buat Akun Baru
+        </h1>
+        <p className="max-w-[250px] text-center text-sm text-text-main/70">
+          Mohon berikan informasi untuk membuat akun Anda!
         </p>
       </div>
 
@@ -82,19 +84,19 @@ export default function RegisterPage() {
 
         <button
           type="submit"
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-btn-primary py-3.5 font-semibold text-white shadow-md shadow-blue-500/20 transition-colors hover:bg-btn-hover cursor-pointer"
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-btn-primary py-3.5 font-semibold text-white shadow-md shadow-blue-500/20 transition-colors hover:bg-btn-hover cursor-pointer tracking-[0.14px]"
         >
-          Daftar Sekarang
+          Daftar
         </button>
       </form>
 
-      <div className="mb-4 mt-8 flex items-center justify-center gap-1.5 text-sm">
-        <span className="text-text-main/70">Sudah punya akun?</span>
+      <div className="mt-8 mb-4 flex justify-center items-center gap-1.5 text-xs leading-[12px] tracking-[0.48px]">
+        <span className="text-text-main/70">Sudah mempunyai akun?</span>
         <Link
           href="/login"
-          className="font-bold text-btn-primary transition-all hover:underline cursor-pointer"
+          className="font-semibold text-btn-primary transition-all hover:underline cursor-pointer"
         >
-          Masuk
+          Masuk disini
         </Link>
       </div>
     </div>
