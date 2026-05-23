@@ -28,10 +28,10 @@ export default function LoginPage() {
           priority
         />
         <h1 className="text-[26px] font-bold text-text-main mb-2 text-center">
-          Welcome Back
+          Selamat Datang !
         </h1>
         <p className="text-sm font-normal text-text-main text-center w-full whitespace-nowrap">
-          Enter your email and password to access your account
+          Masukkan email dan password untuk mengakses akun Anda
         </p>
       </div>
 
@@ -61,19 +61,19 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="mt-4 w-full bg-btn-primary hover:bg-btn-hover text-white font-semibold rounded-xl py-3.5 flex items-center justify-center gap-2 transition-colors shadow-md shadow-blue-500/20 cursor-pointer"
+          className="mt-4 w-full bg-btn-primary hover:bg-btn-hover text-white font-semibold rounded-xl py-3.5 flex items-center justify-center gap-2 transition-colors shadow-md shadow-blue-500/20 cursor-pointer tracking-[0.14px]"
         >
-          Login
+          Masuk
         </button>
       </form>
 
-      <div className="mt-8 mb-4 flex justify-center items-center gap-1.5 text-xs leading-[16px] tracking-[0.48px]">
-        <span className="text-text-main/70">Belum punya akun?</span>
+      <div className="mt-8 mb-4 flex justify-center items-center gap-1.5 text-xs leading-[12px] tracking-[0.48px]">
+        <span className="text-text-main/70">Tidak punya akun?</span>
         <Link
           href="/register"
-          className="text-btn-primary font-bold hover:underline transition-all cursor-pointer"
+          className="text-btn-primary font-semibold hover:underline transition-all cursor-pointer"
         >
-          Buat Akun
+          Daftar disini
         </Link>
       </div>
     </div>
