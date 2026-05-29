@@ -1,10 +1,10 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { Info, Smile, TrendingUp } from "lucide-react";
 import {
   Area,
   AreaChart,
-  ResponsiveContainer,
   Tooltip,
   CartesianGrid,
   YAxis,
@@ -28,6 +28,7 @@ const CustomTooltip = ({ active, payload, isWeight }: CustomTooltipProps) => {
         <div className="bg-btn-primary rounded-full p-1 text-white">
           <Smile size={14} strokeWidth={2.5} />
         </div>
+
         <div className="flex flex-col">
           <span className="text-[10px] font-semibold text-btn-primary leading-tight">
             {isWeight
@@ -41,6 +42,7 @@ const CustomTooltip = ({ active, payload, isWeight }: CustomTooltipProps) => {
       </div>
     );
   }
+
   return null;
 };
 
@@ -55,6 +57,28 @@ export default function GrowthChart({
   onTabChange,
   data,
 }: GrowthChartProps) {
+  const chartWrapperRef = useRef<HTMLDivElement | null>(null);
+  const [chartSize, setChartSize] = useState({ width: 0, height: 180 });
+
+  useEffect(() => {
+    if (!chartWrapperRef.current) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+
+      if (width > 0 && height > 0) {
+        setChartSize({
+          width: Math.floor(width),
+          height: Math.floor(height),
+        });
+      }
+    });
+
+    observer.observe(chartWrapperRef.current);
+
+    return () => observer.disconnect();
+  }, []);
+
   const lastDataPoint = data.length > 0 ? data[data.length - 1] : null;
   const previousDataPoint = data.length > 1 ? data[data.length - 2] : null;
 
@@ -65,6 +89,7 @@ export default function GrowthChart({
     : 0;
 
   let trendValue = 0;
+
   if (lastDataPoint && previousDataPoint) {
     trendValue = isWeight
       ? lastDataPoint.weight - previousDataPoint.weight
@@ -73,10 +98,13 @@ export default function GrowthChart({
 
   const formattedTrend =
     trendValue > 0 ? `+${trendValue.toFixed(1)}` : trendValue.toFixed(1);
+
   const trendUnit = isWeight ? "kg" : "cm";
 
   const firstMonth = data.length > 0 ? data[0].month : "Bulan 0";
   const lastMonth = data.length > 0 ? data[data.length - 1].month : "Bulan 0";
+
+  const canRenderChart = chartSize.width > 0 && chartSize.height > 0;
 
   return (
     <div className="w-full min-h-[511px] bg-white rounded-[12px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-border-input/40 p-6 relative flex flex-col shrink-0">
@@ -84,6 +112,7 @@ export default function GrowthChart({
         <h3 className="text-[16px] font-semibold leading-[20px] tracking-[0.14px] text-text-main">
           Grafik Pertumbuhan
         </h3>
+
         <div className="flex items-center gap-1 text-btn-primary font-medium text-[10px] tracking-[0.48px] leading-[16px]">
           <Info size={12} strokeWidth={2.5} />
           <span>Standar WHO</span>
@@ -92,8 +121,9 @@ export default function GrowthChart({
 
       <div className="flex bg-background border border-border-input/20 rounded-xl p-1 mb-6 shrink-0">
         <button
+          type="button"
           onClick={() => onTabChange("bb")}
-          className={`flex-1 py-2 text-[12px] transition-all rounded-lg ${
+          className={`flex-1 py-2 text-[12px] transition-all rounded-lg cursor-pointer ${
             isWeight
               ? "bg-white shadow-sm font-medium text-text-main"
               : "font-medium text-icon-muted hover:text-text-main"
@@ -101,9 +131,11 @@ export default function GrowthChart({
         >
           Berat Badan (BB)
         </button>
+
         <button
+          type="button"
           onClick={() => onTabChange("tb")}
-          className={`flex-1 py-2 text-[12px] transition-all rounded-lg ${
+          className={`flex-1 py-2 text-[12px] transition-all rounded-lg cursor-pointer ${
             !isWeight
               ? "bg-white shadow-sm font-medium text-text-main"
               : "font-medium text-icon-muted hover:text-text-main"
@@ -113,14 +145,19 @@ export default function GrowthChart({
         </button>
       </div>
 
-      <div className="bg-background rounded-xl border border-border-input/20 pt-6 px-1 h-[260px] relative mb-6 shrink-0 flex flex-col">
+      <div className="bg-background rounded-xl border border-border-input/20 pt-6 px-1 h-[260px] relative mb-6 shrink-0 flex flex-col min-w-0">
         <div className="absolute top-3 left-4 text-[12px] font-medium text-icon-muted z-10">
           {isWeight ? "Berat (kg)" : "Tinggi (cm)"}
         </div>
 
-        <div className="flex-1 w-full relative">
-          <ResponsiveContainer width="100%" height="100%">
+        <div
+          ref={chartWrapperRef}
+          className="w-full h-[180px] min-w-0 overflow-hidden"
+        >
+          {canRenderChart ? (
             <AreaChart
+              width={chartSize.width}
+              height={chartSize.height}
               data={data}
               margin={{ top: 15, right: 0, left: 0, bottom: 0 }}
             >
@@ -134,13 +171,13 @@ export default function GrowthChart({
                   <stop
                     offset="95%"
                     stopColor="var(--chart-gradient)"
-                    stopOpacity={0.0}
+                    stopOpacity={0}
                   />
                 </linearGradient>
               </defs>
 
-              <YAxis domain={[0, "auto"]} hide={true} />
-              <XAxis dataKey="month" hide={true} />
+              <YAxis domain={[0, "auto"]} hide />
+              <XAxis dataKey="month" hide />
 
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -148,6 +185,7 @@ export default function GrowthChart({
                 stroke="var(--chart-grid)"
                 opacity={0.5}
               />
+
               <Tooltip
                 content={<CustomTooltip isWeight={isWeight} />}
                 cursor={{
@@ -156,6 +194,7 @@ export default function GrowthChart({
                   strokeDasharray: "4 4",
                 }}
               />
+
               <Area
                 type="natural"
                 dataKey={isWeight ? "weight" : "height"}
@@ -171,7 +210,11 @@ export default function GrowthChart({
                 }}
               />
             </AreaChart>
-          </ResponsiveContainer>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center rounded-lg bg-background">
+              <span className="text-xs text-icon-muted">Memuat grafik...</span>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-between items-center w-full px-3 pb-2 pt-1 text-[12px] font-normal leading-[15px] text-icon-muted shrink-0">
@@ -185,14 +228,17 @@ export default function GrowthChart({
           <p className="text-[11px] text-icon-muted font-medium leading-[16px] tracking-[0.48px] mb-1">
             Pengukuran Terakhir
           </p>
+
           <div className="flex items-baseline gap-1 mb-1 leading-none">
             <span className="font-bold leading-[32px] text-[24px] tracking-[-0.24px] text-text-main">
               {lastValue}
             </span>
+
             <span className="font-normal leading-[20px] text-[14px] tracking-[-0.24px] text-icon-muted">
               {isWeight ? "kg" : "cm"}
             </span>
           </div>
+
           <div className="text-[12px] font-medium leading-[16px] tracking-[0.48px] text-btn-primary flex items-center gap-1">
             <TrendingUp size={14} strokeWidth={2.5} />
             <span>
@@ -205,8 +251,9 @@ export default function GrowthChart({
           <p className="font-medium leading-[16px] text-[12px] tracking-[0.48px] text-icon-muted">
             Status WHO
           </p>
+
           <div className="flex items-center gap-2 text-status-normal">
-            <div className="flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-status-normal"></div>
+            <div className="flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-status-normal" />
             <span className="font-semibold leading-[20px] text-[14px] tracking-[0.14px]">
               Normal (P50)
             </span>

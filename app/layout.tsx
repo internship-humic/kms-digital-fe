@@ -13,7 +13,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Jaga Cilik",
+  title: "JagaCilik",
   description: "Untuk membantu posyandu",
 };
 
