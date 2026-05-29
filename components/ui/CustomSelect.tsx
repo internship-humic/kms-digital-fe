@@ -1,7 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, Check } from "lucide-react";
+import { useId } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 export type SelectOption = {
   id: string;
@@ -14,6 +21,8 @@ type CustomSelectProps = {
   value: SelectOption | null;
   onChange: (option: SelectOption) => void;
   placeholder?: string;
+  error?: string;
+  required?: boolean;
 };
 
 export default function CustomSelect({
@@ -22,55 +31,61 @@ export default function CustomSelect({
   value,
   onChange,
   placeholder = "Pilih opsi",
+  error,
+  required = false,
 }: CustomSelectProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const selectId = useId();
+
+  const handleValueChange = (selectedValue: string) => {
+    const selectedOption = options.find((opt) => opt.id === selectedValue);
+    if (selectedOption) {
+      onChange(selectedOption);
+    }
+  };
 
   return (
-    <div className="flex flex-col gap-1.5 mt-4">
-      <label className="text-sm font-semibold text-text-main">{label}</label>
-      <div className="relative">
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full bg-background border border-border-input rounded-xl px-4 py-3.5 flex justify-between items-center transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer"
-        >
-          <span className="font-semibold text-icon-muted text-sm">
-            {value ? value.label : placeholder}
-          </span>
-          <ChevronDown
-            className={`h-5 w-5 text-icon-muted transition-transform duration-200 ${
-              isOpen ? "rotate-180" : ""
-            }`}
-            strokeWidth={2.5}
-          />
-        </button>
+    <div className="flex flex-col gap-1.5 w-full">
+      <label
+        htmlFor={selectId}
+        className="text-sm font-semibold text-text-main"
+      >
+        {label} {required && <span className="text-danger">*</span>}
+      </label>
 
-        {isOpen && (
-          <>
-            <div
-              className="fixed inset-0 z-20"
-              onClick={() => setIsOpen(false)}
-            ></div>
-            <div className="absolute top-full left-0 w-full mt-2 bg-white border border-border-input rounded-xl shadow-lg z-30 overflow-hidden">
-              {options.map((option) => (
-                <div
-                  key={option.id}
-                  onClick={() => {
-                    onChange(option);
-                    setIsOpen(false);
-                  }}
-                  className="flex items-center justify-between px-4 py-3 text-sm font-medium text-text-main hover:bg-primary-light cursor-pointer transition-colors"
-                >
-                  {option.label}
-                  {value?.id === option.id && (
-                    <Check className="h-4 w-4 text-primary" strokeWidth={2.5} />
-                  )}
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+      <Select value={value?.id || ""} onValueChange={handleValueChange}>
+        <SelectTrigger
+          id={selectId}
+          className={cn(
+            "w-full bg-background border rounded-xl px-4 py-6 h-auto text-sm focus:ring-2 focus:ring-offset-0 cursor-pointer [&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-icon-muted",
+            error
+              ? "border-danger focus:ring-danger/20"
+              : "border-border-input focus:ring-primary/20",
+            !value && "text-icon-muted",
+          )}
+        >
+          <div className="font-semibold text-left line-clamp-1">
+            <SelectValue placeholder={placeholder} />
+          </div>
+        </SelectTrigger>
+
+        <SelectContent className="rounded-xl border-border-input shadow-lg bg-white">
+          {options.map((option) => (
+            <SelectItem
+              key={option.id}
+              value={option.id}
+              className="px-4 py-3 text-sm font-medium text-text-main hover:bg-primary-light cursor-pointer focus:bg-primary-light"
+            >
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      {error && (
+        <span className="text-xs font-medium text-danger mt-0.5 ml-1">
+          {error}
+        </span>
+      )}
     </div>
   );
 }

@@ -11,7 +11,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-      const isPublicPage =
+    const isPublicPage =
       pathname === "/" || pathname === "/login" || pathname === "/register";
 
     if (!token) {

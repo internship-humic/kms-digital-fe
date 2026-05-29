@@ -8,10 +8,28 @@
   --primary-light: #dbeafe;
 
   --text-main: #191c1e;
+  --text-secondary: #6b6b6b;
   --icon-muted: #434655;
+  --icon-alt: #516070;
+  --text-placeholder: #9ca3af;
+
   --border-input: #c3c6d7;
   --btn-primary: #2563eb;
   --btn-hover: #1d4ed8;
+
+  --success-bg: #b3f2b6;
+  --success-text: #377041;
+  --danger: #ba1a1a;
+
+  --password-strong: #316a3b;
+  --password-medium: #f57c00;
+  --status-normal: #1db954;
+
+  --chart-gradient: #2563eb;
+  --chart-line: #818cf8;
+  --chart-dot: #394cff;
+  --chart-grid: #cbd5e1;
+  --chart-cursor: #94a3b8;
 }
 
 @theme inline {
@@ -23,10 +41,22 @@
   --color-primary-light: var(--primary-light);
 
   --color-text-main: var(--text-main);
+  --color-text-secondary: var(--text-secondary);
   --color-icon-muted: var(--icon-muted);
+  --color-icon-alt: var(--icon-alt);
+  --color-text-placeholder: var(--text-placeholder);
+
   --color-border-input: var(--border-input);
   --color-btn-primary: var(--btn-primary);
   --color-btn-hover: var(--btn-hover);
+
+  --color-success-bg: var(--success-bg);
+  --color-success-text: var(--success-text);
+  --color-danger: var(--danger);
+
+  --color-password-strong: var(--password-strong);
+  --color-password-medium: var(--password-medium);
+  --color-status-normal: var(--status-normal);
 }
 
 body {
