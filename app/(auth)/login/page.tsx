@@ -2,19 +2,18 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { Mail } from "lucide-react";
 import InputField from "@/components/ui/InputField";
 import PasswordField from "@/components/ui/PasswordField";
+import { useLogin } from "@/features/auth/hooks/useLogin";
 
 export default function LoginPage() {
-  const router = useRouter();
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    localStorage.setItem("token", "dummy-token-123");
-    router.push("/dashboard");
-  };
+  const { form, onSubmit, globalError } = useLogin();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = form;
 
   return (
     <div className="flex flex-col flex-1 p-6 sm:p-8 min-h-screen bg-white justify-center">
@@ -35,19 +34,32 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <form onSubmit={handleLogin} className="flex flex-col gap-5">
+      {globalError && (
+        <div
+          className="bg-danger/10 border border-danger/20 text-danger p-3.5 rounded-xl text-[13.5px] font-medium mb-5 flex items-center"
+          role="alert"
+        >
+          {globalError}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
         <InputField
           label="Email atau Nomor Telepon"
-          placeholder="Masukan Email atau Nomor Anda"
+          placeholder="Masukan Email Anda"
           icon={Mail}
-          required
+          {...register("email")}
+          error={errors.email?.message}
+          aria-invalid={!!errors.email}
         />
 
         <div className="flex flex-col gap-1.5">
           <PasswordField
             label="Password"
             placeholder="Masukan Password Anda"
-            required
+            {...register("password")}
+            error={errors.password?.message}
+            aria-invalid={!!errors.password}
           />
           <div className="flex justify-end mt-1">
             <Link
@@ -61,9 +73,11 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="mt-4 w-full bg-btn-primary hover:bg-btn-hover text-white font-semibold rounded-xl py-3.5 flex items-center justify-center gap-2 transition-colors shadow-md shadow-blue-500/20 cursor-pointer tracking-[0.14px]"
+          disabled={isSubmitting}
+          aria-label={isSubmitting ? "Sedang memproses login" : "Masuk ke akun"}
+          className="mt-4 w-full bg-btn-primary hover:bg-btn-hover text-white font-semibold rounded-xl py-3.5 flex items-center justify-center gap-2 transition-colors shadow-md shadow-blue-500/20 cursor-pointer tracking-[0.14px] disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          Masuk
+          {isSubmitting ? "Memproses..." : "Masuk"}
         </button>
       </form>
 

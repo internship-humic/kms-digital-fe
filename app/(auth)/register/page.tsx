@@ -1,25 +1,24 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { User, Mail, Phone, Home } from "lucide-react";
 import InputField from "@/components/ui/InputField";
 import PasswordField from "@/components/ui/PasswordField";
-import CustomSelect, { SelectOption } from "@/components/ui/CustomSelect";
-
-const posyanduOptions = [
-  { id: "posyandu-1", label: "Posyandu Mawar" },
-  { id: "posyandu-2", label: "Posyandu Melati" },
-  { id: "posyandu-3", label: "Posyandu Dahlia" },
-  { id: "posyandu-4", label: "Posyandu Mekar" },
-  { id: "posyandu-5", label: "Posyandu Anggrek" },
-];
+import CustomSelect from "@/components/ui/CustomSelect";
+import TextAreaField from "@/components/ui/TextAreaField";
+import { POSYANDU_OPTIONS } from "@/lib/constants";
+import { Controller } from "react-hook-form";
+import { useRegister } from "@/features/auth/hooks/useRegister";
 
 export default function RegisterPage() {
-  const [selectedPosyandu, setSelectedPosyandu] = useState<SelectOption | null>(
-    null,
-  );
+  const { form, onSubmit, globalError } = useRegister();
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = form;
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto p-6 sm:p-8">
@@ -40,19 +39,40 @@ export default function RegisterPage() {
         </p>
       </div>
 
-      <form className="flex flex-col gap-4">
+      {globalError && (
+        <div
+          className="bg-danger/10 border border-danger/20 text-danger p-3.5 rounded-xl text-[13.5px] font-medium mb-5 flex items-center"
+          role="alert"
+        >
+          {globalError}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <InputField
           label="Nama Lengkap"
           placeholder="Masukkan nama lengkap"
           icon={User}
+          {...register("fullName")}
+          error={errors.fullName?.message}
+          aria-invalid={!!errors.fullName}
         />
 
-        <CustomSelect
-          label="Posyandu"
-          placeholder="Pilih Posyandu"
-          options={posyanduOptions}
-          value={selectedPosyandu}
-          onChange={setSelectedPosyandu}
+        <Controller
+          name="posyanduId"
+          control={control}
+          render={({ field }) => (
+            <CustomSelect
+              label="Posyandu"
+              placeholder="Pilih Posyandu"
+              options={POSYANDU_OPTIONS}
+              value={
+                POSYANDU_OPTIONS.find((opt) => opt.id === field.value) || null
+              }
+              onChange={(option) => field.onChange(option.id)}
+              error={errors.posyanduId?.message}
+            />
+          )}
         />
 
         <InputField
@@ -60,6 +80,9 @@ export default function RegisterPage() {
           placeholder="Masukan Email Anda"
           type="email"
           icon={Mail}
+          {...register("email")}
+          error={errors.email?.message}
+          aria-invalid={!!errors.email}
         />
 
         <InputField
@@ -67,26 +90,46 @@ export default function RegisterPage() {
           placeholder="Masukan Nomor Telepon"
           type="tel"
           icon={Phone}
+          {...register("phone")}
+          error={errors.phone?.message}
+          aria-invalid={!!errors.phone}
         />
 
-        <InputField
+        <TextAreaField
           label="Alamat Rumah"
           placeholder="Masukan Alamat Rumah"
           icon={Home}
+          rows={3}
+          {...register("address")}
+          error={errors.address?.message}
+          aria-invalid={!!errors.address}
         />
 
-        <PasswordField label="Password" placeholder="Masukan Password Anda" />
+        <PasswordField
+          label="Password"
+          placeholder="Masukan Password Anda"
+          {...register("password")}
+          error={errors.password?.message}
+          aria-invalid={!!errors.password}
+        />
 
         <PasswordField
           label="Konfirmasi Password"
           placeholder="Masukan Ulang Password Anda"
+          {...register("confirmPassword")}
+          error={errors.confirmPassword?.message}
+          aria-invalid={!!errors.confirmPassword}
         />
 
         <button
           type="submit"
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-btn-primary py-3.5 font-semibold text-white shadow-md shadow-blue-500/20 transition-colors hover:bg-btn-hover cursor-pointer tracking-[0.14px]"
+          disabled={isSubmitting}
+          aria-label={
+            isSubmitting ? "Sedang memproses registrasi" : "Daftar akun baru"
+          }
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-btn-primary py-3.5 font-semibold text-white shadow-md shadow-blue-500/20 transition-colors hover:bg-btn-hover cursor-pointer tracking-[0.14px] disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          Daftar
+          {isSubmitting ? "Mendaftar..." : "Daftar"}
         </button>
       </form>
 
