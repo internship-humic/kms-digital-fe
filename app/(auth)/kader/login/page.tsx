@@ -8,7 +8,7 @@ import PasswordField from "@/components/ui/PasswordField";
 import { useLogin } from "@/features/auth/hooks/useLogin";
 
 export default function KaderLoginPage() {
-  const { form, onSubmit, globalError } = useLogin();
+  const { form, onSubmit, globalError } = useLogin("kader");
   const {
     register,
     handleSubmit,

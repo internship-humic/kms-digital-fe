@@ -1,0 +1,98 @@
+"use client";
+
+import Image from "next/image";
+import { Bell, Users, TriangleAlert, Plus, TrendingUp } from "lucide-react";
+import { DashboardKaderData } from "../types";
+
+type DashboardKaderFeedProps = {
+  data: DashboardKaderData;
+};
+
+export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
+  const handleAddBalita = () => {
+    console.log("Navigasi ke form tambah data balita");
+  };
+
+  return (
+    <div className="flex flex-col flex-1 bg-background relative px-6 pb-32">
+      <div className="flex items-center justify-between pt-10 pb-4 sticky top-0 bg-background/95 backdrop-blur-md z-30 border-b border-border-input/10 -mx-6 px-6">
+        <div className="flex items-center select-none">
+          <Image
+            src="/images/logo.svg"
+            alt="JagaCilik Logo"
+            width={133}
+            height={44}
+            priority
+            className="w-[133px] h-[43.75px] object-contain opacity-100 rotate-0"
+          />
+        </div>
+
+        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light/40 transition-colors cursor-pointer text-text-main/80">
+          <Bell size={22} strokeWidth={2.2} />
+        </button>
+      </div>
+
+      <div className="mt-8 mb-6">
+        <h1 className="text-[22px] font-semibold leading-[100%] tracking-[0px] text-text-main mb-1.5 align-middle">
+          Halo, Kader {data.kaderName}👋
+        </h1>
+        <p className="text-[14px] font-normal leading-[100%] tracking-[0px] text-btn-primary align-middle">
+          {data.posyanduName} &bull; {data.location}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-white rounded-[16px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-border-input/20 border-l-4 border-l-btn-primary p-4 flex flex-col justify-between h-[135px]">
+          <div className="flex items-center justify-between w-full">
+            <div className="w-9 h-9 bg-primary-light/60 rounded-xl flex items-center justify-center text-btn-primary">
+              <Users size={18} strokeWidth={2.5} />
+            </div>
+            <div className="flex items-center gap-0.5 text-status-normal text-[12px] font-bold leading-none">
+              <TrendingUp size={12} strokeWidth={2.5} />
+              <span>{data.totalBalita.trend}</span>
+            </div>
+          </div>
+          <div className="mt-auto">
+            <p className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-text-main/60 mb-0.5 align-middle">
+              Total Balita
+            </p>
+            <span className="text-[24px] font-bold leading-[32px] tracking-[-0.24px] text-text-main align-middle">
+              {data.totalBalita.value}
+            </span>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-[16px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-border-input/20 border-l-4 border-l-danger p-4 flex flex-col justify-between h-[135px]">
+          <div className="flex items-center justify-between w-full">
+            <div className="w-9 h-9 bg-rose-50 rounded-xl flex items-center justify-center text-danger">
+              <TriangleAlert size={18} strokeWidth={2.5} />
+            </div>
+
+            <span className="inline-flex items-center justify-center text-[10px] font-normal leading-[15px] tracking-[0px] text-danger px-2 py-0.5 rounded-md align-middle">
+              {data.kasusRisiko.label}
+            </span>
+          </div>
+          <div className="mt-auto">
+            <p className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-text-main/60 mb-0.5 align-middle">
+              Kasus Risiko
+            </p>
+
+            <span className="text-[24px] font-bold leading-[32px] tracking-[-0.24px] text-text-main align-middle">
+              {data.kasusRisiko.value}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="fixed bottom-28 left-0 right-0 w-full max-w-md mx-auto flex justify-end px-6 z-40 pointer-events-none">
+        <button
+          onClick={handleAddBalita}
+          className="pointer-events-auto flex items-center gap-2 px-5 py-3.5 bg-btn-primary hover:bg-btn-hover text-white rounded-full font-semibold text-[14px] shadow-[0_8px_24px_-4px_rgba(37,99,235,0.4)] transition-all duration-300 hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+        >
+          <Plus size={18} strokeWidth={3} />
+          <span>Tambah Data Balita</span>
+        </button>
+      </div>
+    </div>
+  );
+}

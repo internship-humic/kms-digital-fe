@@ -8,7 +8,7 @@ import PasswordField from "@/components/ui/PasswordField";
 import { useLogin } from "@/features/auth/hooks/useLogin";
 
 export default function LoginPage() {
-  const { form, onSubmit, globalError } = useLogin();
+  const { form, onSubmit, globalError } = useLogin("parent");
   const {
     register,
     handleSubmit,
