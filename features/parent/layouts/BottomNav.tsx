@@ -35,8 +35,6 @@ export default function BottomNav() {
       {navItems.map((item) => {
         const Icon = item.icon;
 
-        // Logika diperbarui: Menu tetap aktif meskipun sedang membuka sub-halaman
-        // (contoh: '/dashboard/child/1' akan membuat ikon 'Beranda' tetap biru)
         const isActive =
           pathname === item.href || pathname.startsWith(`${item.href}/`);
 
