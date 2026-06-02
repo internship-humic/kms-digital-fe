@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Check } from "lucide-react";
 
 type ProfileCardProps = {
@@ -11,9 +10,16 @@ type ProfileCardProps = {
 export default function ProfileCard({
   fullName,
   email,
-  avatar,
   isVerified,
 }: ProfileCardProps) {
+  const getInitials = (name: string) => {
+    const names = name.trim().split(" ");
+    if (names.length >= 2) {
+      return `${names[0][0]}${names[1][0]}`.toUpperCase();
+    }
+    return names[0] ? names[0][0].toUpperCase() : "U";
+  };
+
   return (
     <section
       aria-labelledby="profile-card-title"
@@ -23,15 +29,8 @@ export default function ProfileCard({
       <div className="absolute -bottom-8 -left-8 h-20 w-20 rounded-full bg-btn-primary/10" />
 
       <div className="relative flex items-center gap-4 p-5">
-        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full shadow-sm ring-4 ring-white">
-          <Image
-            src={avatar}
-            alt={`Foto profil ${fullName}`}
-            fill
-            sizes="64px"
-            className="object-cover"
-            unoptimized
-          />
+        <div className="relative h-16 w-16 shrink-0 rounded-full shadow-sm ring-4 ring-white flex items-center justify-center bg-primary-light/60 text-btn-primary font-bold text-[22px] tracking-widest">
+          {getInitials(fullName)}
         </div>
 
         <div className="flex flex-col">

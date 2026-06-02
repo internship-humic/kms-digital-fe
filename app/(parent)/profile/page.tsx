@@ -13,7 +13,7 @@ export default async function ProfilePage() {
   const profile = await getProfileMockData();
 
   return (
-    <main className="flex flex-1 flex-col bg-background px-6 pt-10 pb-8">
+    <main className="flex flex-1 flex-col bg-background px-6 pt-10 pb-28">
       <header className="mb-6">
         <h1 className="text-[22px] font-bold leading-tight text-text-main">
           Profil Orang Tua

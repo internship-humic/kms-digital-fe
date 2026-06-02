@@ -1,42 +1,37 @@
-"use client";
-
-import { use } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, Share2, Clock, BadgeCheck } from "lucide-react";
-import { useRouter } from "next/navigation";
 
-export default function ArticleDetailPage({
+export default async function ArticleDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const router = useRouter();
-
-  const unwrappedParams = use(params);
-  const id = unwrappedParams.id;
+  const fallbackImage =
+    "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?q=80&w=600&auto=format&fit=crop";
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <div className="flex items-center justify-between px-6 py-4 bg-background/95 backdrop-blur-md sticky top-0 z-30 border-b border-border-input/10">
-        <button
-          onClick={() => router.back()}
+        <Link
+          href="/insights"
           className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light transition-colors -ml-2 cursor-pointer"
         >
           <ArrowLeft size={24} className="text-btn-primary" strokeWidth={2.5} />
-        </button>
+        </Link>
+
         <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light transition-colors -mr-2 cursor-pointer">
           <Share2 size={22} className="text-btn-primary" strokeWidth={2.5} />
         </button>
       </div>
 
       <div className="relative w-full h-[280px] bg-border-input/20">
-        <img
-          src="/images/Hero Image.png"
+        <Image
+          src={fallbackImage}
           alt="Sayuran MPASI"
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.currentTarget.src =
-              "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?q=80&w=600&auto=format&fit=crop";
-          }}
+          fill
+          className="object-cover"
+          priority
         />
       </div>
 

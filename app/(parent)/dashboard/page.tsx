@@ -33,7 +33,7 @@ export default async function DashboardPage() {
   const childrenData = await getDashboardMockData();
 
   return (
-    <div className="flex-1 bg-background flex flex-col relative overflow-y-auto pb-6">
+    <div className="flex-1 bg-background flex flex-col relative overflow-y-auto pb-32">
       <div className="flex items-center justify-between px-6 pt-10 pb-4 sticky top-0 bg-background/95 backdrop-blur-md z-30 border-b border-border-input/10">
         <div className="w-10"></div>
         <div className="flex justify-center">
@@ -46,14 +46,9 @@ export default async function DashboardPage() {
             className="h-8 w-auto object-contain"
           />
         </div>
-        <div className="w-10 h-10 rounded-full overflow-hidden border border-border-input/40 shadow-sm shrink-0">
-          <Image
-            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150&auto=format&fit=crop"
-            alt="Profile"
-            width={40}
-            height={40}
-            className="w-full h-full object-cover"
-          />
+
+        <div className="w-10 h-10 rounded-full border border-border-input/40 shadow-sm shrink-0 flex items-center justify-center bg-primary-light/60 text-btn-primary font-bold text-[15px] tracking-wider select-none">
+          AA
         </div>
       </div>
 
@@ -74,7 +69,7 @@ export default async function DashboardPage() {
             className="bg-white rounded-[20px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-border-input/40 p-5 block transition-transform hover:scale-[1.02] active:scale-95"
           >
             <div className="flex justify-between items-start mb-3">
-              <div className="w-[60px] h-[60px] rounded-full overflow-hidden border border-border-input/40 relative">
+              <div className="w-[60px] h-[60px] rounded-full overflow-hidden border border-border-input/40 relative bg-primary-light/20">
                 <Image
                   src={child.image}
                   alt={child.name}
