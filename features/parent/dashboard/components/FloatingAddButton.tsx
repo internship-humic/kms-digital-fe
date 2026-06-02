@@ -8,7 +8,7 @@ export default function DashboardActions() {
   };
 
   return (
-    <div className="sticky bottom-6 w-full flex justify-end px-6 z-20 mt-auto pointer-events-none">
+    <div className="fixed bottom-28 left-0 right-0 w-full max-w-md mx-auto flex justify-end px-6 z-40 pointer-events-none">
       <button
         onClick={handleAddChild}
         aria-label="Tambah data anak"

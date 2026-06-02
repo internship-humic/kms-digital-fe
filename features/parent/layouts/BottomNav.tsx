@@ -30,17 +30,15 @@ export default function BottomNav() {
     },
   ];
 
-  const isMainRoute = navItems.some((item) => item.href === pathname);
-
-  if (!isMainRoute) {
-    return null;
-  }
-
   return (
-    <div className="sticky bottom-0 w-full bg-white border-t border-border-input/30 flex items-center justify-around px-2 py-3 z-50 shadow-[0_-10px_30px_-15px_rgba(0,0,0,0.08)]">
+    <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto w-full bg-white border-t border-border-input/30 flex items-center justify-around px-2 py-3 z-50 shadow-[0_-10px_30px_-15px_rgba(0,0,0,0.08)]">
       {navItems.map((item) => {
         const Icon = item.icon;
-        const isActive = pathname === item.href;
+
+        // Logika diperbarui: Menu tetap aktif meskipun sedang membuka sub-halaman
+        // (contoh: '/dashboard/child/1' akan membuat ikon 'Beranda' tetap biru)
+        const isActive =
+          pathname === item.href || pathname.startsWith(`${item.href}/`);
 
         return (
           <Link
