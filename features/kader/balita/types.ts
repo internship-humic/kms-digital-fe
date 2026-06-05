@@ -8,3 +8,18 @@ export type BalitaData = {
   status: BalitaStatus;
   address: string;
 };
+
+export type DetailBalitaData = BalitaData & {
+  latestMeasurements: {
+    berat: number;
+    tinggi: number;
+    lingkarKepala: number;
+  };
+  riwayat: Array<{
+    id: string;
+    tanggal: string;
+    berat: number;
+    tinggi: number;
+    zScore: number;
+  }>;
+};

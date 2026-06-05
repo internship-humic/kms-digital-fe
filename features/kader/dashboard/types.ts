@@ -10,4 +10,12 @@ export type DashboardKaderData = {
     value: number;
     label: string;
   };
+  pemeriksaanTerbaru: Array<{
+    id: string;
+    nama: string;
+    inisial: string;
+    jenisPemeriksaan: string;
+    waktu: string;
+    status: string;
+  }>;
 };

@@ -1,16 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import { Bell, Users, TriangleAlert, Plus, TrendingUp } from "lucide-react";
+import { Bell, Users, TriangleAlert, Plus, TrendingUp, Layers, Download, FileUp } from "lucide-react";
 import { DashboardKaderData } from "../types";
 
 type DashboardKaderFeedProps = {
   data: DashboardKaderData;
 };
 
+import { useRouter } from "next/navigation";
+
 export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
+  const router = useRouter();
+
   const handleAddBalita = () => {
-    console.log("Navigasi ke form tambah data balita");
+    router.push("/kader/dashboard/tambah");
   };
 
   return (
@@ -27,7 +31,10 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
           />
         </div>
 
-        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light/40 transition-colors cursor-pointer text-text-main/80">
+        <button 
+          onClick={() => router.push('/kader/notifikasi')}
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light/40 transition-colors cursor-pointer text-text-main/80"
+        >
           <Bell size={22} strokeWidth={2.2} />
         </button>
       </div>
@@ -81,6 +88,54 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
               {data.kasusRisiko.value}
             </span>
           </div>
+        </div>
+      </div>
+
+      {/* Kelola Data Massal Section */}
+      <div className="mt-8 border border-border-input/20 rounded-[16px] p-5 bg-white">
+        <div className="flex items-center gap-2 mb-4">
+          <Layers size={20} className="text-btn-primary" strokeWidth={2.5} />
+          <h2 className="text-[16px] font-semibold text-text-main">Kelola Data Massal</h2>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-3">
+          <button className="flex flex-col items-center justify-center gap-2 py-4 px-2 border border-border-input/20 rounded-xl hover:bg-slate-50 transition-colors">
+            <Download size={20} className="text-btn-primary" strokeWidth={2.5} />
+            <span className="text-[12px] font-medium text-text-main text-center leading-tight">Unduh Template<br/>Excel</span>
+          </button>
+          
+          <button className="flex flex-col items-center justify-center gap-2 py-4 px-2 border border-border-input/20 rounded-xl hover:bg-slate-50 transition-colors">
+            <FileUp size={20} className="text-btn-primary" strokeWidth={2.5} />
+            <span className="text-[12px] font-medium text-text-main text-center leading-tight">Impor Data<br/>Pemeriksaan</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Pemeriksaan Terbaru Section */}
+      <div className="mt-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-[16px] font-semibold text-text-main">Pemeriksaan Terbaru</h2>
+          <button className="text-[13px] font-medium text-btn-primary hover:underline">Lihat Semua</button>
+        </div>
+        
+        <div className="flex flex-col gap-3">
+          {data.pemeriksaanTerbaru.map((item) => (
+            <div key={item.id} className="flex items-center gap-3 p-4 border border-border-input/20 rounded-xl bg-white">
+              <div className="w-12 h-12 bg-btn-primary/10 rounded-full flex items-center justify-center text-btn-primary font-bold text-[15px] shrink-0">
+                {item.inisial}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-[15px] font-semibold text-text-main mb-0.5 truncate">{item.nama}</h3>
+                <p className="text-[13px] text-text-main/60 truncate">{item.jenisPemeriksaan}</p>
+                <p className="text-[12px] text-text-main/40 mt-0.5">{item.waktu}</p>
+              </div>
+              <div className="shrink-0">
+                <span className="text-[13px] font-semibold text-status-normal">
+                  {item.status}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

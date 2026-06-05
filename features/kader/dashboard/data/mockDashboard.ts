@@ -16,5 +16,23 @@ export const getKaderDashboardMockData =
         value: 12,
         label: "Perlu Pantau",
       },
+      pemeriksaanTerbaru: [
+        {
+          id: "1",
+          nama: "Abe Cekut",
+          inisial: "AC",
+          jenisPemeriksaan: "Pemeriksaan Bulanan",
+          waktu: "2 jam lalu",
+          status: "Normal",
+        },
+        {
+          id: "2",
+          nama: "Abe Cekut",
+          inisial: "AC",
+          jenisPemeriksaan: "Pemeriksaan Tambahan",
+          waktu: "2 jam lalu",
+          status: "Normal",
+        }
+      ]
     };
   };

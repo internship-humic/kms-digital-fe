@@ -10,11 +10,55 @@ export const getGrowthMockData = async (): Promise<ChildData[]> => {
       image:
         "https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=150&auto=format&fit=crop",
       stats: {
-        weight: "14.5",
-        height: "95.2",
-        head: "50.0",
+        weight: "12.5",
+        height: "86.2",
+        head: "48.0",
         status: "NORMAL",
       },
+      riwayatPemeriksaan: [
+        {
+          id: "1",
+          tanggal: "15 Mei 2026",
+          lokasi: "Posyandu Melati 2",
+          keterangan: "Pemeriksaan rutin bulanan. Imunisasi DPT lanjutan.",
+          bb: "12.5",
+          tb: "88"
+        },
+        {
+          id: "2",
+          tanggal: "12 Juni 2026",
+          lokasi: "Posyandu Melati 2",
+          keterangan: "Pemeriksaan rutin bulanan.",
+          bb: "12.3",
+          tb: "88"
+        }
+      ],
+      jadwalImunisasi: [
+        {
+          id: "im1",
+          namaVaksin: "DPT-HB-Hib 2 & Polio 3",
+          keterangan: "Jadwal direkomendasikan: 15 Nov 2023",
+          waktu: "15 Nov 2023",
+          bulanKe: "Bulan 3",
+          status: "mendatang"
+        },
+        {
+          id: "im2",
+          namaVaksin: "DPT-HB-Hib 1 & Polio 2",
+          keterangan: "",
+          waktu: "",
+          bulanKe: "Bulan 2",
+          status: "selesai"
+        },
+        {
+          id: "im3",
+          namaVaksin: "BCG & Polio 1",
+          keterangan: "Mencegah tuberkulosis dan polio.",
+          waktu: "",
+          bulanKe: "Bulan 1",
+          status: "selesai"
+        }
+      ]
     },
     {
       id: 2,
@@ -28,6 +72,8 @@ export const getGrowthMockData = async (): Promise<ChildData[]> => {
         head: "43.5",
         status: "NORMAL",
       },
+      riwayatPemeriksaan: [],
+      jadwalImunisasi: []
     },
   ];
 };
