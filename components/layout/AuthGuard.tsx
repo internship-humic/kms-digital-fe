@@ -22,6 +22,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       pathname === "/register" ||
       pathname === "/kader/login" ||
       pathname === "/admin/login" ||
+      pathname === "/admin/register" ||
       isKaderOnboardingPage;
 
     const isKaderPage = pathname.startsWith("/kader");
