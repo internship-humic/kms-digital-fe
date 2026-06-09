@@ -3,7 +3,7 @@ import { z } from "zod";
 export const tambahBalitaSchema = z.object({
   namaLengkap: z.string().min(1, "Nama lengkap wajib diisi"),
   jenisKelamin: z.enum(["Laki-laki", "Perempuan"], {
-    required_error: "Pilih jenis kelamin",
+    message: "Pilih jenis kelamin",
   }),
   tanggalLahir: z.string().min(1, "Tanggal lahir wajib diisi"),
   beratLahir: z.string().min(1, "Berat lahir wajib diisi"),
