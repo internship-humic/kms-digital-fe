@@ -1,3 +1,12 @@
+export type PemeriksaanTerbaru = {
+  id: number;
+  inisial: string;
+  nama: string;
+  jenisPemeriksaan: string;
+  waktu: string;
+  status: string;
+};
+
 export type DashboardKaderData = {
   kaderName: string;
   posyanduName: string;
@@ -10,4 +19,5 @@ export type DashboardKaderData = {
     value: number;
     label: string;
   };
+  pemeriksaanTerbaru: PemeriksaanTerbaru[];
 };

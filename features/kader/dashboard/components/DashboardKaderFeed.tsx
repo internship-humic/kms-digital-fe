@@ -1,7 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { Bell, Users, TriangleAlert, Plus, TrendingUp } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  Bell,
+  Users,
+  TriangleAlert,
+  Plus,
+  TrendingUp,
+  Layers,
+  Download,
+  FileUp,
+} from "lucide-react";
 import { DashboardKaderData } from "../types";
 
 type DashboardKaderFeedProps = {
@@ -9,8 +19,10 @@ type DashboardKaderFeedProps = {
 };
 
 export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
+  const router = useRouter();
+
   const handleAddBalita = () => {
-    console.log("Navigasi ke form tambah data balita");
+    router.push("/kader/dashboard/tambah");
   };
 
   return (
@@ -27,7 +39,10 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
           />
         </div>
 
-        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light/40 transition-colors cursor-pointer text-text-main/80">
+        <button
+          onClick={() => router.push("/kader/notifikasi")}
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light/40 transition-colors cursor-pointer text-text-main/80"
+        >
           <Bell size={22} strokeWidth={2.2} />
         </button>
       </div>
@@ -68,7 +83,7 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
               <TriangleAlert size={18} strokeWidth={2.5} />
             </div>
 
-            <span className="inline-flex items-center justify-center text-[10px] font-normal leading-[15px] tracking-[0px] text-danger px-2 py-0.5 rounded-md align-middle">
+            <span className="inline-flex items-center justify-center text-[10px] font-normal leading-[15px] tracking-[0px] text-danger bg-rose-50 border border-rose-100 px-2 py-0.5 rounded-md align-middle">
               {data.kasusRisiko.label}
             </span>
           </div>
@@ -81,6 +96,88 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
               {data.kasusRisiko.value}
             </span>
           </div>
+        </div>
+      </div>
+
+      <div className="mt-8 border border-border-input/30 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.02)] rounded-[16px] p-5 bg-white">
+        <div className="flex items-center gap-2 mb-4">
+          <Layers size={20} className="text-btn-primary" strokeWidth={2.5} />
+
+          <h2 className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle">
+            Kelola Data Massal
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <button className="flex flex-col items-center justify-center gap-2 py-4 px-2 border border-border-input rounded-xl hover:bg-primary-light/20 transition-colors cursor-pointer group">
+            <Download
+              size={20}
+              className="text-btn-primary group-hover:-translate-y-0.5 transition-transform"
+              strokeWidth={2.5}
+            />
+
+            <span className="text-[12px] font-medium leading-[16px] tracking-[0.48px] text-text-main text-center align-middle">
+              Unduh Template
+              <br />
+              Excel
+            </span>
+          </button>
+
+          <button className="flex flex-col items-center justify-center gap-2 py-4 px-2 border border-border-input rounded-xl hover:bg-primary-light/20 transition-colors cursor-pointer group">
+            <FileUp
+              size={20}
+              className="text-btn-primary group-hover:-translate-y-0.5 transition-transform"
+              strokeWidth={2.5}
+            />
+
+            <span className="text-[12px] font-medium leading-[16px] tracking-[0.48px] text-text-main text-center align-middle">
+              Impor Data
+              <br />
+              Pemeriksaan
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-8 mb-4">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-text-main align-middle">
+            Pemeriksaan Terbaru
+          </h2>
+
+          <button className="text-[12px] font-medium leading-[16px] tracking-[0.48px] text-btn-primary text-center align-middle hover:underline cursor-pointer">
+            Lihat Semua
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {data.pemeriksaanTerbaru.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center gap-3 p-4 border border-border-input/30 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.02)] rounded-xl bg-white hover:border-btn-primary/30 transition-colors cursor-pointer"
+            >
+              <div className="w-[48px] h-[48px] bg-primary-light/70 rounded-full flex items-center justify-center text-btn-primary font-bold text-[16px] tracking-wide shrink-0 border border-primary-light shadow-sm select-none">
+                {item.inisial}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-text-main align-middle mb-0.5 truncate">
+                  {item.nama}
+                </h3>
+
+                <p className="text-[14px] font-normal leading-[20px] tracking-[0px] text-icon-muted align-middle truncate">
+                  {item.jenisPemeriksaan}
+                </p>
+                <p className="text-[12px] font-normal leading-[16px] text-text-main/50 mt-1">
+                  {item.waktu}
+                </p>
+              </div>
+              <div className="shrink-0 pl-2">
+                <span className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-status-normal text-right align-middle">
+                  {item.status}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
