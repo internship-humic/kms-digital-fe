@@ -31,6 +31,14 @@ export default function LaporanFeed() {
 
     if (!file) return;
 
+    const MAX_FILE_SIZE = 50 * 1024 * 1024;
+
+    if (file.size > MAX_FILE_SIZE) {
+      alert("Ukuran file terlalu besar! Maksimal 50 MB.");
+      event.target.value = "";
+      return;
+    }
+
     setUploadedFile(file);
   };
 
