@@ -15,4 +15,20 @@ export type ChildData = {
     head: string;
     status: string;
   };
+  riwayatPemeriksaan: Array<{
+    id: string;
+    tanggal: string;
+    lokasi: string;
+    keterangan: string;
+    bb: string;
+    tb: string;
+  }>;
+  jadwalImunisasi: Array<{
+    id: string;
+    namaVaksin: string;
+    keterangan: string;
+    waktu: string;
+    bulanKe: string;
+    status: 'mendatang' | 'selesai';
+  }>;
 };

@@ -53,15 +53,16 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    if (role === "kader" && !isKaderPage) {
-      router.replace("/kader/dashboard");
-      return;
-    }
+    // [DEV MODE] Diberhentikan sementara agar Anda bebas berpindah halaman tanpa harus logout
+    // if (role === "kader" && !isKaderPage) {
+    //   router.replace("/kader/dashboard");
+    //   return;
+    // }
 
-    if (role === "admin" && !isAdminPage) {
-      router.replace("/admin/dashboard");
-      return;
-    }
+    // if (role === "admin" && !isAdminPage) {
+    //   router.replace("/admin/dashboard");
+    //   return;
+    // }
 
     setIsVerified(true);
   }, [pathname, router]);
