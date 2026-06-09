@@ -18,21 +18,21 @@ export const getKaderDashboardMockData =
       },
       pemeriksaanTerbaru: [
         {
-          id: "1",
-          nama: "Abe Cekut",
+          id: 1,
           inisial: "AC",
+          nama: "Abe Cekut",
           jenisPemeriksaan: "Pemeriksaan Bulanan",
           waktu: "2 jam lalu",
           status: "Normal",
         },
         {
-          id: "2",
-          nama: "Abe Cekut",
-          inisial: "AC",
+          id: 2,
+          inisial: "NA",
+          nama: "Nadlyne Aurora",
           jenisPemeriksaan: "Pemeriksaan Tambahan",
           waktu: "2 jam lalu",
           status: "Normal",
-        }
-      ]
+        },
+      ],
     };
   };

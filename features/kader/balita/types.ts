@@ -9,17 +9,12 @@ export type BalitaData = {
   address: string;
 };
 
-export type DetailBalitaData = BalitaData & {
-  latestMeasurements: {
-    berat: number;
-    tinggi: number;
-    lingkarKepala: number;
-  };
-  riwayat: Array<{
-    id: string;
-    tanggal: string;
-    berat: number;
-    tinggi: number;
-    zScore: number;
-  }>;
+export type BalitaDetail = {
+  id: string;
+  nama: string;
+  jk: string;
+  usia: string;
+  status: string;
+  stats: { berat: string; tinggi: string; lingkarKepala: string };
+  riwayat: { tanggal: string; berat: string; tinggi: string; zscore: string }[];
 };

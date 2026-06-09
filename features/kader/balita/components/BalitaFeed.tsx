@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Search, MapPin, Filter } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { BalitaData, BalitaStatus } from "../types";
 
 type BalitaFeedProps = {
@@ -10,7 +10,6 @@ type BalitaFeedProps = {
 };
 
 export default function BalitaFeed({ initialData }: BalitaFeedProps) {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<"ALL" | BalitaStatus>("ALL");
 
@@ -109,10 +108,10 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
       <div className="flex flex-col gap-4">
         {filteredData.length > 0 ? (
           filteredData.map((child) => (
-            <div
+            <Link
               key={child.id}
-              onClick={() => router.push(`/kader/balita/${child.id}`)}
-              className="bg-white rounded-[20px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05),0_10px_20px_-2px_rgba(0,0,0,0.02)] border border-border-input/30 p-5 flex flex-col gap-4 transition-transform active:scale-[0.99] cursor-pointer hover:border-primary/20 hover:shadow-md"
+              href={`/kader/balita/${child.id}`}
+              className="bg-white rounded-[20px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05),0_10px_20px_-2px_rgba(0,0,0,0.02)] border border-border-input/30 p-5 flex flex-col gap-4 transition-all hover:border-btn-primary/30 active:scale-[0.99] block"
             >
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-4">
@@ -149,7 +148,7 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
                   {child.address}
                 </p>
               </div>
-            </div>
+            </Link>
           ))
         ) : (
           <div className="text-center py-12 text-sm text-text-main/50 font-medium">

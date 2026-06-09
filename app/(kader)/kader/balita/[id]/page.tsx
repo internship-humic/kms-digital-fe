@@ -6,6 +6,15 @@ export const metadata = {
   description: "Rincian profil dan pengukuran pertumbuhan balita",
 };
 
+
+export default async function DetailBalitaPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const data = await getDetailBalitaMockData(id);
+
 export default async function DetailBalitaPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
   const data = await getDetailBalitaMockData(resolvedParams.id);
