@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { User, Mail, Phone, Home } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { Button } from "@/components/ui/button";
 import CustomSelect from "@/components/ui/CustomSelect";
 import InputField from "@/components/ui/InputField";
 import TextAreaField from "@/components/ui/TextAreaField";
@@ -54,11 +54,11 @@ export default function EditProfileForm({
         <div className="h-1.5 w-full bg-btn-primary" />
 
         <div className="p-6">
-          <h2 className="text-[22px] font-bold text-text-main mb-2">
+          <h2 className="text-4xl font-bold text-text-main mb-2">
             Edit Profil
           </h2>
 
-          <p className="text-[14px] text-text-main/70 leading-relaxed mb-8">
+          <p className="text-base text-text-main/70 leading-relaxed mb-8">
             Perbarui informasi pribadi Anda untuk memastikan data akun tetap
             akurat.
           </p>
@@ -122,13 +122,14 @@ export default function EditProfileForm({
               />
             </div>
 
-            <button
+            <Button
               type="submit"
+              size="lg"
               disabled={isSubmitting}
-              className="w-full bg-btn-primary hover:bg-btn-hover text-white font-semibold py-3.5 rounded-xl transition-colors shadow-md shadow-blue-500/20 cursor-pointer tracking-wide mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="mt-2 w-full"
             >
               {isSubmitting ? "Menyimpan..." : "Edit Profil"}
-            </button>
+            </Button>
           </form>
         </div>
       </div>

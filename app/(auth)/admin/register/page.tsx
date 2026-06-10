@@ -5,6 +5,7 @@ import { User, Mail, Phone, Home } from "lucide-react";
 import InputField from "@/components/ui/InputField";
 import PasswordField from "@/components/ui/PasswordField";
 import { useRegister } from "@/features/auth/hooks/useRegister";
+import { Button } from "@/components/ui/button";
 
 export default function AdminRegisterPage() {
   const { form, onSubmit, globalError } = useRegister("admin");
@@ -18,17 +19,15 @@ export default function AdminRegisterPage() {
     <main className="fixed inset-0 z-[999] flex min-h-screen items-center justify-center bg-[#f8f5ff] px-6">
       <section className="w-full max-w-[1024px] rounded-[10px] border border-border-input/70 bg-white px-12 py-20 shadow-sm">
         <div className="mb-12">
-          <h1 className="text-[28px] font-bold text-text-main">
-            Buat Akun Baru
-          </h1>
-          <p className="mt-2 text-[13px] text-text-main">
+          <h1 className="text-7xl font-bold text-text-main">Buat Akun Baru</h1>
+          <p className="mt-2 text-sm text-text-main">
             Mohon berikan informasi untuk membuat akun Anda!
           </p>
         </div>
 
         {globalError && (
           <div
-            className="mb-6 rounded-xl border border-danger/20 bg-danger/10 p-3.5 text-[13.5px] font-medium text-danger"
+            className="mb-6 rounded-xl border border-danger/20 bg-danger/10 p-3.5 text-sm font-medium text-danger"
             role="alert"
           >
             {globalError}
@@ -92,16 +91,17 @@ export default function AdminRegisterPage() {
             />
           </div>
 
-          <button
+          <Button
             type="submit"
+            size="lg"
             disabled={isSubmitting}
-            className="mt-24 flex w-full cursor-pointer items-center justify-center rounded-[10px] bg-btn-primary py-3.5 text-[16px] font-semibold text-white shadow-lg shadow-blue-500/25 transition-colors hover:bg-btn-hover disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-24 w-full text-lg"
           >
             {isSubmitting ? "Mendaftar..." : "Daftar"}
-          </button>
+          </Button>
         </form>
 
-        <div className="mt-7 flex justify-center gap-1 text-[13px]">
+        <div className="mt-7 flex justify-center gap-1 text-sm">
           <span className="text-icon-muted">Sudah mempunyai akun?</span>
           <Link
             href="/admin/login"

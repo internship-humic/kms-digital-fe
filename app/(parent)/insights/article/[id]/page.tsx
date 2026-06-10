@@ -1,14 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Share2, Clock, BadgeCheck } from "lucide-react";
+import { getArticleDetailMockData } from "@/features/parent/insights/data/mockInsights";
 
 export default async function ArticleDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const fallbackImage =
-    "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?q=80&w=600&auto=format&fit=crop";
+  const { id } = await params;
+
+  const article = await getArticleDetailMockData(id);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -27,8 +29,8 @@ export default async function ArticleDetailPage({
 
       <div className="relative w-full h-[280px] bg-border-input/20">
         <Image
-          src={fallbackImage}
-          alt="Sayuran MPASI"
+          src={article.image}
+          alt={article.title}
           fill
           className="object-cover"
           priority
@@ -38,21 +40,21 @@ export default async function ArticleDetailPage({
       <div className="relative z-20 bg-background rounded-t-[32px] -mt-8 px-6 pt-8 pb-12 min-h-[500px] shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.05)]">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
-            <span className="bg-primary-light/60 border border-primary-light text-btn-primary px-3.5 py-1.5 rounded-full text-[12px] font-bold tracking-wider">
-              Nutrisi
+            <span className="bg-primary-light/60 border border-primary-light text-btn-primary px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wider">
+              {article.category}
             </span>
             <div className="flex items-center gap-1.5 text-icon-muted">
               <Clock size={14} />
-              <span className="text-[13px] font-medium">5 menit baca</span>
+              <span className="text-sm font-medium">{article.timeToRead}</span>
             </div>
           </div>
-          <span className="text-[13px] font-medium text-icon-muted">
-            12 Okt 2026
+          <span className="text-sm font-medium text-icon-muted">
+            {article.date}
           </span>
         </div>
 
-        <h1 className="text-[24px] md:text-[26px] font-bold text-text-main leading-tight mb-6">
-          Tips Gizi MPASI untuk Bayi 6 Bulan Pertama
+        <h1 className="text-5xl md:text-6xl font-bold text-text-main leading-tight mb-6">
+          {article.title}
         </h1>
 
         <div className="bg-primary-light/20 rounded-2xl p-4 flex items-center gap-4 mb-8 border border-border-input/30">
@@ -64,52 +66,40 @@ export default async function ArticleDetailPage({
             />
           </div>
           <div className="flex-1">
-            <h3 className="text-[15px] font-bold text-text-main mb-0.5">
-              Dr. Sarah Anindita, Sp.A
+            <h3 className="text-md font-bold text-text-main mb-0.5">
+              {article.author.name}
             </h3>
-            <p className="text-[13px] text-icon-muted leading-snug">
-              Dokter Spesialis Anak - RSIA Harapan Kita
+            <p className="text-sm text-icon-muted leading-snug">
+              {article.author.role}
             </p>
           </div>
         </div>
 
-        <div className="text-[#434654] text-[15.5px] leading-relaxed">
-          <p className="mb-5">
-            Memasuki usia 6 bulan, kebutuhan nutrisi bayi tidak lagi bisa
-            dipenuhi hanya dengan ASI. Inilah saatnya memperkenalkan Makanan
-            Pendamping ASI (MPASI) yang bergizi seimbang untuk mendukung tumbuh
-            kembang optimalnya.
-          </p>
-          <p className="mb-5">
-            Pada tahap awal ini, pencernaan bayi masih beradaptasi, sehingga
-            penting untuk memulai dengan tekstur yang sangat halus (puree) dan
-            perlahan ditingkatkan kekentalannya seiring bertambahnya usia.
-          </p>
-
-          <h3 className="text-[18px] font-bold text-text-main mt-8 mb-3">
-            Zat Besi adalah Kunci
-          </h3>
-          <p className="mb-5">
-            Salah satu nutrisi paling kritis di usia 6 bulan adalah zat besi.
-            Cadangan zat besi bawaan dari lahir mulai habis di usia ini. Berikan
-            makanan kaya zat besi seperti hati ayam, daging sapi cincang halus,
-            atau sereal yang difortifikasi.
-          </p>
-
-          <div className="bg-primary-light/40 border-l-[3px] border-btn-primary p-4 rounded-r-xl my-6">
-            <p className="text-[14px] text-btn-primary font-medium italic leading-relaxed">
-              "Ingat, MPASI pertama bukan tentang seberapa banyak bayi makan,
-              melainkan tentang mengenalkan rasa, tekstur, dan melatih otot
-              mengunyah."
-            </p>
-          </div>
-
-          <p className="mb-5">
-            Pastikan juga setiap porsi makanan mengandung karbohidrat
-            (nasi/kentang tumbuk), protein hewani, lemak tambahan (minyak
-            kelapa/zaitun mentega), serta sedikit sayur atau buah untuk
-            pengenalan serat.
-          </p>
+        <div className="text-[#434654] text-md leading-relaxed">
+          {article.content.map((paragraph, index) => {
+            if (index === 2) {
+              return (
+                <div key={index}>
+                  <h3 className="text-2xl font-bold text-text-main mt-8 mb-3">
+                    Zat Besi adalah Kunci
+                  </h3>
+                  <p className="mb-5">{paragraph}</p>
+                  <div className="bg-primary-light/40 border-l-[3px] border-btn-primary p-4 rounded-r-xl my-6">
+                    <p className="text-base text-btn-primary font-medium italic leading-relaxed">
+                      "Ingat, MPASI pertama bukan tentang seberapa banyak bayi
+                      makan, melainkan tentang mengenalkan rasa, tekstur, dan
+                      melatih otot mengunyah."
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+            return (
+              <p key={index} className="mb-5">
+                {paragraph}
+              </p>
+            );
+          })}
         </div>
       </div>
     </div>

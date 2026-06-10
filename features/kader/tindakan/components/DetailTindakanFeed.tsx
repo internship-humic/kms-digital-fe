@@ -10,6 +10,7 @@ import {
   Phone,
 } from "lucide-react";
 import { interventionSteps, requiredActions } from "../data/mockDetailTindakan";
+import { Button } from "@/components/ui/button";
 
 export default function DetailTindakanFeed() {
   const [actions, setActions] = useState(requiredActions);
@@ -42,7 +43,7 @@ export default function DetailTindakanFeed() {
 
       <section className="px-6">
         <div className="mb-6 flex items-center gap-4 rounded-[16px] bg-background px-4 py-5 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-primary-light bg-white text-[20px] font-bold text-btn-primary shadow-sm">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-primary-light bg-white text-3xl font-bold text-btn-primary shadow-sm">
             AC
           </div>
 
@@ -51,11 +52,11 @@ export default function DetailTindakanFeed() {
               Abe Cekut
             </h2>
 
-            <p className="mt-1 text-[14px] text-icon-muted">
+            <p className="mt-1 text-base text-icon-muted">
               32 Bulan • Laki-laki
             </p>
 
-            <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-danger/10 px-2 py-1 text-[12px] font-medium text-danger">
+            <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-danger/10 px-2 py-1 text-xs font-medium text-danger">
               <AlertCircle size={13} strokeWidth={2.4} />
               High Risk
             </div>
@@ -71,11 +72,11 @@ export default function DetailTindakanFeed() {
             />
 
             <div>
-              <h3 className="text-[15px] font-bold text-danger">
+              <h3 className="text-md font-bold text-danger">
                 Tindakan Segera (High Risk)!
               </h3>
 
-              <p className="mt-2 text-[15px] leading-relaxed text-danger">
+              <p className="mt-2 text-md leading-relaxed text-danger">
                 Terdapat indikasi stunting atau gizi buruk berdasarkan data
                 pengukuran terakhir. Diperlukan penanganan medis lanjutan.
               </p>
@@ -84,7 +85,7 @@ export default function DetailTindakanFeed() {
         </div>
 
         <section className="mb-7">
-          <h3 className="mb-3 text-[15px] font-bold text-text-main">
+          <h3 className="mb-3 text-md font-bold text-text-main">
             Instruksi Intervensi Kader
           </h3>
 
@@ -98,11 +99,11 @@ export default function DetailTindakanFeed() {
                     : ""
                 }`}
               >
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-btn-primary text-[12px] font-bold text-white">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-btn-primary text-xs font-bold text-white">
                   {step.id}
                 </div>
 
-                <p className="text-[15px] leading-relaxed text-text-main">
+                <p className="text-md leading-relaxed text-text-main">
                   {step.description}
                 </p>
               </div>
@@ -114,7 +115,7 @@ export default function DetailTindakanFeed() {
       <div className="h-2 bg-primary-light/40" />
 
       <section className="px-6 pt-7">
-        <h3 className="mb-3 text-[15px] font-bold text-icon-alt">
+        <h3 className="mb-3 text-md font-bold text-icon-alt">
           Tindakan Wajib Kader
         </h3>
 
@@ -144,11 +145,11 @@ export default function DetailTindakanFeed() {
                 </div>
 
                 <div className="flex-1">
-                  <h4 className="text-[17px] font-bold leading-snug text-text-main">
+                  <h4 className="text-xl font-bold leading-snug text-text-main">
                     {action.title}
                   </h4>
 
-                  <p className="mt-2 text-[14px] leading-relaxed text-icon-muted">
+                  <p className="mt-2 text-base leading-relaxed text-icon-muted">
                     {action.description}
                   </p>
 
@@ -158,7 +159,7 @@ export default function DetailTindakanFeed() {
                       tabIndex={0}
                       onClick={(event) => event.stopPropagation()}
                       onKeyDown={(event) => event.stopPropagation()}
-                      className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-btn-primary py-2.5 text-[14px] font-semibold text-white shadow-md shadow-blue-500/20 active:scale-95 cursor-pointer"
+                      className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-btn-primary py-2.5 text-base font-semibold text-white shadow-md shadow-blue-500/20 active:scale-95 cursor-pointer"
                     >
                       <Phone size={15} strokeWidth={2.4} />
                       Hubungi Bidan Desa
@@ -170,13 +171,10 @@ export default function DetailTindakanFeed() {
           ))}
         </div>
 
-        <button
-          type="button"
-          className="mt-7 flex w-full items-center justify-center gap-2 rounded-full bg-btn-primary py-4 text-[15px] font-bold text-white shadow-lg shadow-blue-500/25 active:scale-95 cursor-pointer"
-        >
+        <Button size="xl" className="mt-7 w-full gap-2 rounded-full font-bold">
           <CheckCircle2 size={20} strokeWidth={2.5} />
           Konfirmasi Tindakan Selesai
-        </button>
+        </Button>
       </section>
     </main>
   );

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function KaderOnboardingStep2Page() {
   return (
@@ -21,7 +22,7 @@ export default function KaderOnboardingStep2Page() {
         </div>
 
         <div className="flex flex-col items-center text-center px-4 relative z-10">
-          <h1 className="text-[24px] font-bold text-text-main mb-4 leading-[1.3] tracking-tight">
+          <h1 className="text-5xl font-bold text-text-main mb-4 leading-[1.3] tracking-tight">
             Pemantauan &{" "}
             <span className="text-btn-primary">
               Intervensi
@@ -29,7 +30,7 @@ export default function KaderOnboardingStep2Page() {
               Cepat
             </span>
           </h1>
-          <p className="text-[15px] font-normal text-text-main/70 leading-relaxed max-w-[300px]">
+          <p className="text-md font-normal text-text-main/70 leading-relaxed max-w-[300px]">
             Pantau pertumbuhan balita secara akurat dengan standar WHO dan
             sistem rujukan otomatis untuk penanganan dini.
           </p>
@@ -42,12 +43,15 @@ export default function KaderOnboardingStep2Page() {
           <div className="w-8 h-2 bg-btn-primary rounded-full transition-all duration-300" />
         </div>
 
-        <Link
-          href="/kader/login"
-          className="w-full bg-btn-primary hover:bg-btn-hover text-white font-semibold py-4 rounded-[16px] flex items-center justify-center transition-all shadow-[0_8px_24px_-4px_rgba(37,99,235,0.3)] active:scale-95 cursor-pointer"
+        <Button
+          asChild
+          size="lg"
+          className="w-full rounded-[16px] py-4 h-auto shadow-[0_8px_24px_-4px_rgba(37,99,235,0.3)]"
         >
-          <span className="text-[15px] tracking-wide">Masuk sebagai Kader</span>
-        </Link>
+          <Link href="/kader/login">
+            <span className="text-md tracking-wide">Masuk sebagai Kader</span>
+          </Link>
+        </Button>
       </div>
     </div>
   );

@@ -43,11 +43,11 @@ export default function SuccessModal({
           className="mb-5 object-contain"
         />
 
-        <h3 className="text-[18px] font-semibold leading-[18px] text-btn-primary mb-3">
+        <h3 className="text-2xl font-semibold leading-[18px] text-btn-primary mb-3">
           {title}
         </h3>
 
-        <p className="text-[14px] font-normal leading-[20px] text-text-secondary">
+        <p className="text-base font-normal leading-[20px] text-text-secondary">
           {description}
         </p>
 

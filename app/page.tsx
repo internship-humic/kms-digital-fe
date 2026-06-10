@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { BookOpen, LineChart, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function OnboardingPage() {
   return (
@@ -17,13 +18,13 @@ export default function OnboardingPage() {
           priority
         />
 
-        <h1 className="text-[26px] font-bold text-text-main text-center mb-4 leading-tight px-4">
+        <h1 className="text-6xl font-bold text-text-main text-center mb-4 leading-tight px-4">
           Pantau Tumbuh Kembang
           <br />
           Anak Lebih Mudah
         </h1>
 
-        <p className="text-[15px] text-text-main/70 text-center mb-8 leading-relaxed px-2">
+        <p className="text-md text-text-main/70 text-center mb-8 leading-relaxed px-2">
           JagaCilik hadir sebagai Buku KIA Digital Anda. Pantau metrik
           kesehatan, catat perkembangan, dan ekspor laporan PDF dengan aman.
         </p>
@@ -53,14 +54,11 @@ export default function OnboardingPage() {
       </div>
 
       <div className="mt-8 mb-4 flex flex-col gap-3 w-full px-2">
-        <Link
-          href="/login"
-          className="w-full bg-btn-primary hover:bg-btn-hover text-white font-semibold rounded-xl py-3.5 flex items-center justify-center transition-colors shadow-md shadow-blue-500/20 cursor-pointer"
-        >
-          Masuk
-        </Link>
+        <Button asChild size="lg" className="w-full">
+          <Link href="/login">Masuk</Link>
+        </Button>
 
-        <div className="flex items-center justify-center gap-3 mt-4 text-[13px] font-medium text-text-main/60">
+        <div className="flex items-center justify-center gap-3 mt-4 text-sm font-medium text-text-main/60">
           <Link
             href="/kader/onboarding/step-1"
             className="hover:text-btn-primary transition-colors cursor-pointer"

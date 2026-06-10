@@ -4,9 +4,11 @@ export type NotifikasiType =
   | "Informasi"
   | "Sistem";
 
-export type NotifikasiItem = {
-  id: number;
-  type: NotifikasiType;
-  time: string;
-  message: string;
-};
+export interface NotifikasiItem {
+  id: string | number;
+  tipe: "peringatan" | "jadwal" | "informasi" | "sistem";
+  judul: string;
+  waktu: string;
+  pesan: string;
+  ikonSistem?: "check" | string;
+}

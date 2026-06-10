@@ -17,7 +17,7 @@ export default function NotifikasiPage() {
         >
           <ArrowLeft size={24} className="text-btn-primary" strokeWidth={2.5} />
         </button>
-        <h1 className="text-[20px] font-bold text-btn-primary w-full text-center">
+        <h1 className="text-3xl font-bold text-btn-primary w-full text-center">
           Notifikasi
         </h1>
       </div>

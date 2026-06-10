@@ -2,23 +2,26 @@
 
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { logoutAction } from "@/app/actions/auth";
 
 export default function LogoutButton() {
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
+  const handleLogout = async () => {
+    await logoutAction();
     router.push("/");
   };
 
   return (
-    <button
+    <Button
+      variant="destructive"
+      size="lg"
       onClick={handleLogout}
-      aria-label="Keluar dari akun"
-      className="w-full flex items-center justify-center gap-2 px-6 py-3 border border-danger text-danger hover:bg-danger/10 font-medium text-[14px] leading-[20px] tracking-[0.14px] rounded-full transition-colors cursor-pointer"
+      className="w-full gap-2 rounded-full font-bold"
     >
       <LogOut size={18} strokeWidth={2.5} />
       <span>Keluar</span>
-    </button>
+    </Button>
   );
 }

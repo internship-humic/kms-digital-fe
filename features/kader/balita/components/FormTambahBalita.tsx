@@ -10,6 +10,7 @@ import {
   tambahBalitaSchema,
   TambahBalitaFormValues,
 } from "../validations/balita";
+import { Button } from "@/components/ui/button";
 
 export default function TambahBalitaForm() {
   const router = useRouter();
@@ -58,7 +59,7 @@ export default function TambahBalitaForm() {
           <ArrowLeft size={24} className="text-btn-primary" strokeWidth={2.5} />
         </button>
 
-        <h1 className="text-[20px] font-bold text-btn-primary w-full text-center">
+        <h1 className="text-3xl font-bold text-btn-primary w-full text-center">
           Tambah Data Balita
         </h1>
       </div>
@@ -69,19 +70,26 @@ export default function TambahBalitaForm() {
       >
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-1.5">
-            <label className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle">
+            <label
+              htmlFor="namaLengkap"
+              className="text-base font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle"
+            >
               Nama Lengkap
             </label>
             <input
+              id="namaLengkap"
               type="text"
               placeholder="Masukan Nama Lengkap"
               {...register("namaLengkap")}
-              className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-[14.5px] font-medium text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+              className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-base font-medium text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle">
+            <label
+              id="jenisKelaminLabel"
+              className="text-base font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle"
+            >
               Jenis Kelamin
             </label>
 
@@ -89,9 +97,15 @@ export default function TambahBalitaForm() {
               name="jenisKelamin"
               control={control}
               render={({ field }) => (
-                <div className="grid grid-cols-2 gap-3">
+                <div
+                  role="radiogroup"
+                  aria-labelledby="jenisKelaminLabel"
+                  className="grid grid-cols-2 gap-3"
+                >
                   <button
                     type="button"
+                    role="radio"
+                    aria-checked={field.value === "Laki-laki"}
                     onClick={() => field.onChange("Laki-laki")}
                     className={`flex items-center justify-center gap-2 py-3.5 rounded-xl transition-all cursor-pointer border ${
                       field.value === "Laki-laki"
@@ -109,11 +123,13 @@ export default function TambahBalitaForm() {
                       <circle cx="6" cy="2.5" r="2.5" />
                       <path d="M8.5 6H3.5C2.67157 6 2 6.67157 2 7.5V11.5H4V15.5H8V11.5H10V7.5C10 6.67157 9.32843 6 8.5 6Z" />
                     </svg>
-                    <span className="text-[14px]">Laki-laki</span>
+                    <span className="text-base">Laki-laki</span>
                   </button>
 
                   <button
                     type="button"
+                    role="radio"
+                    aria-checked={field.value === "Perempuan"}
                     onClick={() => field.onChange("Perempuan")}
                     className={`flex items-center justify-center gap-2 py-3.5 rounded-xl transition-all cursor-pointer border ${
                       field.value === "Perempuan"
@@ -131,7 +147,7 @@ export default function TambahBalitaForm() {
                       <circle cx="6" cy="2.5" r="2.5" />
                       <path d="M8.5 6H3.5L1.5 11.5H4V15.5H8V11.5H10.5L8.5 6Z" />
                     </svg>
-                    <span className="text-[14px]">Perempuan</span>
+                    <span className="text-base">Perempuan</span>
                   </button>
                 </div>
               )}
@@ -139,15 +155,19 @@ export default function TambahBalitaForm() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle">
+            <label
+              htmlFor="tanggalLahir"
+              className="text-base font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle"
+            >
               Tanggal Lahir
             </label>
 
             <div className="relative">
               <input
+                id="tanggalLahir"
                 type="date"
                 {...register("tanggalLahir")}
-                className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-[16px] font-normal leading-[24px] text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm appearance-none [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full cursor-pointer"
+                className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-lg font-normal leading-[24px] text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm appearance-none [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full cursor-pointer"
               />
 
               <Calendar
@@ -159,55 +179,68 @@ export default function TambahBalitaForm() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle">
+            <label
+              htmlFor="beratLahir"
+              className="text-base font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle"
+            >
               Berat Lahir (kg)
             </label>
 
             <input
+              id="beratLahir"
               type="number"
               step="0.1"
               placeholder="Masukan Berat Lahir"
               {...register("beratLahir")}
-              className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-[14.5px] font-medium text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+              className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-base font-medium text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle">
+            <label
+              htmlFor="tinggiLahir"
+              className="text-base font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle"
+            >
               Tinggi Lahir (cm)
             </label>
 
             <input
+              id="tinggiLahir"
               type="number"
               step="0.1"
               placeholder="Masukan Tinggi Lahir"
               {...register("tinggiLahir")}
-              className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-[14.5px] font-medium text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+              className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-base font-medium text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle">
+            <label
+              htmlFor="alamatRumah"
+              className="text-base font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle"
+            >
               Alamat Rumah
             </label>
 
             <textarea
+              id="alamatRumah"
               placeholder="Masukkan alamat domisili saat ini"
               rows={4}
               {...register("alamatRumah")}
-              className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-[14.5px] font-medium text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm resize-none"
+              className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-base font-medium text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm resize-none"
             />
           </div>
         </div>
 
         <div className="mt-8 pt-4">
-          <button
+          <Button
             type="submit"
+            size="lg"
             disabled={!isValid || isSubmitting || showModal}
-            className="w-full bg-btn-primary hover:bg-btn-hover text-white font-semibold rounded-xl py-3.5 transition-colors shadow-md shadow-blue-500/20 cursor-pointer tracking-wide disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full tracking-wide"
           >
             {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -223,15 +256,15 @@ export default function TambahBalitaForm() {
               priority
             />
 
-            <h2 className="mb-3 text-[20px] font-bold text-btn-primary">
+            <h2 className="mb-3 text-3xl font-bold text-btn-primary">
               Data Berhasil Ditambahkan!
             </h2>
 
-            <p className="text-[14px] font-medium leading-relaxed text-text-placeholder">
+            <p className="text-base font-medium leading-relaxed text-text-placeholder">
               Proses penambahan data balita telah berhasil diselesaikan.
             </p>
           </div>
-        </div>  
+        </div>
       )}
     </div>
   );

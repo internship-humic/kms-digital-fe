@@ -15,7 +15,7 @@ export default async function ProfilePage() {
   return (
     <main className="flex flex-1 flex-col bg-background px-6 pt-10 pb-28">
       <header className="mb-6">
-        <h1 className="text-[22px] font-bold leading-tight text-text-main">
+        <h1 className="text-4xl font-bold leading-tight text-text-main">
           Profil Orang Tua
         </h1>
 
@@ -27,7 +27,6 @@ export default async function ProfilePage() {
       <ProfileCard
         fullName={profile.fullName}
         email={profile.email}
-        avatar={profile.avatar}
         isVerified={profile.isVerified}
       />
 

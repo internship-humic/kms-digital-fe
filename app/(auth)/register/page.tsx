@@ -10,6 +10,7 @@ import TextAreaField from "@/components/ui/TextAreaField";
 import { POSYANDU_OPTIONS } from "@/lib/constants";
 import { Controller } from "react-hook-form";
 import { useRegister } from "@/features/auth/hooks/useRegister";
+import { Button } from "@/components/ui/button";
 
 export default function RegisterPage() {
   const { form, onSubmit, globalError } = useRegister();
@@ -41,7 +42,7 @@ export default function RegisterPage() {
 
       {globalError && (
         <div
-          className="bg-danger/10 border border-danger/20 text-danger p-3.5 rounded-xl text-[13.5px] font-medium mb-5 flex items-center"
+          className="bg-danger/10 border border-danger/20 text-danger p-3.5 rounded-xl text-sm font-medium mb-5 flex items-center"
           role="alert"
         >
           {globalError}
@@ -121,16 +122,17 @@ export default function RegisterPage() {
           aria-invalid={!!errors.confirmPassword}
         />
 
-        <button
+        <Button
           type="submit"
+          size="lg"
           disabled={isSubmitting}
           aria-label={
             isSubmitting ? "Sedang memproses registrasi" : "Daftar akun baru"
           }
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-btn-primary py-3.5 font-semibold text-white shadow-md shadow-blue-500/20 transition-colors hover:bg-btn-hover cursor-pointer tracking-[0.14px] disabled:opacity-70 disabled:cursor-not-allowed"
+          className="mt-6 w-full"
         >
           {isSubmitting ? "Mendaftar..." : "Daftar"}
-        </button>
+        </Button>
       </form>
 
       <div className="mt-8 mb-4 flex justify-center items-center gap-1.5 text-xs leading-[12px] tracking-[0.48px]">

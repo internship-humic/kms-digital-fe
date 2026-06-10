@@ -7,37 +7,41 @@ import {
   Settings,
   CheckCircle2,
 } from "lucide-react";
-import { NotifikasiItem, NotifikasiType } from "../types";
+import { NotifikasiItem } from "../types";
 
 const getNotifConfig = (item: NotifikasiItem) => {
-  switch (item.type) {
-    case "Peringatan Penting":
+  switch (item.tipe) {
+    case "peringatan":
       return {
+        label: "Peringatan Penting",
         icon: AlertCircle,
         bg: "bg-rose-100",
         iconColor: "text-danger",
         border: "border-l-danger",
         labelColor: "text-danger",
       };
-    case "Jadwal":
+    case "jadwal":
       return {
+        label: "Jadwal",
         icon: Calendar,
         bg: "bg-btn-primary",
         iconColor: "text-white",
         border: "border-l-btn-primary",
         labelColor: "text-btn-primary",
       };
-    case "Informasi":
+    case "informasi":
       return {
+        label: "Informasi",
         icon: FileText,
         bg: "bg-[#1864AB]",
         iconColor: "text-white",
         border: "border-l-[#1864AB]",
         labelColor: "text-[#1864AB]",
       };
-    case "Sistem":
-      if (item.message.includes("berhasil diunduh")) {
+    case "sistem":
+      if (item.pesan.includes("berhasil diunduh")) {
         return {
+          label: "Sistem",
           icon: CheckCircle2,
           bg: "bg-emerald-100",
           iconColor: "text-status-normal",
@@ -46,6 +50,7 @@ const getNotifConfig = (item: NotifikasiItem) => {
         };
       }
       return {
+        label: "Sistem",
         icon: Settings,
         bg: "bg-border-input/50",
         iconColor: "text-icon-alt",
@@ -54,6 +59,7 @@ const getNotifConfig = (item: NotifikasiItem) => {
       };
     default:
       return {
+        label: "Notifikasi",
         icon: Settings,
         bg: "bg-gray-100",
         iconColor: "text-icon-alt",
@@ -68,6 +74,7 @@ export default function NotifikasiList({ items }: { items: NotifikasiItem[] }) {
     <div className="flex flex-col gap-4 px-6 pt-6 pb-10">
       {items.map((item) => {
         const {
+          label,
           icon: Icon,
           bg,
           iconColor,
@@ -89,16 +96,16 @@ export default function NotifikasiList({ items }: { items: NotifikasiItem[] }) {
             <div className="flex-1">
               <div className="flex justify-between items-center mb-1">
                 <span
-                  className={`text-[12px] font-medium leading-[16px] tracking-[0.48px] ${labelColor}`}
+                  className={`text-xs font-medium leading-[16px] tracking-[0.48px] ${labelColor}`}
                 >
-                  {item.type}
+                  {label}
                 </span>
-                <span className="text-[12px] font-medium leading-[16px] tracking-[0.48px] text-icon-muted">
-                  {item.time}
+                <span className="text-xs font-medium leading-[16px] tracking-[0.48px] text-icon-muted">
+                  {item.waktu}
                 </span>
               </div>
-              <p className="text-[14px] font-medium leading-[20px] tracking-[0px] text-text-main">
-                {item.message}
+              <p className="text-base font-medium leading-[20px] tracking-[0px] text-text-main">
+                {item.pesan}
               </p>
             </div>
           </div>

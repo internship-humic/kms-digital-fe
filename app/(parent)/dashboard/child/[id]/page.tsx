@@ -1,22 +1,50 @@
-"use client";
-
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Download } from "lucide-react";
-import { use, useState } from "react";
 import GrowthChart from "@/features/parent/growth/components/GrowthChart";
 import { MOCK_CHILD_CHART_DATA } from "@/features/parent/growth/data/mockGrowth";
+import { getCombinedGrowthData } from "@/features/parent/growth/utils/getChartData";
+import { getDashboardMockData } from "@/features/parent/dashboard/data/mockDashboard";
+import { Button } from "@/components/ui/button";
+import { notFound } from "next/navigation";
 
-export default function ChildDetailPage({
+export async function generateMetadata({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const unwrappedParams = use(params);
-  const id = unwrappedParams.id;
+  const { id } = await params;
+  return {
+    title: `KMS Digital #${id} | JagaCilik`,
+    description: "Pantau metrik pertumbuhan anak sesuai standar WHO",
+  };
+}
 
-  const [activeTab, setActiveTab] = useState<"bb" | "tb">("bb");
-  const isWeight = activeTab === "bb";
+const getInitials = (name: string) => {
+  const names = name.trim().split(" ");
+  if (names.length >= 2) {
+    return `${names[0][0]}${names[1][0]}`.toUpperCase();
+  }
+  return names[0] ? names[0][0].toUpperCase() : "B";
+};
+
+export default async function ChildDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  const childrenList = await getDashboardMockData();
+  const child = childrenList.find((item) => item.id === Number(id));
+
+  if (!child) {
+    notFound();
+  }
+
+  const preCalculatedChartData = getCombinedGrowthData(
+    child.gender === "Laki-laki" ? "Laki-laki" : "Perempuan",
+    MOCK_CHILD_CHART_DATA,
+  );
 
   return (
     <div className="flex flex-col min-h-screen bg-background relative">
@@ -27,53 +55,49 @@ export default function ChildDetailPage({
         >
           <ArrowLeft size={24} className="text-btn-primary" strokeWidth={2.5} />
         </Link>
-        <h1 className="text-[20px] font-bold text-btn-primary w-full text-center">
+        <h1 className="text-3xl font-bold text-btn-primary w-full text-center">
           KMS Digital
         </h1>
       </div>
 
       <div className="flex-1 px-6 pb-32 pt-2 flex flex-col items-center gap-5 overflow-y-auto">
         <div className="w-full min-h-[98px] bg-white rounded-[12px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-border-input/40 p-4 flex items-center gap-4 relative shrink-0">
-          <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0 border border-border-input/30">
-            <Image
-              src="https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=150&auto=format&fit=crop"
-              alt="Elzhard Rahadian"
-              width={56}
-              height={56}
-              className="w-full h-full object-cover"
-            />
+          {/* Avatar Inisial Dinamis */}
+          <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0 border border-primary-light/80 bg-primary-light/60 shadow-sm">
+            <span className="text-2xl font-bold text-btn-primary tracking-widest select-none">
+              {getInitials(child.name)}
+            </span>
           </div>
+
           <div className="flex flex-col flex-1">
             <div className="flex items-center justify-between w-full">
-              <h2 className="text-[17px] font-medium leading-[24px] text-text-main">
-                Elzhard Rahadian
+              <h2 className="text-xl font-medium leading-[24px] text-text-main">
+                {child.name}
               </h2>
               <div className="bg-status-normal text-white px-2.5 py-1 rounded-full flex items-center justify-center shrink-0 ml-2">
-                <span className="text-[12px] font-medium tracking-wide">
-                  {isWeight ? "BB Normal" : "TB Normal"}
+                <span className="text-xs font-medium tracking-wide">
+                  Normal
                 </span>
               </div>
             </div>
-            <p className="text-[13px] font-regular text-icon-muted mt-0.5">
-              Laki-laki &bull; 3 Tahun 2 Bulan
+            <p className="text-sm font-regular text-icon-muted mt-0.5">
+              {child.gender} &bull; {child.age}
             </p>
           </div>
         </div>
 
         <GrowthChart
-          isWeight={isWeight}
-          onTabChange={setActiveTab}
           data={MOCK_CHILD_CHART_DATA}
+          preCalculatedChartData={preCalculatedChartData}
+          gender={child.gender}
         />
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 w-full max-w-md mx-auto p-6 bg-gradient-to-t from-background via-background/90 to-transparent pb-8 pt-12 pointer-events-none z-30">
-        <button className="w-full mx-auto bg-btn-primary hover:bg-btn-hover text-white rounded-[16px] py-4 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 transition-transform active:scale-95 pointer-events-auto cursor-pointer">
+        <Button size="xl" className="w-full gap-2 mx-auto pointer-events-auto">
           <Download size={20} strokeWidth={2.5} />
-          <span className="font-semibold leading-[20px] text-[14px] tracking-[0.14px]">
-            Unduh Laporan (PDF)
-          </span>
-        </button>
+          Unduh Laporan (PDF)
+        </Button>
       </div>
     </div>
   );

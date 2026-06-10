@@ -16,10 +16,7 @@ export default function SecuritySection() {
             aria-hidden="true"
           />
 
-          <h2
-            id="security-title"
-            className="text-[17px] font-bold text-text-main"
-          >
+          <h2 id="security-title" className="text-xl font-bold text-text-main">
             Keamanan Akun
           </h2>
         </div>
@@ -43,7 +40,7 @@ export default function SecuritySection() {
           Kata Sandi
         </p>
 
-        <p className="mt-1 text-[15px] font-medium tracking-widest text-text-main">
+        <p className="mt-1 text-md font-medium tracking-widest text-text-main">
           ••••••••
         </p>
       </div>

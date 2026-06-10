@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { Button } from "@/components/ui/button";
 import PasswordField from "@/components/ui/PasswordField";
 import SuccessModal from "@/components/ui/SuccessModal";
 import { usePasswordStrength } from "@/hooks/usePasswordStrength";
@@ -62,11 +62,11 @@ export default function ChangePasswordForm() {
         <div className="h-1.5 w-full bg-btn-primary" />
 
         <div className="p-6">
-          <h2 className="text-[22px] font-bold text-text-main mb-2">
+          <h2 className="text-4xl font-bold text-text-main mb-2">
             Ubah Kata Sandi
           </h2>
 
-          <p className="text-[14px] text-text-main/70 leading-relaxed mb-8">
+          <p className="text-base text-text-main/70 leading-relaxed mb-8">
             Untuk menjaga keamanan akun Anda, silakan buat kata sandi baru yang
             kuat sebelum melanjutkan.
           </p>
@@ -104,7 +104,7 @@ export default function ChangePasswordForm() {
                   />
                 </div>
 
-                <div className="flex justify-between items-center text-[12px] font-semibold mb-5 h-4">
+                <div className="flex justify-between items-center text-xs font-semibold mb-5 h-4">
                   <span className={strengthTextColorClass}>{strengthText}</span>
 
                   <span
@@ -133,7 +133,7 @@ export default function ChangePasswordForm() {
                     </div>
 
                     <span
-                      className={`text-[14px] ${
+                      className={`text-base ${
                         isMinLength ? "text-text-main" : "text-text-main/50"
                       }`}
                     >
@@ -157,7 +157,7 @@ export default function ChangePasswordForm() {
                     </div>
 
                     <span
-                      className={`text-[14px] ${
+                      className={`text-base ${
                         hasUpperLower ? "text-text-main" : "text-text-main/50"
                       }`}
                     >
@@ -181,7 +181,7 @@ export default function ChangePasswordForm() {
                     </div>
 
                     <span
-                      className={`text-[14px] ${
+                      className={`text-base ${
                         hasNumberOrSymbol
                           ? "text-text-main"
                           : "text-text-main/50"
@@ -208,20 +208,19 @@ export default function ChangePasswordForm() {
                 <div className="flex items-center gap-1.5 text-password-strong mt-3 animate-in fade-in zoom-in duration-300">
                   <Check size={14} strokeWidth={3} />
 
-                  <span className="text-[13px] font-medium">
-                    Kata sandi cocok
-                  </span>
+                  <span className="text-sm font-medium">Kata sandi cocok</span>
                 </div>
               )}
             </div>
 
-            <button
+            <Button
               type="submit"
+              size="lg"
               disabled={isSubmitting}
-              className="w-full bg-btn-primary hover:bg-btn-hover text-white font-semibold py-3.5 rounded-xl transition-colors shadow-md shadow-blue-500/20 cursor-pointer tracking-wide disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full tracking-wide"
             >
               {isSubmitting ? "Menyimpan..." : "Perbarui Kata Sandi"}
-            </button>
+            </Button>
           </form>
         </div>
       </div>

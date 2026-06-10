@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -11,11 +12,37 @@ import {
   ArrowUpDown,
   Ruler,
   Info,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import { BalitaDetail } from "../types";
 
-export default function DetailBalitaFeed({ data }: { data: BalitaDetail }) {
+export default function DetailBalitaFeed({
+  data,
+  metrics,
+}: {
+  data: BalitaDetail;
+  metrics: {
+    combinedChartData: any[];
+    riwayatDenganZScoreAsli: any[];
+    macroStatusInfo: { label: string };
+  };
+}) {
   const router = useRouter();
+  const [expandedRow, setExpandedRow] = useState<number | null>(0);
+
+  const { combinedChartData, riwayatDenganZScoreAsli, macroStatusInfo } =
+    metrics;
 
   return (
     <div className="flex flex-col flex-1 bg-background pb-10">
@@ -26,7 +53,7 @@ export default function DetailBalitaFeed({ data }: { data: BalitaDetail }) {
         >
           <ArrowLeft size={24} className="text-btn-primary" strokeWidth={2.5} />
         </button>
-        <h1 className="text-[20px] font-bold text-btn-primary w-full text-center">
+        <h1 className="text-3xl font-bold text-btn-primary w-full text-center">
           Detail Data Balita
         </h1>
       </div>
@@ -34,204 +61,201 @@ export default function DetailBalitaFeed({ data }: { data: BalitaDetail }) {
       <div className="px-6 flex flex-col gap-6 pt-6">
         <div className="bg-white p-4 rounded-[20px] border border-border-input/40 shadow-sm flex items-center gap-4">
           <div className="w-16 h-16 rounded-full bg-primary-light flex items-center justify-center shrink-0 border border-primary-light/50 shadow-sm">
-            <span className="text-[22px] font-bold text-btn-primary tracking-widest select-none">
+            <span className="text-4xl font-bold text-btn-primary tracking-widest select-none">
               {data.nama.substring(0, 2).toUpperCase()}
             </span>
           </div>
           <div>
-            <h2 className="text-[18px] font-semibold text-text-main align-middle leading-[28px]">
+            <h2 className="text-2xl font-semibold text-text-main align-middle leading-[28px]">
               {data.nama}
             </h2>
-            <p className="text-[14px] font-normal text-icon-muted leading-[100%] align-middle">
+            <p className="text-base font-normal text-icon-muted leading-[100%] align-middle">
               {data.jk} &bull; {data.usia}
             </p>
           </div>
         </div>
 
-        <div className="bg-status-normal text-white px-4 py-2 rounded-full w-fit flex items-center gap-2 font-semibold text-[16px] leading-[16px]">
-          <div className="w-2.5 h-2.5 rounded-full bg-white" />
-          Status: {data.status}
-        </div>
+        <div className="bg-white p-5 rounded-[20px] border border-border-input/40 shadow-sm flex flex-col gap-5">
+          <div
+            className={`px-3 py-1.5 rounded-full border w-fit flex items-center gap-1.5 font-semibold text-lg leading-[16px] text-white ${
+              macroStatusInfo.label === "NORMAL"
+                ? "bg-status-normal border-status-normal"
+                : macroStatusInfo.label === "HIGH RISK"
+                  ? "bg-danger border-danger"
+                  : "bg-password-medium border-password-medium"
+            }`}
+          >
+            <div className="w-1.5 h-1.5 rounded-full bg-white" />
+            <span>Status: {macroStatusInfo.label}</span>
+          </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-background rounded-[16px] border border-border-input/30 p-4 shadow-sm">
-            <Weight
-              className="text-btn-primary mb-3 h-6 w-6"
-              strokeWidth={2.5}
-            />
-            <p className="text-[14px] text-[#747685] font-normal leading-[20px] mb-1">
-              Berat
-            </p>
-            <div className="flex items-baseline gap-1">
-              <span className="text-[22px] font-bold text-text-main leading-none">
-                {data.stats.berat}
-              </span>
-              <span className="text-[13px] text-icon-muted font-medium">
-                kg
-              </span>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-background rounded-[16px] border border-border-input/30 p-4 shadow-sm">
+              <Weight
+                className="text-btn-primary mb-3 h-6 w-6"
+                strokeWidth={2.5}
+              />
+              <p className="text-base text-[#747685] font-normal leading-[20px] mb-1">
+                Berat
+              </p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-text-main leading-none">
+                  {data.stats.berat}
+                </span>
+                <span className="text-sm text-icon-muted font-medium">kg</span>
+              </div>
             </div>
-          </div>
-          <div className="bg-background rounded-[16px] border border-border-input/30 p-4 shadow-sm">
-            <ArrowUpDown
-              size={24}
-              className="text-btn-primary mb-3"
-              strokeWidth={2.5}
-            />
-            <p className="text-[14px] text-[#747685] font-normal leading-[20px] mb-1">
-              Tinggi
-            </p>
-            <div className="flex items-baseline gap-1">
-              <span className="text-[22px] font-bold text-text-main leading-none">
-                {data.stats.tinggi}
-              </span>
-              <span className="text-[13px] text-icon-muted font-medium">
-                cm
-              </span>
+
+            <div className="bg-background rounded-[16px] border border-border-input/30 p-4 shadow-sm">
+              <ArrowUpDown
+                size={24}
+                className="text-btn-primary mb-3"
+                strokeWidth={2.5}
+              />
+              <p className="text-base text-[#747685] font-normal leading-[20px] mb-1">
+                Tinggi
+              </p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-text-main leading-none">
+                  {data.stats.tinggi}
+                </span>
+                <span className="text-sm text-icon-muted font-medium">cm</span>
+              </div>
             </div>
-          </div>
-          <div className="col-span-2 bg-background rounded-[16px] border border-border-input/30 p-4 shadow-sm">
-            <Ruler
-              className="text-btn-primary mb-3 h-6 w-6"
-              strokeWidth={2.5}
-            />
-            <p className="text-[14px] text-[#747685] font-normal leading-[20px] mb-1">
-              Lingkar Kepala
-            </p>
-            <div className="flex items-baseline gap-1">
-              <span className="text-[22px] font-bold text-text-main leading-none">
-                {data.stats.lingkarKepala}
-              </span>
-              <span className="text-[13px] text-icon-muted font-medium">
-                cm
-              </span>
+
+            <div className="col-span-2 bg-background rounded-[16px] border border-border-input/30 p-4 shadow-sm">
+              <Ruler
+                className="text-btn-primary mb-3 h-6 w-6"
+                strokeWidth={2.5}
+              />
+              <p className="text-base text-[#747685] font-normal leading-[20px] mb-1">
+                Lingkar Kepala
+              </p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-bold text-text-main leading-none">
+                  {data.stats.lingkarKepala}
+                </span>
+                <span className="text-sm text-icon-muted font-medium">cm</span>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="bg-white p-5 rounded-[20px] border border-border-input/40 shadow-sm">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-[20px] font-semibold leading-[28px] text-text-main">
-              Grafik Tren Pertumbuhan Otomatis
+            <h3 className="text-3xl font-semibold leading-[28px] text-text-main">
+              Grafik Tren BB/U Otomatis
             </h3>
             <div className="flex gap-2">
-              <button className="w-8 h-8 rounded-full bg-[#E6E8EA] flex items-center justify-center text-text-main">
+              <button className="w-8 h-8 rounded-full bg-[#E6E8EA] flex items-center justify-center text-text-main hover:bg-gray-200 transition-colors">
                 <Download size={14} />
               </button>
-              <button className="w-8 h-8 rounded-full bg-[#E6E8EA] flex items-center justify-center text-text-main">
+              <button className="w-8 h-8 rounded-full bg-[#E6E8EA] flex items-center justify-center text-text-main hover:bg-gray-200 transition-colors">
                 <Maximize2 size={14} />
               </button>
             </div>
           </div>
-          <p className="text-[14px] text-icon-muted mb-4">
-            Visualisasi Berat Badan vs Umur (Bulan)
-          </p>
 
-          <div className="bg-white border border-border-input/20 rounded-[16px] p-4 shadow-sm w-full h-[280px] flex flex-col relative overflow-hidden">
-            <div className="flex-1 w-full relative">
-              <svg
-                viewBox="0 0 300 180"
-                className="w-full h-full"
-                preserveAspectRatio="none"
+          <div className="bg-white border border-border-input/20 rounded-[16px] p-4 shadow-sm w-full h-[340px] flex flex-col relative overflow-hidden">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={combinedChartData}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
-                <line
-                  x1="0"
-                  y1="30"
-                  x2="300"
-                  y2="30"
-                  stroke="#f0f0f0"
-                  strokeWidth="1"
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#E5E7EB"
                 />
-                <line
-                  x1="0"
-                  y1="90"
-                  x2="300"
-                  y2="90"
-                  stroke="#f0f0f0"
-                  strokeWidth="1"
+                <XAxis
+                  dataKey="bulan"
+                  tick={{ fontSize: 11, fill: "#6B7280" }}
+                  tickLine={false}
+                  axisLine={{ stroke: "#E5E7EB" }}
+                  minTickGap={20}
                 />
-                <line
-                  x1="0"
-                  y1="150"
-                  x2="300"
-                  y2="150"
-                  stroke="#f0f0f0"
-                  strokeWidth="1"
+                <YAxis
+                  tick={{ fontSize: 11, fill: "#6B7280" }}
+                  tickLine={false}
+                  axisLine={false}
                 />
-                <line
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="180"
-                  stroke="#e5e7eb"
-                  strokeWidth="2"
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: "12px",
+                    border: "none",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                  }}
+                  labelStyle={{
+                    fontWeight: "bold",
+                    color: "#374151",
+                    marginBottom: "4px",
+                  }}
+                  itemStyle={{ fontSize: "12px" }}
                 />
-                <line
-                  x1="0"
-                  y1="180"
-                  x2="300"
-                  y2="180"
-                  stroke="#e5e7eb"
-                  strokeWidth="2"
+                <Legend
+                  wrapperStyle={{ fontSize: "11px", paddingTop: "10px" }}
+                  iconType="circle"
+                  iconSize={8}
                 />
-                <path
-                  d="M 0 160 Q 150 140 300 80"
-                  fill="none"
-                  stroke="#fca5a5"
-                  strokeWidth="2"
-                />
-                <path
-                  d="M 0 140 Q 150 120 300 50"
-                  fill="none"
-                  stroke="#fca5a5"
-                  strokeWidth="2"
-                />
-                <path
-                  d="M 0 150 Q 150 130 300 65"
-                  fill="none"
-                  stroke="#86efac"
-                  strokeWidth="2.5"
-                />
-                <path
-                  d="M 20 165 L 80 150 L 150 125"
-                  fill="none"
-                  stroke="#2563eb"
-                  strokeWidth="1.5"
+                <Line
+                  type="monotone"
+                  name="+3 SD"
+                  dataKey="SD3pos"
+                  stroke="#EF4444"
+                  strokeWidth={1}
+                  dot={false}
                   strokeDasharray="4 4"
                 />
-                <circle cx="20" cy="165" r="4" fill="#2563eb" />
-                <circle cx="80" cy="150" r="4" fill="#2563eb" />
-                <circle cx="150" cy="125" r="4" fill="#2563eb" />
-              </svg>
-              <div className="absolute top-0 left-2 text-[10px] text-gray-400 rotate-90 origin-top-left translate-y-6">
-                Berat (kg)
-              </div>
-              <div className="absolute bottom-1 left-2 text-[10px] text-gray-400">
-                Bulan 0
-              </div>
-              <div className="absolute bottom-1 right-2 text-[10px] text-gray-400">
-                Bulan 24
-              </div>
-            </div>
-            <div className="flex items-center justify-between mt-4 px-2">
-              <div className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
-                <span className="text-[9px] font-bold text-gray-500 tracking-wider">
-                  GARIS NORMAL
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
-                <span className="text-[9px] font-bold text-gray-500 tracking-wider">
-                  AMBANG BATAS
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-blue-600"></div>
-                <span className="text-[9px] font-bold text-gray-500 tracking-wider">
-                  DATA ARKA
-                </span>
-              </div>
-            </div>
+                <Line
+                  type="monotone"
+                  name="+2 SD"
+                  dataKey="SD2pos"
+                  stroke="#F59E0B"
+                  strokeWidth={1.5}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  name="Median"
+                  dataKey="median"
+                  stroke="#10B981"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  name="-2 SD"
+                  dataKey="SD2neg"
+                  stroke="#F59E0B"
+                  strokeWidth={1.5}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  name="-3 SD"
+                  dataKey="SD3neg"
+                  stroke="#EF4444"
+                  strokeWidth={1}
+                  dot={false}
+                  strokeDasharray="4 4"
+                />
+                <Line
+                  type="monotone"
+                  name="Data Aktual Anak"
+                  dataKey="aktualAnak"
+                  stroke="#2563EB"
+                  strokeWidth={3}
+                  connectNulls={true}
+                  dot={{
+                    r: 4,
+                    strokeWidth: 2,
+                    fill: "#FFFFFF",
+                    stroke: "#2563EB",
+                  }}
+                  activeDot={{ r: 6, strokeWidth: 0, fill: "#1D4ED8" }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
@@ -241,11 +265,11 @@ export default function DetailBalitaFeed({ data }: { data: BalitaDetail }) {
               <Calculator size={20} />
             </div>
             <div className="flex flex-col">
-              <span className="text-[14px] font-semibold text-text-main">
-                Kalkulasi Z-Score Otomatis
+              <span className="text-base font-semibold text-text-main">
+                Kalkulasi 3 Pilar Z-Score
               </span>
               <span className="text-[11px] text-icon-muted">
-                Hasil instan setiap input data baru
+                BB/U, TB/U, dan BB/TB Otomatis
               </span>
             </div>
           </div>
@@ -254,7 +278,7 @@ export default function DetailBalitaFeed({ data }: { data: BalitaDetail }) {
               <BookOpenText size={20} />
             </div>
             <div className="flex flex-col">
-              <span className="text-[14px] font-semibold text-text-main">
+              <span className="text-base font-semibold text-text-main">
                 Standar Antropometri Kemenkes
               </span>
               <span className="text-[11px] text-icon-muted">
@@ -266,17 +290,14 @@ export default function DetailBalitaFeed({ data }: { data: BalitaDetail }) {
 
         <div className="flex flex-col gap-4 mt-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-[16px] font-bold text-text-main">
+            <h3 className="text-lg font-bold text-text-main">
               Riwayat Pengukuran
             </h3>
-            <button className="text-[13px] font-medium text-btn-primary hover:underline">
-              Lihat Semua {">"}
-            </button>
           </div>
 
           <div className="bg-white border border-border-input/20 rounded-[16px] overflow-hidden shadow-sm flex flex-col">
             <div className="grid grid-cols-4 bg-gray-50/80 p-4 border-b border-gray-100">
-              <div className="text-[11px] font-bold text-gray-500 tracking-wider">
+              <div className="text-[11px] font-bold text-gray-500 tracking-wider pl-4">
                 TANGGAL
               </div>
               <div className="text-[11px] font-bold text-gray-500 tracking-wider text-center">
@@ -286,28 +307,98 @@ export default function DetailBalitaFeed({ data }: { data: BalitaDetail }) {
                 TINGGI
               </div>
               <div className="text-[11px] font-bold text-gray-500 tracking-wider text-right pr-2">
-                Z-SCORE
+                BB/TB
               </div>
             </div>
 
             <div className="flex flex-col">
-              {data.riwayat.map((row, idx) => (
-                <div
-                  key={idx}
-                  className={`grid grid-cols-4 p-4 items-center ${idx !== data.riwayat.length - 1 ? "border-b border-gray-50" : ""}`}
-                >
-                  <div className="text-[13px] text-gray-700">{row.tanggal}</div>
-                  <div className="text-[13px] text-gray-700 text-center">
-                    {parseFloat(row.berat).toFixed(1)} kg
+              {riwayatDenganZScoreAsli.map((row, idx) => {
+                const isExpanded = expandedRow === idx;
+                return (
+                  <div
+                    key={idx}
+                    className={`flex flex-col ${idx !== riwayatDenganZScoreAsli.length - 1 ? "border-b border-gray-100" : ""}`}
+                  >
+                    {/* Diubah menjadi tag button yang bersih untuk aksesibilitas */}
+                    <button
+                      type="button"
+                      aria-expanded={isExpanded}
+                      onClick={() => setExpandedRow(isExpanded ? null : idx)}
+                      className="w-full text-left grid grid-cols-4 px-4 py-4.5 items-center cursor-pointer hover:bg-primary-light/10 focus:outline-none focus-visible:bg-primary-light/20 transition-colors"
+                    >
+                      <div className="text-sm text-gray-700 font-medium flex items-center gap-1.5 -ml-1">
+                        {isExpanded ? (
+                          <ChevronUp
+                            size={16}
+                            className="text-btn-primary shrink-0"
+                          />
+                        ) : (
+                          <ChevronDown
+                            size={16}
+                            className="text-icon-muted shrink-0"
+                          />
+                        )}
+                        {row.tanggal}
+                      </div>
+                      <div className="text-sm text-gray-700 text-center">
+                        {parseFloat(row.berat).toFixed(1)} kg
+                      </div>
+                      <div className="text-sm text-gray-700 text-center">
+                        {parseFloat(row.tinggi).toFixed(1)} cm
+                      </div>
+                      <div className="text-sm font-bold text-btn-primary text-right pr-2">
+                        {row.zBBTB}
+                      </div>
+                    </button>
+
+                    {isExpanded && (
+                      <div className="px-4 pb-5 pt-1 bg-gray-50/50">
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="bg-white border border-gray-200/80 rounded-xl p-3 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)]">
+                            <p className="text-[10px] text-icon-muted font-bold tracking-wider mb-1.5 uppercase">
+                              BB/U (Berat)
+                            </p>
+                            <p className="text-lg font-bold text-text-main leading-none mb-1.5">
+                              {row.zBB}
+                            </p>
+                            <p
+                              className={`text-[11px] font-semibold leading-tight ${row.statusBB.includes("Normal") ? "text-status-normal" : "text-danger"}`}
+                            >
+                              {row.statusBB}
+                            </p>
+                          </div>
+                          <div className="bg-white border border-gray-200/80 rounded-xl p-3 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)]">
+                            <p className="text-[10px] text-icon-muted font-bold tracking-wider mb-1.5 uppercase">
+                              TB/U (Tinggi)
+                            </p>
+                            <p className="text-lg font-bold text-text-main leading-none mb-1.5">
+                              {row.zTB}
+                            </p>
+                            <p
+                              className={`text-[11px] font-semibold leading-tight ${row.statusTB.includes("Normal") || row.statusTB.includes("Tinggi") ? "text-status-normal" : "text-danger"}`}
+                            >
+                              {row.statusTB}
+                            </p>
+                          </div>
+                          <div className="bg-white border border-gray-200/80 rounded-xl p-3 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)]">
+                            <p className="text-[10px] text-icon-muted font-bold tracking-wider mb-1.5 uppercase">
+                              BB/TB (Wasting)
+                            </p>
+                            <p className="text-lg font-bold text-text-main leading-none mb-1.5">
+                              {row.zBBTB}
+                            </p>
+                            <p
+                              className={`text-[11px] font-semibold leading-tight ${row.statusBBTB.includes("Normal") ? "text-status-normal" : row.statusBBTB.includes("Berisiko") ? "text-password-medium" : "text-danger"}`}
+                            >
+                              {row.statusBBTB}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="text-[13px] text-gray-700 text-center">
-                    {parseFloat(row.tinggi).toFixed(1)} cm
-                  </div>
-                  <div className="text-[13px] font-bold text-btn-primary text-right pr-2">
-                    {parseFloat(row.zscore).toFixed(2)}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="p-4 bg-gray-50/50 border-t border-gray-100 flex gap-2">
