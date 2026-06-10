@@ -1,115 +1,58 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Info, Smile, TrendingUp } from "lucide-react";
-import {
-  Area,
-  AreaChart,
-  Tooltip,
-  CartesianGrid,
-  YAxis,
-  XAxis,
-} from "recharts";
+import { useState } from "react";
+import { Info, TrendingUp } from "lucide-react";
 import { GrowthDataPoint } from "../types";
-
-type CustomTooltipProps = {
-  active?: boolean;
-  payload?: Array<{
-    value: number;
-    payload: GrowthDataPoint;
-  }>;
-  isWeight: boolean;
-};
-
-const CustomTooltip = ({ active, payload, isWeight }: CustomTooltipProps) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-white rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.08)] border border-border-input/20 py-2 px-3 flex items-center gap-2">
-        <div className="bg-btn-primary rounded-full p-1 text-white">
-          <Smile size={14} strokeWidth={2.5} />
-        </div>
-
-        <div className="flex flex-col">
-          <span className="text-[10px] font-semibold text-btn-primary leading-tight">
-            {isWeight
-              ? `Berat ${payload[0].value} kg`
-              : `Tinggi ${payload[0].value} cm`}
-          </span>
-          <span className="text-[10px] font-normal text-text-main">
-            Usia {payload[0].payload.month.split(" ")[1]} Bulan
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  return null;
-};
+import WHOGrowthChart from "@/features/parent/growth/components/WHOGrowthChart";
 
 type GrowthChartProps = {
-  isWeight: boolean;
-  onTabChange: (tab: "bb" | "tb") => void;
   data: GrowthDataPoint[];
+  preCalculatedChartData: { bb: any[]; tb: any[]; lk: any[] };
 };
 
 export default function GrowthChart({
-  isWeight,
-  onTabChange,
   data,
+  preCalculatedChartData,
 }: GrowthChartProps) {
-  const chartWrapperRef = useRef<HTMLDivElement | null>(null);
-  const [chartSize, setChartSize] = useState({ width: 0, height: 180 });
-
-  useEffect(() => {
-    if (!chartWrapperRef.current) return;
-
-    const observer = new ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect;
-
-      if (width > 0 && height > 0) {
-        setChartSize({
-          width: Math.floor(width),
-          height: Math.floor(height),
-        });
-      }
-    });
-
-    observer.observe(chartWrapperRef.current);
-
-    return () => observer.disconnect();
-  }, []);
+  const [activeMetric, setActiveMetric] = useState<"bb" | "tb" | "lk">("bb");
 
   const lastDataPoint = data.length > 0 ? data[data.length - 1] : null;
   const previousDataPoint = data.length > 1 ? data[data.length - 2] : null;
 
   const lastValue = lastDataPoint
-    ? isWeight
+    ? activeMetric === "bb"
       ? lastDataPoint.weight
-      : lastDataPoint.height
+      : activeMetric === "tb"
+        ? lastDataPoint.height
+        : lastDataPoint.head
     : 0;
 
   let trendValue = 0;
-
   if (lastDataPoint && previousDataPoint) {
-    trendValue = isWeight
-      ? lastDataPoint.weight - previousDataPoint.weight
-      : lastDataPoint.height - previousDataPoint.height;
+    const previousValue =
+      activeMetric === "bb"
+        ? previousDataPoint.weight
+        : activeMetric === "tb"
+          ? previousDataPoint.height
+          : previousDataPoint.head;
+
+    trendValue = lastValue - previousValue;
   }
 
   const formattedTrend =
     trendValue > 0 ? `+${trendValue.toFixed(1)}` : trendValue.toFixed(1);
+  const trendUnit = activeMetric === "bb" ? "kg" : "cm";
 
-  const trendUnit = isWeight ? "kg" : "cm";
-
-  const firstMonth = data.length > 0 ? data[0].month : "Bulan 0";
-  const lastMonth = data.length > 0 ? data[data.length - 1].month : "Bulan 0";
-
-  const canRenderChart = chartSize.width > 0 && chartSize.height > 0;
+  const yLabelMap = {
+    bb: "Berat Badan (kg)",
+    tb: "Tinggi Badan (cm)",
+    lk: "Lingkar Kepala (cm)",
+  };
 
   return (
     <div className="w-full min-h-[511px] bg-white rounded-[12px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-border-input/40 p-6 relative flex flex-col shrink-0">
       <div className="flex justify-between items-center mb-5">
-        <h3 className="text-[16px] font-semibold leading-[20px] tracking-[0.14px] text-text-main">
+        <h3 className="text-lg font-semibold leading-[20px] tracking-[0.14px] text-text-main">
           Grafik Pertumbuhan
         </h3>
 
@@ -119,127 +62,70 @@ export default function GrowthChart({
         </div>
       </div>
 
-      <div className="flex bg-background border border-border-input/20 rounded-xl p-1 mb-6 shrink-0">
+      <div className="flex bg-background border border-border-input/20 rounded-xl p-1 mb-6 shrink-0 overflow-x-auto hide-scrollbar">
         <button
           type="button"
-          onClick={() => onTabChange("bb")}
-          className={`flex-1 py-2 text-[12px] transition-all rounded-lg cursor-pointer ${
-            isWeight
+          onClick={() => setActiveMetric("bb")}
+          className={`flex-1 min-w-[90px] py-2 text-xs transition-all rounded-lg cursor-pointer ${
+            activeMetric === "bb"
               ? "bg-white shadow-sm font-medium text-text-main"
               : "font-medium text-icon-muted hover:text-text-main"
           }`}
         >
-          Berat Badan (BB)
+          Berat (BB)
         </button>
 
         <button
           type="button"
-          onClick={() => onTabChange("tb")}
-          className={`flex-1 py-2 text-[12px] transition-all rounded-lg cursor-pointer ${
-            !isWeight
+          onClick={() => setActiveMetric("tb")}
+          className={`flex-1 min-w-[90px] py-2 text-xs transition-all rounded-lg cursor-pointer ${
+            activeMetric === "tb"
               ? "bg-white shadow-sm font-medium text-text-main"
               : "font-medium text-icon-muted hover:text-text-main"
           }`}
         >
-          Tinggi Badan (TB)
+          Tinggi (TB)
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveMetric("lk")}
+          className={`flex-1 min-w-[90px] py-2 text-xs transition-all rounded-lg cursor-pointer ${
+            activeMetric === "lk"
+              ? "bg-white shadow-sm font-medium text-text-main"
+              : "font-medium text-icon-muted hover:text-text-main"
+          }`}
+        >
+          Kepala (LK)
         </button>
       </div>
 
-      <div className="bg-background rounded-xl border border-border-input/20 pt-6 px-1 h-[260px] relative mb-6 shrink-0 flex flex-col min-w-0">
-        <div className="absolute top-3 left-4 text-[12px] font-medium text-icon-muted z-10">
-          {isWeight ? "Berat (kg)" : "Tinggi (cm)"}
-        </div>
-
-        <div
-          ref={chartWrapperRef}
-          className="w-full h-[180px] min-w-0 overflow-hidden"
-        >
-          {canRenderChart ? (
-            <AreaChart
-              width={chartSize.width}
-              height={chartSize.height}
-              data={data}
-              margin={{ top: 15, right: 0, left: 0, bottom: 0 }}
-            >
-              <defs>
-                <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor="var(--chart-gradient)"
-                    stopOpacity={0.6}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="var(--chart-gradient)"
-                    stopOpacity={0}
-                  />
-                </linearGradient>
-              </defs>
-
-              <YAxis domain={[0, "auto"]} hide />
-              <XAxis dataKey="month" hide />
-
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="var(--chart-grid)"
-                opacity={0.5}
-              />
-
-              <Tooltip
-                content={<CustomTooltip isWeight={isWeight} />}
-                cursor={{
-                  stroke: "var(--chart-cursor)",
-                  strokeWidth: 1,
-                  strokeDasharray: "4 4",
-                }}
-              />
-
-              <Area
-                type="natural"
-                dataKey={isWeight ? "weight" : "height"}
-                stroke="var(--chart-line)"
-                strokeWidth={3}
-                fillOpacity={1}
-                fill="url(#colorGradient)"
-                activeDot={{
-                  r: 5,
-                  fill: "var(--chart-dot)",
-                  stroke: "white",
-                  strokeWidth: 2.5,
-                }}
-              />
-            </AreaChart>
-          ) : (
-            <div className="w-full h-full flex items-center justify-center rounded-lg bg-background">
-              <span className="text-xs text-icon-muted">Memuat grafik...</span>
-            </div>
-          )}
-        </div>
-
-        <div className="flex justify-between items-center w-full px-3 pb-2 pt-1 text-[12px] font-normal leading-[15px] text-icon-muted shrink-0">
-          <span>{firstMonth}</span>
-          <span>{lastMonth}</span>
-        </div>
+      <div className="mb-6 shrink-0 flex flex-col min-w-0 rounded-xl overflow-hidden -mx-6">
+        <WHOGrowthChart
+          data={preCalculatedChartData[activeMetric]}
+          xLabel="Umur (Bulan)"
+          yLabel={yLabelMap[activeMetric]}
+          title=""
+        />
       </div>
 
-      <div className="flex gap-4 mt-auto">
+      <div className="flex gap-4 mt-auto pt-2 border-t border-border-input/20">
         <div className="flex-1 bg-background rounded-xl border border-border-input/20 p-3.5">
           <p className="text-[11px] text-icon-muted font-medium leading-[16px] tracking-[0.48px] mb-1">
             Pengukuran Terakhir
           </p>
 
           <div className="flex items-baseline gap-1 mb-1 leading-none">
-            <span className="font-bold leading-[32px] text-[24px] tracking-[-0.24px] text-text-main">
+            <span className="font-bold leading-[32px] text-5xl tracking-[-0.24px] text-text-main">
               {lastValue}
             </span>
 
-            <span className="font-normal leading-[20px] text-[14px] tracking-[-0.24px] text-icon-muted">
-              {isWeight ? "kg" : "cm"}
+            <span className="font-normal leading-[20px] text-base tracking-[-0.24px] text-icon-muted">
+              {trendUnit}
             </span>
           </div>
 
-          <div className="text-[12px] font-medium leading-[16px] tracking-[0.48px] text-btn-primary flex items-center gap-1">
+          <div className="text-xs font-medium leading-[16px] tracking-[0.48px] text-btn-primary flex items-center gap-1">
             <TrendingUp size={14} strokeWidth={2.5} />
             <span>
               {formattedTrend} {trendUnit}
@@ -248,14 +134,14 @@ export default function GrowthChart({
         </div>
 
         <div className="flex-1 bg-background rounded-xl border border-border-input/20 p-3.5 flex flex-col justify-between">
-          <p className="font-medium leading-[16px] text-[12px] tracking-[0.48px] text-icon-muted">
-            Status WHO
+          <p className="font-medium leading-[16px] text-xs tracking-[0.48px] text-icon-muted">
+            Status Terkini
           </p>
 
           <div className="flex items-center gap-2 text-status-normal">
             <div className="flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-status-normal" />
-            <span className="font-semibold leading-[20px] text-[14px] tracking-[0.14px]">
-              Normal (P50)
+            <span className="font-semibold leading-[20px] text-base tracking-[0.14px]">
+              Sesuai Track
             </span>
           </div>
         </div>

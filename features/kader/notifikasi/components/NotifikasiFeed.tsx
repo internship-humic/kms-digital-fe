@@ -81,7 +81,7 @@ export default function NotifikasiFeed({
         >
           <ArrowLeft size={24} strokeWidth={2.5} />
         </button>
-        <h1 className="text-[18px] font-bold text-btn-primary flex-1 text-center pr-10">
+        <h1 className="text-2xl font-bold text-btn-primary flex-1 text-center pr-10">
           Notifikasi
         </h1>
       </div>
@@ -106,16 +106,14 @@ export default function NotifikasiFeed({
                 {/* Konten Teks */}
                 <div className="flex-1 min-w-0 pt-0.5">
                   <div className="flex items-center justify-between mb-1">
-                    <span
-                      className={`text-[13px] font-semibold ${style.title}`}
-                    >
+                    <span className={`text-sm font-semibold ${style.title}`}>
                       {item.judul}
                     </span>
-                    <span className="text-[12px] font-medium text-gray-500">
+                    <span className="text-xs font-medium text-gray-500">
                       {item.waktu}
                     </span>
                   </div>
-                  <p className="text-[14px] text-gray-800 leading-snug">
+                  <p className="text-base text-gray-800 leading-snug">
                     {item.pesan}
                   </p>
                 </div>

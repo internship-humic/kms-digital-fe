@@ -4,6 +4,7 @@ import { ArrowUpDown } from "lucide-react";
 import DashboardActions from "@/features/parent/dashboard/components/FloatingAddButton";
 import ChildOptionButton from "@/features/parent/dashboard/components/ChildCardMenu";
 import { getDashboardMockData } from "@/features/parent/dashboard/data/mockDashboard";
+import { getProfileMockData } from "@/features/parent/profile/data/mockProfile";
 
 export const metadata = {
   title: "Dashboard | JagaCilik",
@@ -29,8 +30,19 @@ const ScaleIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const getInitials = (name: string) => {
+  const names = name.trim().split(" ");
+  if (names.length >= 2) {
+    return `${names[0][0]}${names[1][0]}`.toUpperCase();
+  }
+  return names[0] ? names[0][0].toUpperCase() : "B";
+};
+
 export default async function DashboardPage() {
   const childrenData = await getDashboardMockData();
+  const profile = await getProfileMockData();
+
+  const firstName = profile.fullName.split(" ")[0];
 
   return (
     <div className="flex-1 bg-background flex flex-col relative overflow-y-auto pb-32">
@@ -47,16 +59,16 @@ export default async function DashboardPage() {
           />
         </div>
 
-        <div className="w-10 h-10 rounded-full border border-border-input/40 shadow-sm shrink-0 flex items-center justify-center bg-primary-light/60 text-btn-primary font-bold text-[15px] tracking-wider select-none">
-          AA
+        <div className="w-10 h-10 rounded-full border border-border-input/40 shadow-sm shrink-0 flex items-center justify-center bg-primary-light/60 text-btn-primary font-bold text-md tracking-wider select-none">
+          {getInitials(profile.fullName)}
         </div>
       </div>
 
       <div className="px-6 mt-6 mb-6">
-        <h1 className="text-[22px] font-semibold leading-[24px] text-text-main mb-1.5 flex items-center gap-1.5">
-          Hi, Arjanti 👋
+        <h1 className="text-4xl font-semibold leading-[24px] text-text-main mb-1.5 flex items-center gap-1.5">
+          Hi, {firstName} 👋
         </h1>
-        <p className="text-[16px] font-normal leading-[24px] text-text-main/70">
+        <p className="text-lg font-normal leading-[24px] text-text-main/70">
           Pantau terus tumbuh kembang si kecil dengan JagaCilik.
         </p>
       </div>
@@ -69,14 +81,11 @@ export default async function DashboardPage() {
             className="bg-white rounded-[20px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-border-input/40 p-5 block transition-transform hover:scale-[1.02] active:scale-95"
           >
             <div className="flex justify-between items-start mb-3">
-              <div className="w-[60px] h-[60px] rounded-full overflow-hidden border border-border-input/40 relative bg-primary-light/20">
-                <Image
-                  src={child.image}
-                  alt={child.name}
-                  width={60}
-                  height={60}
-                  className="w-full h-full object-cover"
-                />
+              {/* Avatar inisial */}
+              <div className="w-[60px] h-[60px] rounded-full flex items-center justify-center shrink-0 border border-primary-light/80 bg-primary-light/60 shadow-sm">
+                <span className="text-3xl font-bold text-btn-primary tracking-widest select-none">
+                  {getInitials(child.name)}
+                </span>
               </div>
 
               <ChildOptionButton childName={child.name} />
@@ -85,20 +94,20 @@ export default async function DashboardPage() {
             <h3 className="text-lg font-medium text-text-main mb-0.5">
               {child.name}
             </h3>
-            <p className="text-[13.5px] font-normal text-icon-muted mb-4">
+            <p className="text-sm font-normal text-icon-muted mb-4">
               {child.gender} &bull; {child.age}
             </p>
 
             <div className="flex gap-2.5">
               <div className="flex items-center gap-1.5 bg-primary-light/40 px-3.5 py-1.5 rounded-full border border-border-input/20">
                 <ScaleIcon className="text-icon-muted" />
-                <span className="text-[13.5px] font-normal text-text-main">
+                <span className="text-sm font-normal text-text-main">
                   {child.weight}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 bg-primary-light/40 px-3.5 py-1.5 rounded-full border border-border-input/20">
                 <ArrowUpDown size={14} className="text-icon-muted" />
-                <span className="text-[13.5px] font-normal text-text-main">
+                <span className="text-sm font-normal text-text-main">
                   {child.height}
                 </span>
               </div>

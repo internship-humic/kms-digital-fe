@@ -13,7 +13,7 @@ export default function SecuritySection() {
           <ArrowLeft size={24} className="text-btn-primary" strokeWidth={2.5} />
         </Link>
 
-        <h1 className="text-[22px] leading-[32px] tracking-[-0.24px] font-bold text-btn-primary w-full text-center">
+        <h1 className="text-4xl leading-[32px] tracking-[-0.24px] font-bold text-btn-primary w-full text-center">
           Keamanan Akun
         </h1>
       </div>

@@ -96,15 +96,15 @@ export default function NotifikasiList({ items }: { items: NotifikasiItem[] }) {
             <div className="flex-1">
               <div className="flex justify-between items-center mb-1">
                 <span
-                  className={`text-[12px] font-medium leading-[16px] tracking-[0.48px] ${labelColor}`}
+                  className={`text-xs font-medium leading-[16px] tracking-[0.48px] ${labelColor}`}
                 >
                   {label}
                 </span>
-                <span className="text-[12px] font-medium leading-[16px] tracking-[0.48px] text-icon-muted">
+                <span className="text-xs font-medium leading-[16px] tracking-[0.48px] text-icon-muted">
                   {item.waktu}
                 </span>
               </div>
-              <p className="text-[14px] font-medium leading-[20px] tracking-[0px] text-text-main">
+              <p className="text-base font-medium leading-[20px] tracking-[0px] text-text-main">
                 {item.pesan}
               </p>
             </div>

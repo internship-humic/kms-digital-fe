@@ -6,6 +6,7 @@ import InputField from "@/components/ui/InputField";
 import PasswordField from "@/components/ui/PasswordField";
 import { useLogin } from "@/features/auth/hooks/useLogin";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 export default function AdminLoginPage() {
   const { form, onSubmit, globalError } = useLogin("admin");
@@ -32,7 +33,7 @@ export default function AdminLoginPage() {
               JagaCilik
             </h2>
 
-            <p className="mt-2 text-[16px] text-icon-muted">
+            <p className="mt-2 text-lg text-icon-muted">
               Sistem Informasi Pengawasan Kesehatan Anak Terpadu.
             </p>
           </div>
@@ -41,17 +42,17 @@ export default function AdminLoginPage() {
         <div className="flex w-full items-center justify-center px-8 lg:w-1/2">
           <div className="w-full max-w-[342px]">
             <div className="mb-12 text-center">
-              <h1 className="text-[28px] font-bold text-text-main">
+              <h1 className="text-7xl font-bold text-text-main">
                 Selamat Datang !
               </h1>
-              <p className="mt-4 text-[13px] text-text-main">
+              <p className="mt-4 text-sm text-text-main">
                 Masukkan email dan password untuk mengakses akun Anda.
               </p>
             </div>
 
             {globalError && (
               <div
-                className="mb-5 rounded-xl border border-danger/20 bg-danger/10 p-3.5 text-[13.5px] font-medium text-danger"
+                className="mb-5 rounded-xl border border-danger/20 bg-danger/10 p-3.5 text-sm font-medium text-danger"
                 role="alert"
               >
                 {globalError}
@@ -82,23 +83,24 @@ export default function AdminLoginPage() {
                 <div className="mt-3 flex justify-end">
                   <Link
                     href="#"
-                    className="text-[13px] font-semibold text-btn-primary hover:underline"
+                    className="text-sm font-semibold text-btn-primary hover:underline"
                   >
                     Lupa Password?
                   </Link>
                 </div>
               </div>
 
-              <button
+              <Button
                 type="submit"
+                size="lg"
                 disabled={isSubmitting}
-                className="mt-10 flex w-full cursor-pointer items-center justify-center rounded-[10px] bg-btn-primary py-3.5 text-[16px] font-semibold text-white shadow-lg shadow-blue-500/25 transition-colors hover:bg-btn-hover disabled:cursor-not-allowed disabled:opacity-70"
+                className="mt-10 w-full text-lg"
               >
                 {isSubmitting ? "Memproses..." : "Masuk"}
-              </button>
+              </Button>
             </form>
 
-            <div className="mt-11 flex justify-center gap-1 text-[13px]">
+            <div className="mt-11 flex justify-center gap-1 text-sm">
               <span className="text-icon-muted">Tidak punya akun?</span>
               <Link
                 href="/admin/register"

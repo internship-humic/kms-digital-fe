@@ -3,14 +3,14 @@
 import { useRouter } from "next/navigation";
 import { BadgeCheck, ChevronRight, LogOut } from "lucide-react";
 import { kaderMenus, kaderProfile, kaderStats } from "../data/mockProfileKader";
+import { Button } from "@/components/ui/button";
+import { logoutAction } from "@/app/actions/auth";
 
 export default function ProfileKaderFeed() {
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-
+  const handleLogout = async () => {
+    await logoutAction();
     router.replace("/");
   };
 
@@ -22,7 +22,7 @@ export default function ProfileKaderFeed() {
 
       <section className="mb-8 flex flex-col items-center text-center">
         <div className="relative mb-4">
-          <div className="flex h-24 w-24 items-center justify-center rounded-full border-[4px] border-white bg-primary-light text-[28px] font-bold text-btn-primary shadow-[0_8px_24px_rgba(15,23,42,0.12)]">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full border-[4px] border-white bg-primary-light text-7xl font-bold text-btn-primary shadow-[0_8px_24px_rgba(15,23,42,0.12)]">
             {kaderProfile.initial}
           </div>
 
@@ -31,13 +31,13 @@ export default function ProfileKaderFeed() {
           </div>
         </div>
 
-        <h2 className="text-[22px] font-bold text-text-main">
+        <h2 className="text-4xl font-bold text-text-main">
           {kaderProfile.name}
         </h2>
 
-        <p className="mt-1 text-[16px] text-icon-muted">{kaderProfile.role}</p>
+        <p className="mt-1 text-lg text-icon-muted">{kaderProfile.role}</p>
 
-        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary-light/70 px-3 py-1.5 text-[13px] font-semibold text-btn-primary">
+        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary-light/70 px-3 py-1.5 text-sm font-semibold text-btn-primary">
           <BadgeCheck size={14} strokeWidth={2.5} />
           {kaderProfile.badge}
         </div>
@@ -57,8 +57,8 @@ export default function ProfileKaderFeed() {
                   <Icon size={22} strokeWidth={2.4} />
                 </div>
 
-                <p className="text-[14px] text-icon-muted">{stat.label}</p>
-                <p className="mt-1 text-[26px] font-bold leading-none text-text-main">
+                <p className="text-base text-icon-muted">{stat.label}</p>
+                <p className="mt-1 text-6xl font-bold leading-none text-text-main">
                   {stat.value}
                 </p>
               </div>
@@ -77,8 +77,8 @@ export default function ProfileKaderFeed() {
                   <Icon size={23} strokeWidth={2.4} />
                 </div>
 
-                <p className="text-[14px] text-icon-muted">{stat.label}</p>
-                <p className="mt-1 text-[26px] font-bold leading-none text-text-main">
+                <p className="text-base text-icon-muted">{stat.label}</p>
+                <p className="mt-1 text-6xl font-bold leading-none text-text-main">
                   {stat.value}
                 </p>
               </>
@@ -106,10 +106,10 @@ export default function ProfileKaderFeed() {
               </div>
 
               <div className="min-w-0 flex-1">
-                <h3 className="text-[15px] font-bold text-text-main">
+                <h3 className="text-md font-bold text-text-main">
                   {menu.title}
                 </h3>
-                <p className="mt-0.5 text-[14px] text-icon-muted">
+                <p className="mt-0.5 text-base text-icon-muted">
                   {menu.description}
                 </p>
               </div>
@@ -124,14 +124,15 @@ export default function ProfileKaderFeed() {
         })}
       </section>
 
-      <button
-        type="button"
+      <Button
+        variant="destructive"
+        size="lg"
         onClick={handleLogout}
-        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[12px] border border-danger bg-white py-4 text-[15px] font-bold text-danger transition-all hover:bg-danger/5 active:scale-95"
+        className="w-full gap-2 font-bold bg-white text-danger border border-danger hover:bg-danger/5"
       >
         <LogOut size={20} strokeWidth={2.4} />
         Keluar
-      </button>
+      </Button>
     </main>
   );
 }

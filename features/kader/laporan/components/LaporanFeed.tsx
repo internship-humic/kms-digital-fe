@@ -11,6 +11,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { reports } from "../data/mockLaporan";
+import { Button } from "@/components/ui/button";
 
 export default function LaporanFeed() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -59,7 +60,7 @@ export default function LaporanFeed() {
           Ekspor Laporan
         </h1>
 
-        <p className="text-[16px] leading-relaxed text-icon-muted">
+        <p className="text-lg leading-relaxed text-icon-muted">
           Ekspor Laporan dalam Satu Klik. Tidak perlu menulis manual.
         </p>
       </section>
@@ -89,11 +90,11 @@ export default function LaporanFeed() {
                 />
               </div>
 
-              <h2 className="max-w-[260px] truncate text-[18px] font-bold text-text-main">
+              <h2 className="max-w-[260px] truncate text-2xl font-bold text-text-main">
                 {uploadedFile.name}
               </h2>
 
-              <p className="mt-1 text-[13px] text-icon-muted">
+              <p className="mt-1 text-sm text-icon-muted">
                 Generated: 12 Okt 2023 • {uploadedFileSize}
               </p>
             </>
@@ -101,40 +102,35 @@ export default function LaporanFeed() {
             <>
               <UploadCloud size={60} className="mb-3 text-text-secondary" />
 
-              <p className="text-[18px] font-semibold text-text-secondary">
+              <p className="text-2xl font-semibold text-text-secondary">
                 Drag your files or{" "}
                 <span className="text-btn-primary">browse</span>
               </p>
 
-              <p className="mt-1 text-[13px] text-text-main/30">
+              <p className="mt-1 text-sm text-text-main/30">
                 Max 50 MB files are allowed
               </p>
             </>
           )}
         </button>
 
-        <button
+        <Button
           type="button"
+          size="xl"
           disabled={!uploadedFile}
-          className={`mt-6 w-full rounded-[12px] py-4 text-[15px] font-semibold text-white shadow-md transition-all active:scale-95 ${
-            uploadedFile
-              ? "cursor-pointer bg-btn-primary hover:bg-btn-hover"
-              : "cursor-not-allowed bg-text-secondary"
-          }`}
+          className="mt-6 w-full"
         >
           Upload Laporan PDF
-        </button>
+        </Button>
       </section>
 
       <section className="mb-8">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-[20px] font-bold text-text-main">
-            Laporan Terkini
-          </h2>
+          <h2 className="text-3xl font-bold text-text-main">Laporan Terkini</h2>
 
           <button
             type="button"
-            className="cursor-pointer text-[14px] font-semibold text-btn-primary hover:underline"
+            className="cursor-pointer text-base font-semibold text-btn-primary hover:underline"
           >
             Lihat Semua
           </button>
@@ -151,11 +147,11 @@ export default function LaporanFeed() {
               </div>
 
               <div className="min-w-0 flex-1">
-                <h3 className="truncate text-[15px] font-semibold text-text-main">
+                <h3 className="truncate text-md font-semibold text-text-main">
                   {report.name}
                 </h3>
 
-                <p className="mt-0.5 text-[14px] text-icon-muted">
+                <p className="mt-0.5 text-base text-icon-muted">
                   {report.meta}
                 </p>
               </div>
@@ -176,7 +172,7 @@ export default function LaporanFeed() {
                   <button
                     type="button"
                     onClick={() => handleEdit(report.name)}
-                    className="flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left text-[13px] font-medium text-icon-muted transition-colors hover:bg-background"
+                    className="flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left text-sm font-medium text-icon-muted transition-colors hover:bg-background"
                   >
                     <Pencil size={14} />
                     Edit Laporan
@@ -185,7 +181,7 @@ export default function LaporanFeed() {
                   <button
                     type="button"
                     onClick={() => handleDelete(report.name)}
-                    className="flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left text-[13px] font-medium text-icon-muted transition-colors hover:bg-background"
+                    className="flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left text-sm font-medium text-icon-muted transition-colors hover:bg-background"
                   >
                     <Trash2 size={14} />
                     Delete
@@ -199,11 +195,11 @@ export default function LaporanFeed() {
 
       <section className="flex items-center justify-between overflow-hidden rounded-[20px] bg-primary-light p-6">
         <div className="max-w-[190px]">
-          <h2 className="mb-3 text-[20px] font-bold text-icon-alt">
+          <h2 className="mb-3 text-3xl font-bold text-icon-alt">
             Siap Dibagikan
           </h2>
 
-          <p className="text-[15px] leading-relaxed text-icon-alt/70">
+          <p className="text-md leading-relaxed text-icon-alt/70">
             Laporan ini memuat data pertumbuhan, nutrisi, dan imunisasi yang
             valid untuk dikirim ke dokter anak Anda.
           </p>

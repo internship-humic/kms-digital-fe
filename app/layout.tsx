@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist } from "next/font/google";
-import AuthGuard from "@/components/layout/AuthGuard";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +21,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-      lang="en"
+      lang="id"
       className={cn(
         "antialiased",
         plusJakarta.variable,
@@ -32,7 +31,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background font-sans tracking-tight">
         <div className="w-full max-w-md mx-auto min-h-screen bg-white relative shadow-2xl overflow-x-hidden flex flex-col">
-          <AuthGuard>{children}</AuthGuard>
+          {children}
         </div>
       </body>
     </html>

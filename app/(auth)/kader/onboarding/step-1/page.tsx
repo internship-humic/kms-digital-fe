@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function KaderOnboardingStep1Page() {
   return (
@@ -21,10 +22,10 @@ export default function KaderOnboardingStep1Page() {
         </div>
 
         <div className="flex flex-col items-center text-center px-2">
-          <h1 className="text-[24px] font-bold text-text-main mb-4 leading-tight tracking-tight">
+          <h1 className="text-5xl font-bold text-text-main mb-4 leading-tight tracking-tight">
             Ekspor Laporan Otomatis
           </h1>
-          <p className="text-[15px] font-normal text-text-main/70 leading-relaxed max-w-[280px]">
+          <p className="text-md font-normal text-text-main/70 leading-relaxed max-w-[280px]">
             Pelaporan satu klik untuk kebutuhan administrasi Puskesmas dengan
             data terstruktur.
           </p>
@@ -37,13 +38,12 @@ export default function KaderOnboardingStep1Page() {
           <div className="w-2 h-2 bg-border-input/50 rounded-full transition-all duration-300" />
         </div>
 
-        <Link
-          href="/kader/onboarding/step-2"
-          className="w-full bg-btn-primary hover:bg-btn-hover text-white font-semibold py-4 rounded-[16px] flex items-center justify-center gap-2 transition-all shadow-[0_8px_24px_-4px_rgba(37,99,235,0.3)] active:scale-95 cursor-pointer"
-        >
-          <span className="text-[15px] tracking-wide">Selanjutnya</span>
-          <ArrowRight size={20} strokeWidth={2.5} />
-        </Link>
+        <Button asChild size="lg" className="w-full rounded-[16px] py-4 h-auto">
+          <Link href="/kader/onboarding/step-2">
+            <span className="text-md tracking-wide">Selanjutnya</span>
+            <ArrowRight size={20} strokeWidth={2.5} />
+          </Link>
+        </Button>
       </div>
     </div>
   );

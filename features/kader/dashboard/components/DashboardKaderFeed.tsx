@@ -13,6 +13,7 @@ import {
   FileUp,
 } from "lucide-react";
 import { DashboardKaderData } from "../types";
+import { Button } from "@/components/ui/button";
 
 type DashboardKaderFeedProps = {
   data: DashboardKaderData;
@@ -48,10 +49,10 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
       </div>
 
       <div className="mt-8 mb-6">
-        <h1 className="text-[22px] font-semibold leading-[100%] tracking-[0px] text-text-main mb-1.5 align-middle">
+        <h1 className="text-4xl font-semibold leading-[100%] tracking-[0px] text-text-main mb-1.5 align-middle">
           Halo, Kader {data.kaderName}👋
         </h1>
-        <p className="text-[14px] font-normal leading-[100%] tracking-[0px] text-btn-primary align-middle">
+        <p className="text-base font-normal leading-[100%] tracking-[0px] text-btn-primary align-middle">
           {data.posyanduName} &bull; {data.location}
         </p>
       </div>
@@ -62,16 +63,16 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
             <div className="w-9 h-9 bg-primary-light/60 rounded-xl flex items-center justify-center text-btn-primary">
               <Users size={18} strokeWidth={2.5} />
             </div>
-            <div className="flex items-center gap-0.5 text-status-normal text-[12px] font-bold leading-none">
+            <div className="flex items-center gap-0.5 text-status-normal text-xs font-bold leading-none">
               <TrendingUp size={12} strokeWidth={2.5} />
               <span>{data.totalBalita.trend}</span>
             </div>
           </div>
           <div className="mt-auto">
-            <p className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-text-main/60 mb-0.5 align-middle">
+            <p className="text-base font-semibold leading-[20px] tracking-[0.14px] text-text-main/60 mb-0.5 align-middle">
               Total Balita
             </p>
-            <span className="text-[24px] font-bold leading-[32px] tracking-[-0.24px] text-text-main align-middle">
+            <span className="text-5xl font-bold leading-[32px] tracking-[-0.24px] text-text-main align-middle">
               {data.totalBalita.value}
             </span>
           </div>
@@ -88,11 +89,11 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
             </span>
           </div>
           <div className="mt-auto">
-            <p className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-text-main/60 mb-0.5 align-middle">
+            <p className="text-base font-semibold leading-[20px] tracking-[0.14px] text-text-main/60 mb-0.5 align-middle">
               Kasus Risiko
             </p>
 
-            <span className="text-[24px] font-bold leading-[32px] tracking-[-0.24px] text-text-main align-middle">
+            <span className="text-5xl font-bold leading-[32px] tracking-[-0.24px] text-text-main align-middle">
               {data.kasusRisiko.value}
             </span>
           </div>
@@ -103,7 +104,7 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
         <div className="flex items-center gap-2 mb-4">
           <Layers size={20} className="text-btn-primary" strokeWidth={2.5} />
 
-          <h2 className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle">
+          <h2 className="text-base font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle">
             Kelola Data Massal
           </h2>
         </div>
@@ -116,7 +117,7 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
               strokeWidth={2.5}
             />
 
-            <span className="text-[12px] font-medium leading-[16px] tracking-[0.48px] text-text-main text-center align-middle">
+            <span className="text-xs font-medium leading-[16px] tracking-[0.48px] text-text-main text-center align-middle">
               Unduh Template
               <br />
               Excel
@@ -130,7 +131,7 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
               strokeWidth={2.5}
             />
 
-            <span className="text-[12px] font-medium leading-[16px] tracking-[0.48px] text-text-main text-center align-middle">
+            <span className="text-xs font-medium leading-[16px] tracking-[0.48px] text-text-main text-center align-middle">
               Impor Data
               <br />
               Pemeriksaan
@@ -141,11 +142,11 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
 
       <div className="mt-8 mb-4">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-text-main align-middle">
+          <h2 className="text-base font-semibold leading-[20px] tracking-[0.14px] text-text-main align-middle">
             Pemeriksaan Terbaru
           </h2>
 
-          <button className="text-[12px] font-medium leading-[16px] tracking-[0.48px] text-btn-primary text-center align-middle hover:underline cursor-pointer">
+          <button className="text-xs font-medium leading-[16px] tracking-[0.48px] text-btn-primary text-center align-middle hover:underline cursor-pointer">
             Lihat Semua
           </button>
         </div>
@@ -156,23 +157,23 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
               key={item.id}
               className="flex items-center gap-3 p-4 border border-border-input/30 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.02)] rounded-xl bg-white hover:border-btn-primary/30 transition-colors cursor-pointer"
             >
-              <div className="w-[48px] h-[48px] bg-primary-light/70 rounded-full flex items-center justify-center text-btn-primary font-bold text-[16px] tracking-wide shrink-0 border border-primary-light shadow-sm select-none">
+              <div className="w-[48px] h-[48px] bg-primary-light/70 rounded-full flex items-center justify-center text-btn-primary font-bold text-lg tracking-wide shrink-0 border border-primary-light shadow-sm select-none">
                 {item.inisial}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-text-main align-middle mb-0.5 truncate">
+                <h3 className="text-base font-semibold leading-[20px] tracking-[0.14px] text-text-main align-middle mb-0.5 truncate">
                   {item.nama}
                 </h3>
 
-                <p className="text-[14px] font-normal leading-[20px] tracking-[0px] text-icon-muted align-middle truncate">
+                <p className="text-base font-normal leading-[20px] tracking-[0px] text-icon-muted align-middle truncate">
                   {item.jenisPemeriksaan}
                 </p>
-                <p className="text-[12px] font-normal leading-[16px] text-text-main/50 mt-1">
+                <p className="text-xs font-normal leading-[16px] text-text-main/50 mt-1">
                   {item.waktu}
                 </p>
               </div>
               <div className="shrink-0 pl-2">
-                <span className="text-[14px] font-semibold leading-[20px] tracking-[0.14px] text-status-normal text-right align-middle">
+                <span className="text-base font-semibold leading-[20px] tracking-[0.14px] text-status-normal text-right align-middle">
                   {item.status}
                 </span>
               </div>
@@ -182,13 +183,14 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
       </div>
 
       <div className="fixed bottom-28 left-0 right-0 w-full max-w-md mx-auto flex justify-end px-6 z-40 pointer-events-none">
-        <button
+        <Button
           onClick={handleAddBalita}
-          className="pointer-events-auto flex items-center gap-2 px-5 py-3.5 bg-btn-primary hover:bg-btn-hover text-white rounded-full font-semibold text-[14px] shadow-[0_8px_24px_-4px_rgba(37,99,235,0.4)] transition-all duration-300 hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+          size="lg"
+          className="pointer-events-auto gap-2 rounded-full shadow-[0_8px_24px_-4px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 font-semibold text-base"
         >
           <Plus size={18} strokeWidth={3} />
           <span>Tambah Data Balita</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

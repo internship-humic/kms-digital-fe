@@ -53,22 +53,22 @@ export default function TindakanFeed() {
       <section className="mb-7 grid grid-cols-2 gap-2">
         <div className="rounded-[12px] border border-border-input/40 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-start justify-between">
-            <p className="text-[14px] text-icon-muted">Total Kasus</p>
+            <p className="text-base text-icon-muted">Total Kasus</p>
             <UserRoundCheck size={18} className="text-border-input" />
           </div>
 
-          <p className="text-[26px] font-bold leading-none text-text-main">
+          <p className="text-6xl font-bold leading-none text-text-main">
             {totalCases + 9}
           </p>
         </div>
 
         <div className="rounded-[12px] border border-danger/20 bg-danger/5 p-4 shadow-sm">
           <div className="mb-2 flex items-start justify-between">
-            <p className="text-[14px] text-danger">Perlu Rujukan</p>
+            <p className="text-base text-danger">Perlu Rujukan</p>
             <Asterisk size={22} className="text-danger" strokeWidth={3} />
           </div>
 
-          <p className="text-[26px] font-bold leading-none text-danger">
+          <p className="text-6xl font-bold leading-none text-danger">
             {referralCases + 2}
           </p>
         </div>
@@ -90,26 +90,26 @@ export default function TindakanFeed() {
                   </h2>
 
                   <div
-                    className={`mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-medium ${style.badge}`}
+                    className={`mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}
                   >
                     {style.icon}
                     {item.riskLabel}
                   </div>
                 </div>
 
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border-input/40 bg-background text-[18px] font-bold text-icon-alt shadow-sm">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border-input/40 bg-background text-2xl font-bold text-icon-alt shadow-sm">
                   {item.initial}
                 </div>
               </div>
 
-              <div className="mb-4 flex items-center gap-2 text-[14px] text-icon-muted">
+              <div className="mb-4 flex items-center gap-2 text-base text-icon-muted">
                 <CalendarDays size={15} strokeWidth={2} />
                 <span>{item.measuredAt}</span>
               </div>
 
               <Link
                 href={`/kader/tindakan/${item.id}`}
-                className={`flex w-full items-center justify-center gap-2 rounded-[8px] py-3 text-[15px] font-semibold transition-all active:scale-95 cursor-pointer ${style.button}`}
+                className={`flex w-full items-center justify-center gap-2 rounded-[8px] py-3 text-md font-semibold transition-all active:scale-95 cursor-pointer ${style.button}`}
               >
                 {style.buttonIcon}
                 {style.action}

@@ -23,7 +23,7 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
 
   const getStatusStyles = (status: BalitaStatus) => {
     const baseBadgeClass =
-      "inline-flex items-center justify-center text-[12px] font-medium leading-[16px] tracking-[0.48px] px-3 py-1 rounded-full border";
+      "inline-flex items-center justify-center text-xs font-medium leading-[16px] tracking-[0.48px] px-3 py-1 rounded-full border";
 
     switch (status) {
       case "NORMAL":
@@ -74,7 +74,7 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
       <div className="flex items-center gap-2.5 overflow-x-auto pb-6 -mx-6 px-6 scrollbar-none shrink-0">
         <button
           onClick={() => setActiveFilter("ALL")}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[13.5px] font-semibold transition-all cursor-pointer whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
             activeFilter === "ALL"
               ? "bg-btn-primary text-white shadow-md shadow-blue-500/10"
               : "bg-primary-light/40 text-icon-muted hover:bg-primary-light/60 border border-border-input/10"
@@ -89,7 +89,7 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
             <button
               key={status}
               onClick={() => setActiveFilter(status)}
-              className={`px-4 py-2 rounded-full text-[13.5px] font-semibold transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
                 activeFilter === status
                   ? "bg-btn-primary text-white shadow-md shadow-blue-500/10"
                   : "bg-primary-light/40 text-icon-muted hover:bg-primary-light/60 border border-border-input/10"
@@ -120,11 +120,11 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
                   </div>
 
                   <div className="flex flex-col">
-                    <h3 className="text-[20px] font-semibold leading-[28px] tracking-[0px] text-text-main mb-0.5 align-middle">
+                    <h3 className="text-3xl font-semibold leading-[28px] tracking-[0px] text-text-main mb-0.5 align-middle">
                       {child.name}
                     </h3>
 
-                    <p className="text-[14px] font-normal leading-[20px] tracking-[0.14px] text-btn-primary align-middle">
+                    <p className="text-base font-normal leading-[20px] tracking-[0.14px] text-btn-primary align-middle">
                       {child.gender} &bull; {child.age}
                     </p>
                   </div>
@@ -144,7 +144,7 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
                   strokeWidth={2.5}
                 />
 
-                <p className="text-[14px] font-normal leading-[20px] tracking-[0px] text-text-main/80 align-middle">
+                <p className="text-base font-normal leading-[20px] tracking-[0px] text-text-main/80 align-middle">
                   {child.address}
                 </p>
               </div>

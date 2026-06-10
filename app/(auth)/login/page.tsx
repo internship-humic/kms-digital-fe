@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Mail } from "lucide-react";
 import InputField from "@/components/ui/InputField";
 import PasswordField from "@/components/ui/PasswordField";
+import { Button } from "@/components/ui/button";
 import { useLogin } from "@/features/auth/hooks/useLogin";
 
 export default function LoginPage() {
@@ -26,7 +27,7 @@ export default function LoginPage() {
           className="mb-6 h-16 sm:h-20 w-auto object-contain"
           priority
         />
-        <h1 className="text-[26px] font-bold text-text-main mb-2 text-center">
+        <h1 className="text-6xl font-bold text-text-main mb-2 text-center">
           Selamat Datang !
         </h1>
         <p className="text-sm font-normal text-text-main text-center w-full whitespace-nowrap">
@@ -36,7 +37,7 @@ export default function LoginPage() {
 
       {globalError && (
         <div
-          className="bg-danger/10 border border-danger/20 text-danger p-3.5 rounded-xl text-[13.5px] font-medium mb-5 flex items-center"
+          className="bg-danger/10 border border-danger/20 text-danger p-3.5 rounded-xl text-sm font-medium mb-5 flex items-center"
           role="alert"
         >
           {globalError}
@@ -71,14 +72,14 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <button
+        <Button
           type="submit"
+          size="lg"
           disabled={isSubmitting}
-          aria-label={isSubmitting ? "Sedang memproses login" : "Masuk ke akun"}
-          className="mt-4 w-full bg-btn-primary hover:bg-btn-hover text-white font-semibold rounded-xl py-3.5 flex items-center justify-center gap-2 transition-colors shadow-md shadow-blue-500/20 cursor-pointer tracking-[0.14px] disabled:opacity-70 disabled:cursor-not-allowed"
+          className="mt-4 w-full tracking-[0.14px]"
         >
           {isSubmitting ? "Memproses..." : "Masuk"}
-        </button>
+        </Button>
       </form>
 
       <div className="mt-8 mb-4 flex justify-center items-center gap-1.5 text-xs leading-[12px] tracking-[0.48px]">

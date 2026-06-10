@@ -3,7 +3,6 @@ import { Check } from "lucide-react";
 type ProfileCardProps = {
   fullName: string;
   email: string;
-  avatar: string;
   isVerified: boolean;
 };
 
@@ -29,7 +28,7 @@ export default function ProfileCard({
       <div className="absolute -bottom-8 -left-8 h-20 w-20 rounded-full bg-btn-primary/10" />
 
       <div className="relative flex items-center gap-4 p-5">
-        <div className="relative h-16 w-16 shrink-0 rounded-full shadow-sm ring-4 ring-white flex items-center justify-center bg-primary-light/60 text-btn-primary font-bold text-[22px] tracking-widest">
+        <div className="relative h-16 w-16 shrink-0 rounded-full shadow-sm ring-4 ring-white flex items-center justify-center bg-primary-light/60 text-btn-primary font-bold text-4xl tracking-widest">
           {getInitials(fullName)}
         </div>
 

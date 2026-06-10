@@ -34,7 +34,7 @@ export default function PersonalInfoSection({
 
           <h2
             id="personal-info-title"
-            className="text-[17px] font-bold text-text-main"
+            className="text-xl font-bold text-text-main"
           >
             Informasi Pribadi
           </h2>
@@ -70,7 +70,7 @@ export default function PersonalInfoSection({
               aria-hidden="true"
             />
 
-            <p className="text-[15px] font-medium text-text-main">{posyandu}</p>
+            <p className="text-md font-medium text-text-main">{posyandu}</p>
           </div>
         </div>
 
@@ -99,9 +99,7 @@ function ProfileInfoItem({
         {label}
       </p>
 
-      <p className="text-[15px] font-medium leading-snug text-text-main">
-        {value}
-      </p>
+      <p className="text-md font-medium leading-snug text-text-main">{value}</p>
     </div>
   );
 }

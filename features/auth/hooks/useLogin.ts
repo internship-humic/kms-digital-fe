@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, LoginFormValues } from "@/lib/validations/auth";
 import { loginService } from "@/services/auth.service";
+import { setAuthCookies } from "@/app/actions/auth";
 
 type UserRole = "parent" | "kader" | "admin";
 
@@ -20,26 +21,26 @@ export const useLogin = (role: UserRole) => {
       setGlobalError(null);
 
       const response = await loginService(data);
-
       console.log("Response Login:", response);
 
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("role", role);
+      await setAuthCookies(response.token, role);
 
       switch (role) {
         case "kader":
           router.push("/kader/dashboard");
           break;
-
         case "admin":
           router.push("/admin/dashboard");
           break;
-
         default:
           router.push("/dashboard");
       }
-    } catch (error: any) {
-      setGlobalError(error?.message || "Terjadi kesalahan sistem saat login.");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setGlobalError(error.message);
+      } else {
+        setGlobalError("Terjadi kesalahan sistem saat login.");
+      }
     }
   };
 
