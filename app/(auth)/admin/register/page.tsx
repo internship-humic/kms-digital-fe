@@ -18,9 +18,9 @@ export default function AdminRegisterPage() {
   return (
     <main className="fixed inset-0 z-[999] flex min-h-screen items-center justify-center bg-[#f8f5ff] px-6">
       <section className="w-full max-w-[1024px] rounded-[10px] border border-border-input/70 bg-white px-12 py-20 shadow-sm">
-        <div className="mb-12">
-          <h1 className="text-7xl font-bold text-text-main">Buat Akun Baru</h1>
-          <p className="mt-2 text-sm text-text-main">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-text-main mb-1.5">Buat Akun Baru</h1>
+          <p className="text-[13px] text-text-main/70">
             Mohon berikan informasi untuk membuat akun Anda!
           </p>
         </div>
@@ -95,7 +95,7 @@ export default function AdminRegisterPage() {
             type="submit"
             size="lg"
             disabled={isSubmitting}
-            className="mt-24 w-full text-lg"
+            className="mt-10 w-full text-lg"
           >
             {isSubmitting ? "Mendaftar..." : "Daftar"}
           </Button>

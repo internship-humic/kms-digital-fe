@@ -40,12 +40,12 @@ export default function AdminLoginPage() {
         </div>
 
         <div className="flex w-full items-center justify-center px-8 lg:w-1/2">
-          <div className="w-full max-w-[342px]">
-            <div className="mb-12 text-center">
-              <h1 className="text-7xl font-bold text-text-main">
+          <div className="w-full max-w-[360px]">
+            <div className="mb-8 text-center">
+              <h1 className="text-2xl font-bold text-text-main mb-2">
                 Selamat Datang !
               </h1>
-              <p className="mt-4 text-sm text-text-main">
+              <p className="text-[13px] text-text-main/70">
                 Masukkan email dan password untuk mengakses akun Anda.
               </p>
             </div>

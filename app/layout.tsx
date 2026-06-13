@@ -30,9 +30,7 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col bg-background font-sans tracking-tight">
-        <div className="w-full max-w-md mx-auto min-h-screen bg-white relative shadow-2xl overflow-x-hidden flex flex-col">
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   );
