@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ArrowUpDown } from "lucide-react";
 import DashboardActions from "@/features/parent/dashboard/components/FloatingAddButton";
 import ChildOptionButton from "@/features/parent/dashboard/components/ChildCardMenu";
-import { getDashboardMockData } from "@/features/parent/dashboard/data/mockDashboard";
-import { getProfileMockData } from "@/features/parent/profile/data/mockProfile";
+import { getParentDashboard } from "@/services/dashboard.service";
+import { getProfile } from "@/services/profile.service";
 
 export const metadata = {
   title: "Dashboard | JagaCilik",
@@ -39,10 +39,12 @@ const getInitials = (name: string) => {
 };
 
 export default async function DashboardPage() {
-  const childrenData = await getDashboardMockData();
-  const profile = await getProfileMockData();
+  const childrenData = await getParentDashboard();
+  const profile = await getProfile();
 
-  const firstName = profile.fullName.split(" ")[0];
+  const firstName = profile?.fullName
+    ? profile.fullName.split(" ")[0]
+    : "Orang Tua";
 
   return (
     <div className="flex-1 bg-background flex flex-col relative overflow-y-auto pb-32">
@@ -60,7 +62,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="w-10 h-10 rounded-full border border-border-input/40 shadow-sm shrink-0 flex items-center justify-center bg-primary-light/60 text-btn-primary font-bold text-md tracking-wider select-none">
-          {getInitials(profile.fullName)}
+          {profile ? getInitials(profile.fullName) : "O"}
         </div>
       </div>
 
@@ -74,14 +76,13 @@ export default async function DashboardPage() {
       </div>
 
       <div className="px-6 flex flex-col gap-5">
-        {childrenData.map((child) => (
+        {childrenData?.map((child) => (
           <Link
             href={`/dashboard/child/${child.id}`}
             key={child.id}
             className="bg-white rounded-[20px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-border-input/40 p-5 block transition-transform hover:scale-[1.02] active:scale-95"
           >
             <div className="flex justify-between items-start mb-3">
-              {/* Avatar inisial */}
               <div className="w-[60px] h-[60px] rounded-full flex items-center justify-center shrink-0 border border-primary-light/80 bg-primary-light/60 shadow-sm">
                 <span className="text-3xl font-bold text-btn-primary tracking-widest select-none">
                   {getInitials(child.name)}

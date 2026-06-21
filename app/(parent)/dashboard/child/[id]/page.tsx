@@ -3,7 +3,7 @@ import { ArrowLeft, Download } from "lucide-react";
 import GrowthChart from "@/features/parent/growth/components/GrowthChart";
 import { MOCK_CHILD_CHART_DATA } from "@/features/parent/growth/data/mockGrowth";
 import { getCombinedGrowthData } from "@/features/parent/growth/utils/getChartData";
-import { getDashboardMockData } from "@/features/parent/dashboard/data/mockDashboard";
+import { getParentDashboard } from "@/services/dashboard.service";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 
@@ -34,8 +34,8 @@ export default async function ChildDetailPage({
 }) {
   const { id } = await params;
 
-  const childrenList = await getDashboardMockData();
-  const child = childrenList.find((item) => item.id === Number(id));
+  const childrenList = await getParentDashboard();
+  const child = childrenList.find((item) => item.id.toString() === id);
 
   if (!child) {
     notFound();

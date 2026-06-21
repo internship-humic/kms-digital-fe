@@ -17,7 +17,13 @@ import {
   jadwalPosyandu,
 } from "../data/mockDashboard";
 
-export default function AdminDashboardFeed() {
+interface AdminDashboardFeedProps {
+  initialData?: any;
+}
+
+export default function AdminDashboardFeed({
+  initialData,
+}: AdminDashboardFeedProps) {
   const getMetricIcon = (iconName: string) => {
     switch (iconName) {
       case "smile":
@@ -60,7 +66,6 @@ export default function AdminDashboardFeed() {
 
   return (
     <div className="p-8 pb-20">
-      {/* Header Info */}
       <div className="mb-8">
         <h1 className="text-[32px] font-bold leading-[40px] tracking-[-0.64px] align-middle text-text-main mb-2">
           Dashboard Admin JagaCilik

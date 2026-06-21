@@ -1,28 +1,29 @@
-import { useState, useMemo } from "react";
+import { useState, useCallback } from "react";
 
-export function usePagination<T>(data: T[], itemsPerPage: number = 5) {
-  const [currentPage, setCurrentPage] = useState(1);
+export function usePagination(initialLimit: number = 10) {
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(initialLimit);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const totalPages = Math.ceil(data.length / itemsPerPage) || 1;
+  const setPaginationData = useCallback((total: number, pages: number) => {
+    setTotalItems(total);
+    setTotalPages(pages);
+  }, []);
 
-  const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return data.slice(start, start + itemsPerPage);
-  }, [currentPage, itemsPerPage, data]);
-
-  const nextPage = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
-  const prevPage = () => setCurrentPage((p) => Math.max(1, p - 1));
-  const goToPage = (page: number) =>
-    setCurrentPage(Math.min(Math.max(1, page), totalPages));
+  const nextPage = () => setPage((p) => Math.min(totalPages, p + 1));
+  const prevPage = () => setPage((p) => Math.max(1, p - 1));
+  const goToPage = (p: number) => setPage(Math.min(Math.max(1, p), totalPages));
 
   return {
-    currentPage,
+    page,
+    limit,
+    setLimit,
+    totalItems,
     totalPages,
-    paginatedData,
+    setPaginationData,
     nextPage,
     prevPage,
     goToPage,
-    totalItems: data.length,
-    itemsPerPage,
   };
 }

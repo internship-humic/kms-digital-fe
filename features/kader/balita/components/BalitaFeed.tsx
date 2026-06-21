@@ -28,9 +28,9 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
     switch (status) {
       case "NORMAL":
         return `${baseBadgeClass} bg-emerald-50 border-emerald-200 text-status-normal`;
-      case "LOW_RISK":
+      case "LOWRISK":
         return `${baseBadgeClass} bg-amber-50 border-amber-200 text-password-medium`;
-      case "HIGH_RISK":
+      case "HIGHRISK":
         return `${baseBadgeClass} bg-rose-50 border-rose-200 text-danger`;
     }
   };
@@ -39,9 +39,9 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
     switch (status) {
       case "NORMAL":
         return "Status: Normal";
-      case "LOW_RISK":
+      case "LOWRISK":
         return "Status: Low Risk";
-      case "HIGH_RISK":
+      case "HIGHRISK":
         return "Status: High Risk";
     }
   };
@@ -84,25 +84,23 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
           Semua
         </button>
 
-        {(["NORMAL", "LOW_RISK", "HIGH_RISK"] as BalitaStatus[]).map(
-          (status) => (
-            <button
-              key={status}
-              onClick={() => setActiveFilter(status)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                activeFilter === status
-                  ? "bg-btn-primary text-white shadow-md shadow-blue-500/10"
-                  : "bg-primary-light/40 text-icon-muted hover:bg-primary-light/60 border border-border-input/10"
-              }`}
-            >
-              {status === "NORMAL"
-                ? "Normal"
-                : status === "LOW_RISK"
-                  ? "Low Risk"
-                  : "High Risk"}
-            </button>
-          ),
-        )}
+        {(["NORMAL", "LOWRISK", "HIGHRISK"] as BalitaStatus[]).map((status) => (
+          <button
+            key={status}
+            onClick={() => setActiveFilter(status)}
+            className={`px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
+              activeFilter === status
+                ? "bg-btn-primary text-white shadow-md shadow-blue-500/10"
+                : "bg-primary-light/40 text-icon-muted hover:bg-primary-light/60 border border-border-input/10"
+            }`}
+          >
+            {status === "NORMAL"
+              ? "Normal"
+              : status === "LOWRISK"
+                ? "Low Risk"
+                : "High Risk"}
+          </button>
+        ))}
       </div>
 
       <div className="flex flex-col gap-4">
