@@ -1,29 +1,64 @@
 import { LoginFormValues, RegisterFormValues } from "@/lib/validations/auth";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+
 export const loginService = async (data: LoginFormValues) => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  try {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password,
+      }),
+    });
 
-  if (data.email === "error@mail.com") {
-    throw new Error("Akun tidak ditemukan atau password salah.");
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "Gagal melakukan login.");
+    }
+
+    return {
+      token: result.data.accessToken,
+      user: result.data.user,
+      role: result.data.role,
+    };
+  } catch (error: any) {
+    throw new Error(error.message || "Terjadi kesalahan koneksi ke server.");
   }
-
-  return {
-    token: "dummy-token-123",
-    user: { email: data.email },
-  };
 };
 
 export const registerService = async (data: RegisterFormValues) => {
-  const { confirmPassword, ...payload } = data;
+  try {
+    const payload = {
+      name: data.fullName,
+      email: data.email,
+      password: data.password,
+      password_confirmation: data.confirmPassword,
+      address: data.address,
+      clinic_id: data.posyanduId,
+      phone_number: data.phone,
+    };
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+    const response = await fetch(`${API_URL}/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
-  if (payload.email === "exist@mail.com") {
-    throw new Error("Email ini sudah terdaftar.");
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "Gagal melakukan registrasi.");
+    }
+
+    return result.data;
+  } catch (error: any) {
+    throw new Error(error.message || "Terjadi kesalahan koneksi ke server.");
   }
-
-  return {
-    message: "Registrasi berhasil",
-    user: { email: payload.email, fullName: payload.fullName },
-  };
 };

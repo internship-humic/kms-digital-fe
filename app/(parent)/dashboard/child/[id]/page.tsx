@@ -62,7 +62,6 @@ export default async function ChildDetailPage({
 
       <div className="flex-1 px-6 pb-32 pt-2 flex flex-col items-center gap-5 overflow-y-auto">
         <div className="w-full min-h-[98px] bg-white rounded-[12px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-border-input/40 p-4 flex items-center gap-4 relative shrink-0">
-          {/* Avatar Inisial Dinamis */}
           <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0 border border-primary-light/80 bg-primary-light/60 shadow-sm">
             <span className="text-2xl font-bold text-btn-primary tracking-widest select-none">
               {getInitials(child.name)}
@@ -89,7 +88,6 @@ export default async function ChildDetailPage({
         <GrowthChart
           data={MOCK_CHILD_CHART_DATA}
           preCalculatedChartData={preCalculatedChartData}
-          gender={child.gender}
         />
       </div>
 

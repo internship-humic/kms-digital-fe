@@ -15,6 +15,48 @@ export const getGrowthMockData = async (): Promise<ChildData[]> => {
         head: "50.0",
         status: "NORMAL",
       },
+      riwayatPemeriksaan: [
+        {
+          id: 1,
+          tanggal: "12 Okt 2026",
+          lokasi: "Posyandu Melati 04",
+          keterangan:
+            "Pemeriksaan rutin bulanan. Tumbuh kembang anak sesuai dengan grafik.",
+          bb: 14.5,
+          tb: 95.2,
+        },
+        {
+          id: 2,
+          tanggal: "12 Sep 2026",
+          lokasi: "Puskesmas Kebayoran",
+          keterangan: "Pemeriksaan tambahan dan konsultasi gizi.",
+          bb: 14.2,
+          tb: 94.8,
+        },
+      ],
+      jadwalImunisasi: [
+        {
+          id: 1,
+          namaVaksin: "Hepatitis B & Polio 1",
+          bulanKe: "Bulan 1",
+          keterangan: "Vaksin dasar lengkap",
+          status: "selesai",
+        },
+        {
+          id: 2,
+          namaVaksin: "DPT-HB-Hib 3 & Polio 4",
+          bulanKe: "Bulan 4",
+          keterangan: "Lanjutan vaksin dasar",
+          status: "selesai",
+        },
+        {
+          id: 3,
+          namaVaksin: "Campak Rubella (MR) Lanjutan",
+          bulanKe: "Bulan 36",
+          keterangan: "Booster imunisasi lanjutan",
+          status: "mendatang",
+        },
+      ],
     },
     {
       id: 2,
@@ -28,6 +70,39 @@ export const getGrowthMockData = async (): Promise<ChildData[]> => {
         head: "43.5",
         status: "NORMAL",
       },
+      riwayatPemeriksaan: [
+        {
+          id: 1,
+          tanggal: "05 Okt 2026",
+          lokasi: "Posyandu Melati 04",
+          keterangan: "Pemeriksaan rutin bulanan.",
+          bb: 8.2,
+          tb: 72.0,
+        },
+      ],
+      jadwalImunisasi: [
+        {
+          id: 1,
+          namaVaksin: "BCG & Polio 1",
+          bulanKe: "Bulan 1",
+          keterangan: "Vaksin dasar",
+          status: "selesai",
+        },
+        {
+          id: 2,
+          namaVaksin: "Campak Rubella (MR)",
+          bulanKe: "Bulan 9",
+          keterangan: "Wajib diberikan tepat waktu",
+          status: "selesai",
+        },
+        {
+          id: 3,
+          namaVaksin: "DPT-HB-Hib Lanjutan",
+          bulanKe: "Bulan 18",
+          keterangan: "Booster lanjutan",
+          status: "mendatang",
+        },
+      ],
     },
   ];
 };

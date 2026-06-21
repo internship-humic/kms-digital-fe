@@ -2,15 +2,28 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { User, Mail, Phone, Home } from "lucide-react";
 import InputField from "@/components/ui/InputField";
 import PasswordField from "@/components/ui/PasswordField";
-import CustomSelect from "@/components/ui/CustomSelect";
+import CustomSelect, { SelectOption } from "@/components/ui/CustomSelect";
 import TextAreaField from "@/components/ui/TextAreaField";
-import { POSYANDU_OPTIONS } from "@/lib/constants";
 import { Controller } from "react-hook-form";
 import { useRegister } from "@/features/auth/hooks/useRegister";
 import { Button } from "@/components/ui/button";
+
+import {
+  getProvinces,
+  getRegencies,
+  getDistricts,
+  getVillages,
+  getClinics,
+} from "@/services/region.service";
+
+interface RegionResponseDTO {
+  id: string;
+  name: string;
+}
 
 export default function RegisterPage() {
   const { form, onSubmit, globalError } = useRegister();
@@ -18,8 +31,89 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors, isSubmitting },
   } = form;
+
+  const [provinces, setProvinces] = useState<SelectOption[]>([]);
+  const [regencies, setRegencies] = useState<SelectOption[]>([]);
+  const [districts, setDistricts] = useState<SelectOption[]>([]);
+  const [villages, setVillages] = useState<SelectOption[]>([]);
+  const [clinics, setClinics] = useState<SelectOption[]>([]);
+
+  const [selectedProv, setSelectedProv] = useState<string>("");
+  const [selectedReg, setSelectedReg] = useState<string>("");
+  const [selectedDist, setSelectedDist] = useState<string>("");
+  const [selectedVill, setSelectedVill] = useState<string>("");
+
+  useEffect(() => {
+    getProvinces().then((data) =>
+      setProvinces(
+        data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
+      ),
+    );
+  }, []);
+
+  useEffect(() => {
+    if (selectedProv) {
+      getRegencies(selectedProv).then((data) =>
+        setRegencies(
+          data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
+        ),
+      );
+    }
+
+    setRegencies([]);
+    setDistricts([]);
+    setVillages([]);
+    setClinics([]);
+    setSelectedReg("");
+    setSelectedDist("");
+    setSelectedVill("");
+    setValue("posyanduId", "");
+  }, [selectedProv, setValue]);
+
+  useEffect(() => {
+    if (selectedReg) {
+      getDistricts(selectedReg).then((data) =>
+        setDistricts(
+          data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
+        ),
+      );
+    }
+    setDistricts([]);
+    setVillages([]);
+    setClinics([]);
+    setSelectedDist("");
+    setSelectedVill("");
+    setValue("posyanduId", "");
+  }, [selectedReg, setValue]);
+
+  useEffect(() => {
+    if (selectedDist) {
+      getVillages(selectedDist).then((data) =>
+        setVillages(
+          data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
+        ),
+      );
+    }
+    setVillages([]);
+    setClinics([]);
+    setSelectedVill("");
+    setValue("posyanduId", "");
+  }, [selectedDist, setValue]);
+
+  useEffect(() => {
+    if (selectedVill) {
+      getClinics(selectedVill).then((data) =>
+        setClinics(
+          data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
+        ),
+      );
+    }
+    setClinics([]);
+    setValue("posyanduId", "");
+  }, [selectedVill, setValue]);
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto p-6 sm:p-8">
@@ -59,23 +153,6 @@ export default function RegisterPage() {
           aria-invalid={!!errors.fullName}
         />
 
-        <Controller
-          name="posyanduId"
-          control={control}
-          render={({ field }) => (
-            <CustomSelect
-              label="Posyandu"
-              placeholder="Pilih Posyandu"
-              options={POSYANDU_OPTIONS}
-              value={
-                POSYANDU_OPTIONS.find((opt) => opt.id === field.value) || null
-              }
-              onChange={(option) => field.onChange(option.id)}
-              error={errors.posyanduId?.message}
-            />
-          )}
-        />
-
         <InputField
           label="Alamat Email"
           placeholder="Masukan Email Anda"
@@ -96,8 +173,65 @@ export default function RegisterPage() {
           aria-invalid={!!errors.phone}
         />
 
+        <div className="rounded-xl border border-border-input/40 bg-gray-50/50 p-4 shadow-sm mb-2 mt-2">
+          <p className="text-sm font-semibold text-text-main mb-3">
+            Pilih Lokasi Posyandu
+          </p>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <CustomSelect
+              label="Provinsi"
+              placeholder="Pilih Provinsi"
+              options={provinces}
+              value={provinces.find((opt) => opt.id === selectedProv) || null}
+              onChange={(option) => setSelectedProv(option.id)}
+            />
+            <CustomSelect
+              label="Kabupaten/Kota"
+              placeholder="Pilih Kabupaten"
+              options={regencies}
+              value={regencies.find((opt) => opt.id === selectedReg) || null}
+              onChange={(option) => setSelectedReg(option.id)}
+            />
+            <CustomSelect
+              label="Kecamatan"
+              placeholder="Pilih Kecamatan"
+              options={districts}
+              value={districts.find((opt) => opt.id === selectedDist) || null}
+              onChange={(option) => setSelectedDist(option.id)}
+            />
+            <CustomSelect
+              label="Desa/Kelurahan"
+              placeholder="Pilih Desa"
+              options={villages}
+              value={villages.find((opt) => opt.id === selectedVill) || null}
+              onChange={(option) => setSelectedVill(option.id)}
+            />
+          </div>
+
+          <Controller
+            name="posyanduId"
+            control={control}
+            render={({ field }) => (
+              <CustomSelect
+                label="Posyandu Terdekat"
+                placeholder={
+                  selectedVill
+                    ? clinics.length > 0
+                      ? "Pilih Posyandu"
+                      : "Posyandu tidak tersedia"
+                    : "Pilih desa terlebih dahulu"
+                }
+                options={clinics}
+                value={clinics.find((opt) => opt.id === field.value) || null}
+                onChange={(option) => field.onChange(option.id)}
+                error={errors.posyanduId?.message}
+              />
+            )}
+          />
+        </div>
+
         <TextAreaField
-          label="Alamat Rumah"
+          label="Alamat Lengkap Domisili"
           placeholder="Masukan Alamat Rumah"
           icon={Home}
           rows={3}
