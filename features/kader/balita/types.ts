@@ -1,4 +1,4 @@
-export type BalitaStatus = "NORMAL" | "LOW_RISK" | "HIGH_RISK";
+export type BalitaStatus = "NORMAL" | "LOWRISK" | "HIGHRISK";
 
 export type BalitaData = {
   id: number;
@@ -18,4 +18,3 @@ export type BalitaDetail = {
   stats: { berat: string; tinggi: string; lingkarKepala: string };
   riwayat: { tanggal: string; berat: string; tinggi: string; zscore: string }[];
 };
-  

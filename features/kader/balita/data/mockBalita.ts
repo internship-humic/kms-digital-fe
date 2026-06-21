@@ -17,7 +17,7 @@ export const getBalitaMockData = async (): Promise<BalitaData[]> => {
       name: "Nadlyn A.",
       gender: "Perempuan",
       age: "18 Bulan",
-      status: "LOW_RISK",
+      status: "LOWRISK",
       address: "Gang Haji Usin No. 12, Cipete Utara, Jakarta Selatan",
     },
     {
@@ -25,7 +25,7 @@ export const getBalitaMockData = async (): Promise<BalitaData[]> => {
       name: "Abe Cekut",
       gender: "Laki-laki",
       age: "32 Bulan",
-      status: "HIGH_RISK",
+      status: "HIGHRISK",
       address:
         "Perumahan Elok Blok C4, Bintaro Jaya Sektor 9, Tangerang Selatan",
     },

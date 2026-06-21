@@ -1,5 +1,5 @@
 import DashboardKaderFeed from "@/features/kader/dashboard/components/DashboardKaderFeed";
-import { getKaderDashboardMockData } from "@/features/kader/dashboard/data/mockDashboard";
+import { getKaderDashboard } from "@/services/dashboard.service";
 
 export const metadata = {
   title: "Dashboard Kader | JagaCilik",
@@ -8,7 +8,15 @@ export const metadata = {
 };
 
 export default async function KaderDashboardPage() {
-  const dashboardData = await getKaderDashboardMockData();
+  const dashboardData = await getKaderDashboard();
+
+  if (!dashboardData) {
+    return (
+      <div className="p-8 text-center text-danger">
+        Gagal memuat data dashboard.
+      </div>
+    );
+  }
 
   return <DashboardKaderFeed data={dashboardData} />;
 }

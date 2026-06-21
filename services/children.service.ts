@@ -1,12 +1,12 @@
-import { cookies } from "next/headers";
+import { fetchWithAuth } from "@/lib/fetcher";
+import type { BalitaData } from "@/features/kader/balita/types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-
-export const getChildrens = async (search?: string, page = 1, limit = 50) => {
+export const getChildrens = async (
+  search?: string,
+  page = 1,
+  limit = 50,
+): Promise<BalitaData[]> => {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
-
     const queryParams = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
@@ -16,27 +16,26 @@ export const getChildrens = async (search?: string, page = 1, limit = 50) => {
       queryParams.append("search", search);
     }
 
-    const response = await fetch(
-      `${API_URL}/children?${queryParams.toString()}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        cache: "no-store",
-      },
-    );
+    const response = await fetchWithAuth(`/children?${queryParams.toString()}`);
 
-    const result = await response.json();
+    const mappedData: BalitaData[] = response.data.map((item: any) => {
+      const birthDate = new Date(item.birth_date);
+      const diffTime = Math.abs(new Date().getTime() - birthDate.getTime());
+      const diffMonths = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30));
 
-    if (!response.ok) {
-      throw new Error(result.message || "Gagal mengambil data balita");
-    }
+      return {
+        id: item.id,
+        name: item.name,
+        gender: item.gender === "MALE" ? "Laki-laki" : "Perempuan",
+        age: `${diffMonths} Bulan`,
+        status: item.status || "NORMAL",
+        address: item.address,
+      };
+    });
 
-    return result.data;
+    return mappedData;
   } catch (error) {
     console.error("Error fetching childrens:", error);
-    return { data: [], pagination: null };
+    return [];
   }
 };

@@ -2,28 +2,16 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import { User, Mail, Phone, Home } from "lucide-react";
+import { Controller } from "react-hook-form";
 import InputField from "@/components/ui/InputField";
 import PasswordField from "@/components/ui/PasswordField";
-import CustomSelect, { SelectOption } from "@/components/ui/CustomSelect";
+import CustomSelect from "@/components/ui/CustomSelect";
 import TextAreaField from "@/components/ui/TextAreaField";
-import { Controller } from "react-hook-form";
-import { useRegister } from "@/features/auth/hooks/useRegister";
 import { Button } from "@/components/ui/button";
 
-import {
-  getProvinces,
-  getRegencies,
-  getDistricts,
-  getVillages,
-  getClinics,
-} from "@/services/region.service";
-
-interface RegionResponseDTO {
-  id: string;
-  name: string;
-}
+import { useRegister } from "@/features/auth/hooks/useRegister";
+import { useRegionData } from "@/features/auth/hooks/useRegionData";
 
 export default function RegisterPage() {
   const { form, onSubmit, globalError } = useRegister();
@@ -35,85 +23,21 @@ export default function RegisterPage() {
     formState: { errors, isSubmitting },
   } = form;
 
-  const [provinces, setProvinces] = useState<SelectOption[]>([]);
-  const [regencies, setRegencies] = useState<SelectOption[]>([]);
-  const [districts, setDistricts] = useState<SelectOption[]>([]);
-  const [villages, setVillages] = useState<SelectOption[]>([]);
-  const [clinics, setClinics] = useState<SelectOption[]>([]);
-
-  const [selectedProv, setSelectedProv] = useState<string>("");
-  const [selectedReg, setSelectedReg] = useState<string>("");
-  const [selectedDist, setSelectedDist] = useState<string>("");
-  const [selectedVill, setSelectedVill] = useState<string>("");
-
-  useEffect(() => {
-    getProvinces().then((data) =>
-      setProvinces(
-        data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
-      ),
-    );
-  }, []);
-
-  useEffect(() => {
-    if (selectedProv) {
-      getRegencies(selectedProv).then((data) =>
-        setRegencies(
-          data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
-        ),
-      );
-    }
-
-    setRegencies([]);
-    setDistricts([]);
-    setVillages([]);
-    setClinics([]);
-    setSelectedReg("");
-    setSelectedDist("");
-    setSelectedVill("");
-    setValue("posyanduId", "");
-  }, [selectedProv, setValue]);
-
-  useEffect(() => {
-    if (selectedReg) {
-      getDistricts(selectedReg).then((data) =>
-        setDistricts(
-          data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
-        ),
-      );
-    }
-    setDistricts([]);
-    setVillages([]);
-    setClinics([]);
-    setSelectedDist("");
-    setSelectedVill("");
-    setValue("posyanduId", "");
-  }, [selectedReg, setValue]);
-
-  useEffect(() => {
-    if (selectedDist) {
-      getVillages(selectedDist).then((data) =>
-        setVillages(
-          data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
-        ),
-      );
-    }
-    setVillages([]);
-    setClinics([]);
-    setSelectedVill("");
-    setValue("posyanduId", "");
-  }, [selectedDist, setValue]);
-
-  useEffect(() => {
-    if (selectedVill) {
-      getClinics(selectedVill).then((data) =>
-        setClinics(
-          data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
-        ),
-      );
-    }
-    setClinics([]);
-    setValue("posyanduId", "");
-  }, [selectedVill, setValue]);
+  const {
+    provinces,
+    regencies,
+    districts,
+    villages,
+    clinics,
+    selectedProv,
+    setSelectedProv,
+    selectedReg,
+    setSelectedReg,
+    selectedDist,
+    setSelectedDist,
+    selectedVill,
+    setSelectedVill,
+  } = useRegionData(setValue);
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto p-6 sm:p-8">

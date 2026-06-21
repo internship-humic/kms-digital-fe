@@ -17,14 +17,17 @@ export const loginService = async (data: LoginFormValues) => {
 
     const result = await response.json();
 
-    if (!response.ok) {
+    if (!response.ok || result.success === false) {
       throw new Error(result.message || "Gagal melakukan login.");
     }
+
+    const normalizedRole = result.data.role.toLowerCase();
+    const finalRole = normalizedRole === "parents" ? "parent" : normalizedRole;
 
     return {
       token: result.data.accessToken,
       user: result.data.user,
-      role: result.data.role,
+      role: finalRole,
     };
   } catch (error: any) {
     throw new Error(error.message || "Terjadi kesalahan koneksi ke server.");
@@ -53,7 +56,7 @@ export const registerService = async (data: RegisterFormValues) => {
 
     const result = await response.json();
 
-    if (!response.ok) {
+    if (!response.ok || result.success === false) {
       throw new Error(result.message || "Gagal melakukan registrasi.");
     }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Plus,
@@ -9,25 +9,71 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { mockStaffList } from "../data/mockStaff";
 import BuatAkunKaderModal from "./BuatAkunKaderModal";
 import { usePagination } from "@/hooks/usePagination";
 
+// import { getStaff } from "@/services/staff.service";
+import { mockStaffList } from "../data/mockStaff";
+
 export default function StaffDirectoryFeed() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [staffData, setStaffData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
-    currentPage,
+    page,
+    limit,
+    totalItems,
     totalPages,
-    paginatedData: tableData,
+    setPaginationData,
     nextPage,
     prevPage,
     goToPage,
-    totalItems,
-    itemsPerPage,
-  } = usePagination(mockStaffList, 5);
+  } = usePagination(5);
+
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      setIsLoading(true);
+      try {
+        // const response = await getStaff(searchQuery, page, limit);
+        // setStaffData(response.data);
+        // setPaginationData(response.pagination.total, response.pagination.totalPages);
+
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        const filtered = mockStaffList.filter(
+          (s) =>
+            s.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            s.email.toLowerCase().includes(searchQuery.toLowerCase()),
+        );
+        const start = (page - 1) * limit;
+
+        setStaffData(filtered.slice(start, start + limit));
+        setPaginationData(
+          filtered.length,
+          Math.ceil(filtered.length / limit) || 1,
+        );
+      } catch (error) {
+        console.error("Gagal mengambil data kader:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const timeoutId = setTimeout(() => {
+      fetchStaffData();
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [page, limit, searchQuery, setPaginationData]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    if (page !== 1) goToPage(1);
+  };
 
   const getStatusStyle = (status: string) => {
     switch (status) {
@@ -71,6 +117,8 @@ export default function StaffDirectoryFeed() {
             />
             <input
               type="text"
+              value={searchQuery}
+              onChange={handleSearch}
               placeholder="Cari nama, email, atau posyandu..."
               className="pl-11 pr-4 py-3 w-full rounded-xl border border-border-input/60 focus:outline-none focus:border-btn-primary focus:ring-1 focus:ring-btn-primary text-[15px] placeholder:text-text-placeholder text-text-main transition-all"
             />
@@ -125,155 +173,160 @@ export default function StaffDirectoryFeed() {
           </div>
         </div>
 
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-border-input/30">
-              <th className="px-6 py-4 text-[14px] font-bold text-text-main w-[25%]">
-                Nama Kader
-              </th>
-              <th className="px-6 py-4 text-[14px] font-bold text-text-main w-[20%]">
-                Email/Username
-              </th>
-              <th className="px-6 py-4 text-[14px] font-bold text-text-main w-[15%]">
-                Desa
-              </th>
-              <th className="px-6 py-4 text-[14px] font-bold text-text-main w-[15%]">
-                Posyandu
-              </th>
-              <th className="px-6 py-4 text-[14px] font-bold text-text-main w-[15%]">
-                Status Akun
-              </th>
-              <th className="px-6 py-4 text-[14px] font-bold text-text-main text-right w-[10%]">
-                Aksi
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {tableData.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={6}
-                  className="px-6 py-10 text-center text-[15px] text-icon-muted"
-                >
-                  Data kader tidak ditemukan.
-                </td>
+        <div className="relative min-h-[300px]">
+          {isLoading && (
+            <div className="absolute inset-0 z-10 bg-white/50 backdrop-blur-[1px] flex items-center justify-center">
+              <Loader2 className="w-8 h-8 text-btn-primary animate-spin" />
+            </div>
+          )}
+
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-border-input/30">
+                <th className="px-6 py-4 text-[14px] font-bold text-text-main w-[25%]">
+                  Nama Kader
+                </th>
+                <th className="px-6 py-4 text-[14px] font-bold text-text-main w-[20%]">
+                  Email/Username
+                </th>
+                <th className="px-6 py-4 text-[14px] font-bold text-text-main w-[15%]">
+                  Desa
+                </th>
+                <th className="px-6 py-4 text-[14px] font-bold text-text-main w-[15%]">
+                  Posyandu
+                </th>
+                <th className="px-6 py-4 text-[14px] font-bold text-text-main w-[15%]">
+                  Status Akun
+                </th>
+                <th className="px-6 py-4 text-[14px] font-bold text-text-main text-right w-[10%]">
+                  Aksi
+                </th>
               </tr>
-            ) : (
-              tableData.map((row) => (
-                <tr
-                  key={row.id}
-                  className="border-b border-border-input/20 last:border-b-0 hover:bg-background transition-colors"
-                >
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-9 h-9 rounded-full bg-btn-primary flex items-center justify-center text-white text-[13px] font-bold shrink-0">
-                        {row.inisial}
-                      </div>
-                      <span className="text-[15px] font-semibold text-text-main">
-                        {row.nama}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5 text-[15px] text-icon-muted">
-                    {row.email}
-                  </td>
-                  <td className="px-6 py-5 text-[15px] text-icon-muted">
-                    {row.desa}
-                  </td>
-                  <td className="px-6 py-5 text-[15px] text-icon-muted">
-                    {row.posyandu}
-                  </td>
-                  <td className="px-6 py-5">
-                    <div
-                      className={`inline-flex justify-center min-w-[100px] py-1.5 rounded-full text-[13px] font-semibold ${getStatusStyle(row.status)}`}
-                    >
-                      {row.status}
-                    </div>
-                  </td>
-                  <td className="px-6 py-5">
-                    <div className="flex items-center justify-end gap-3">
-                      <button
-                        aria-label={`Lihat detail kader ${row.nama}`}
-                        className="text-icon-muted hover:text-text-main transition-colors cursor-pointer"
-                      >
-                        <Eye size={18} strokeWidth={2.5} />
-                      </button>
-                      <button
-                        aria-label={`Edit data kader ${row.nama}`}
-                        className="text-btn-primary hover:text-btn-hover transition-colors cursor-pointer"
-                      >
-                        <Pencil size={18} strokeWidth={2.5} />
-                      </button>
-                      <button
-                        aria-label={`Hapus data kader ${row.nama}`}
-                        className="text-danger hover:text-danger/80 transition-colors cursor-pointer"
-                      >
-                        <Trash2 size={18} strokeWidth={2.5} />
-                      </button>
-                    </div>
+            </thead>
+            <tbody>
+              {!isLoading && staffData.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-6 py-10 text-center text-[15px] text-icon-muted"
+                  >
+                    Data kader tidak ditemukan.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                staffData.map((row) => (
+                  <tr
+                    key={row.id}
+                    className="border-b border-border-input/20 last:border-b-0 hover:bg-background transition-colors"
+                  >
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-4">
+                        <div className="w-9 h-9 rounded-full bg-btn-primary flex items-center justify-center text-white text-[13px] font-bold shrink-0">
+                          {row.inisial}
+                        </div>
+                        <span className="text-[15px] font-semibold text-text-main">
+                          {row.nama}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5 text-[15px] text-icon-muted">
+                      {row.email}
+                    </td>
+                    <td className="px-6 py-5 text-[15px] text-icon-muted">
+                      {row.desa}
+                    </td>
+                    <td className="px-6 py-5 text-[15px] text-icon-muted">
+                      {row.posyandu}
+                    </td>
+                    <td className="px-6 py-5">
+                      <div
+                        className={`inline-flex justify-center min-w-[100px] py-1.5 rounded-full text-[13px] font-semibold ${getStatusStyle(row.status)}`}
+                      >
+                        {row.status}
+                      </div>
+                    </td>
+                    <td className="px-6 py-5">
+                      <div className="flex items-center justify-end gap-3">
+                        <button
+                          aria-label={`Lihat detail kader ${row.nama}`}
+                          className="text-icon-muted hover:text-text-main transition-colors cursor-pointer"
+                        >
+                          <Eye size={18} strokeWidth={2.5} />
+                        </button>
+                        <button
+                          aria-label={`Edit data kader ${row.nama}`}
+                          className="text-btn-primary hover:text-btn-hover transition-colors cursor-pointer"
+                        >
+                          <Pencil size={18} strokeWidth={2.5} />
+                        </button>
+                        <button
+                          aria-label={`Hapus data kader ${row.nama}`}
+                          className="text-danger hover:text-danger/80 transition-colors cursor-pointer"
+                        >
+                          <Trash2 size={18} strokeWidth={2.5} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
-        {/* Pagination Dinamis */}
+        {/* Pagination Controls */}
         <div className="px-6 py-4 border-t border-border-input/30 flex items-center justify-between bg-white">
           <span className="text-sm text-icon-muted">
-            Menampilkan{" "}
-            {totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1}–
-            {Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems}{" "}
-            kader
+            Menampilkan {totalItems === 0 ? 0 : (page - 1) * limit + 1}–
+            {Math.min(page * limit, totalItems)} dari {totalItems} kader
           </span>
           <div className="flex items-center gap-1">
             <button
               onClick={prevPage}
-              disabled={currentPage === 1 || totalItems === 0}
+              disabled={page === 1 || totalItems === 0}
               className="w-8 h-8 flex items-center justify-center text-icon-muted hover:text-text-main disabled:opacity-50 transition-colors cursor-pointer"
             >
               <ChevronLeft size={16} strokeWidth={2.5} />
             </button>
 
-            {[1, 2, 3].map((page) => {
-              if (page > totalPages) return null;
-              const isActive = currentPage === page;
-              return (
-                <button
-                  key={page}
-                  onClick={() => goToPage(page)}
-                  className={`w-8 h-8 rounded-md font-bold text-sm flex items-center justify-center transition-colors cursor-pointer ${
-                    isActive
-                      ? "bg-btn-primary text-white"
-                      : "text-icon-muted hover:bg-background"
-                  }`}
-                >
-                  {page}
-                </button>
-              );
-            })}
+            {Array.from({ length: totalPages }).map((_, idx) => {
+              const pageNum = idx + 1;
+              const isActive = page === pageNum;
 
-            {totalPages > 3 && (
-              <>
-                <span className="w-4 flex justify-center text-icon-muted">
-                  ...
-                </span>
-                <button
-                  onClick={() => goToPage(totalPages)}
-                  className={`w-8 h-8 rounded-md font-bold text-sm flex items-center justify-center transition-colors cursor-pointer ${
-                    currentPage === totalPages
-                      ? "bg-btn-primary text-white"
-                      : "text-icon-muted hover:bg-background"
-                  }`}
-                >
-                  {totalPages}
-                </button>
-              </>
-            )}
+              if (
+                pageNum === 1 ||
+                pageNum === totalPages ||
+                (pageNum >= page - 1 && pageNum <= page + 1)
+              ) {
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => goToPage(pageNum)}
+                    className={`w-8 h-8 rounded-md font-bold text-sm flex items-center justify-center transition-colors cursor-pointer ${
+                      isActive
+                        ? "bg-primary-light text-btn-primary"
+                        : "text-icon-muted hover:bg-background"
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              }
+
+              if (pageNum === page - 2 || pageNum === page + 2) {
+                return (
+                  <span key={pageNum} className="text-icon-muted px-1">
+                    ...
+                  </span>
+                );
+              }
+
+              return null;
+            })}
 
             <button
               onClick={nextPage}
-              disabled={currentPage === totalPages || totalItems === 0}
+              disabled={page === totalPages || totalItems === 0}
               className="w-8 h-8 flex items-center justify-center text-icon-muted hover:text-text-main disabled:opacity-50 transition-colors cursor-pointer"
             >
               <ChevronRight size={16} strokeWidth={2.5} />

@@ -1,61 +1,33 @@
+import { RegionResponseDTO } from "@/features/auth/types";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
-export const getProvinces = async () => {
+async function fetchRegionData(endpoint: string): Promise<RegionResponseDTO[]> {
   try {
-    const res = await fetch(`${API_URL}/region/province`);
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json.data;
-  } catch (error) {
-    console.error("Gagal mengambil data provinsi:", error);
-    return [];
-  }
-};
+    const response = await fetch(`${API_URL}${endpoint}`);
+    const result = await response.json();
 
-export const getRegencies = async (provinceId: string) => {
-  try {
-    const res = await fetch(`${API_URL}/region/regency/${provinceId}`);
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json.data;
-  } catch (error) {
-    console.error("Gagal mengambil data kabupaten:", error);
-    return [];
-  }
-};
+    if (!response.ok || result.success === false) {
+      throw new Error(result.message || `Gagal mengambil data ${endpoint}`);
+    }
 
-export const getDistricts = async (regencyId: string) => {
-  try {
-    const res = await fetch(`${API_URL}/region/district/${regencyId}`);
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json.data;
-  } catch (error) {
-    console.error("Gagal mengambil data kecamatan:", error);
+    return result.data;
+  } catch (error: any) {
+    console.error(`Gagal mengambil data ${endpoint}:`, error.message);
     return [];
   }
-};
+}
 
-export const getVillages = async (districtId: string) => {
-  try {
-    const res = await fetch(`${API_URL}/region/village/${districtId}`);
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json.data;
-  } catch (error) {
-    console.error("Gagal mengambil data desa:", error);
-    return [];
-  }
-};
+export const getProvinces = () => fetchRegionData("/region/province");
 
-export const getClinics = async (villageId: string) => {
-  try {
-    const res = await fetch(`${API_URL}/clinic/${villageId}`);
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json.data;
-  } catch (error) {
-    console.error("Gagal mengambil data klinik/posyandu:", error);
-    return [];
-  }
-};
+export const getRegencies = (provinceId: string) =>
+  fetchRegionData(`/region/regency/${provinceId}`);
+
+export const getDistricts = (regencyId: string) =>
+  fetchRegionData(`/region/district/${regencyId}`);
+
+export const getVillages = (districtId: string) =>
+  fetchRegionData(`/region/village/${districtId}`);
+
+export const getClinics = (villageId: string) =>
+  fetchRegionData(`/clinic/${villageId}`);

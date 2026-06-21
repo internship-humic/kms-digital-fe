@@ -1,5 +1,5 @@
 import BalitaFeed from "@/features/kader/balita/components/BalitaFeed";
-import { getBalitaMockData } from "@/features/kader/balita/data/mockBalita";
+import { getChildrens } from "@/services/children.service";
 
 export const metadata = {
   title: "Data Balita | JagaCilik",
@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 export default async function DataBalitaPage() {
-  const dataBalita = await getBalitaMockData();
+  const dataBalita = await getChildrens();
 
   return (
     <div className="flex-1 bg-background flex flex-col relative overflow-y-auto">

@@ -31,9 +31,17 @@ export default function TambahBalitaForm() {
   const onSubmit = async (data: TambahBalitaFormValues) => {
     setIsSubmitting(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const payloadToBackend = {
+      name: data.namaLengkap,
+      gender: data.jenisKelamin === "Laki-laki" ? "MALE" : "FEMALE",
+      birth_date: data.tanggalLahir,
+      body_weight: parseFloat(data.beratLahir),
+      body_height: parseFloat(data.tinggiLahir),
+      address: data.alamatRumah,
+    };
 
-    console.log("Data Balita Tersimpan:", data);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    console.log("Data Balita Tersimpan (Mapped):", payloadToBackend);
 
     setIsSubmitting(false);
     setShowModal(true);
