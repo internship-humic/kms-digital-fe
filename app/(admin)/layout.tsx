@@ -1,5 +1,11 @@
-import AdminSidebar from "@/features/admin/layout/components/AdminSidebar";
-import AdminTopbar from "@/features/admin/layout/components/AdminTopbar";
+import type { Metadata } from "next";
+import Sidebar from "@/features/admin/layout/Sidebar";
+import AdminTopbar from "@/features/admin/layout/AdminTopbar";
+
+export const metadata: Metadata = {
+  title: "Admin Portal | JagaCilik",
+  description: "Portal Manajemen Admin Posyandu",
+};
 
 export default function AdminLayout({
   children,
@@ -7,16 +13,13 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#f8f9fc] flex">
-      {/* Sidebar - Fixed Width */}
-      <AdminSidebar />
-      
-      {/* Main Content - Takes remaining space */}
-      <div className="flex-1 flex flex-col ml-[280px]">
+    <div className="flex h-screen w-full bg-background font-sans text-text-main overflow-hidden !max-w-none !mx-0">
+      <Sidebar />
+
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <AdminTopbar />
-        <main className="p-8">
-          {children}
-        </main>
+
+        <main className="flex-1 overflow-y-auto bg-background">{children}</main>
       </div>
     </div>
   );

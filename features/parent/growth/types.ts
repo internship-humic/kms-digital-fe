@@ -5,6 +5,23 @@ export type GrowthDataPoint = {
   head: number;
 };
 
+export type RiwayatPemeriksaan = {
+  id: number;
+  tanggal: string;
+  lokasi: string;
+  keterangan: string;
+  bb: number;
+  tb: number;
+};
+
+export type JadwalImunisasi = {
+  id: number;
+  namaVaksin: string;
+  bulanKe: string;
+  keterangan: string;
+  status: "selesai" | "mendatang";
+};
+
 export type ChildData = {
   id: number;
   name: string;
@@ -16,4 +33,6 @@ export type ChildData = {
     head: string;
     status: string;
   };
+  riwayatPemeriksaan?: RiwayatPemeriksaan[];
+  jadwalImunisasi?: JadwalImunisasi[];
 };

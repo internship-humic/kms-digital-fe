@@ -1,4 +1,4 @@
-import DashboardAdminFeed from "@/features/admin/dashboard/components/DashboardAdminFeed";
+import AdminDashboardFeed from "@/features/admin/dashboard/components/AdminDashboardFeed";
 
 export const metadata = {
   title: "Dashboard Admin | JagaCilik",
@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function AdminDashboardPage() {
-  return <DashboardAdminFeed />;
+  return <AdminDashboardFeed />;
 }

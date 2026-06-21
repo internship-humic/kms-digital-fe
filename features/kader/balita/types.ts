@@ -18,3 +18,4 @@ export type BalitaDetail = {
   stats: { berat: string; tinggi: string; lingkarKepala: string };
   riwayat: { tanggal: string; berat: string; tinggi: string; zscore: string }[];
 };
+  
