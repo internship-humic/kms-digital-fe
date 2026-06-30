@@ -5,15 +5,28 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 async function fetchRegionData(endpoint: string): Promise<RegionResponseDTO[]> {
   try {
     const response = await fetch(`${API_URL}${endpoint}`);
+
+    const contentType = response.headers.get("content-type");
+
+    if (!contentType?.includes("application/json")) {
+      throw new Error(
+        `Response dari ${endpoint} bukan JSON. Pastikan backend berjalan dan API_URL benar.`,
+      );
+    }
+
     const result = await response.json();
+
+    if (response.status === 404) {
+      return [];
+    }
 
     if (!response.ok || result.success === false) {
       throw new Error(result.message || `Gagal mengambil data ${endpoint}`);
     }
 
-    return result.data;
+    return result.data || [];
   } catch (error: any) {
-    console.error(`Gagal mengambil data ${endpoint}:`, error.message);
+    console.warn(`Data ${endpoint} tidak tersedia:`, error.message);
     return [];
   }
 }

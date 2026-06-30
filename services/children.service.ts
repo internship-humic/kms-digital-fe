@@ -1,5 +1,27 @@
 import { fetchWithAuth } from "@/lib/fetcher";
-import type { BalitaData } from "@/features/kader/balita/types";
+import type { BalitaData, ChildPayload } from "@/features/kader/balita/types";
+
+function calculateAgeInMonths(birthDateValue: string) {
+  const birthDate = new Date(birthDateValue);
+  const now = new Date();
+
+  const yearDiff = now.getFullYear() - birthDate.getFullYear();
+  const monthDiff = now.getMonth() - birthDate.getMonth();
+
+  const totalMonths = yearDiff * 12 + monthDiff;
+
+  return Math.max(totalMonths, 0);
+}
+
+function formatDateForInput(dateValue: string) {
+  if (!dateValue) return "";
+
+  const date = new Date(dateValue);
+
+  if (Number.isNaN(date.getTime())) return "";
+
+  return date.toISOString().split("T")[0];
+}
 
 export const getChildrens = async (
   search?: string,
@@ -19,17 +41,20 @@ export const getChildrens = async (
     const response = await fetchWithAuth(`/children?${queryParams.toString()}`);
 
     const mappedData: BalitaData[] = response.data.map((item: any) => {
-      const birthDate = new Date(item.birth_date);
-      const diffTime = Math.abs(new Date().getTime() - birthDate.getTime());
-      const diffMonths = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30));
+      const diffMonths = calculateAgeInMonths(item.birth_date);
 
       return {
         id: item.id,
         name: item.name,
         gender: item.gender === "MALE" ? "Laki-laki" : "Perempuan",
+        genderApi: item.gender,
         age: `${diffMonths} Bulan`,
         status: item.status || "NORMAL",
         address: item.address,
+        birthDate: formatDateForInput(item.birth_date),
+        parentId: item.parent_id,
+        parentName: item.parent?.name || "-",
+        parentPhone: item.parent?.phone_number || "-",
       };
     });
 
@@ -40,14 +65,40 @@ export const getChildrens = async (
   }
 };
 
-export const createChild = async (payload: any) => {
+export const createChild = async (payload: ChildPayload) => {
   try {
     const response = await fetchWithAuth("/children", {
       method: "POST",
       body: JSON.stringify(payload),
     });
+
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Gagal menyimpan data balita.");
+  }
+};
+
+export const updateChild = async (id: string, payload: ChildPayload) => {
+  try {
+    const response = await fetchWithAuth(`/children/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Gagal memperbarui data balita.");
+  }
+};
+
+export const deleteChild = async (id: string) => {
+  try {
+    const response = await fetchWithAuth(`/children/${id}`, {
+      method: "DELETE",
+    });
+
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Gagal menghapus data balita.");
   }
 };

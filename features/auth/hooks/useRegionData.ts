@@ -23,21 +23,17 @@ export const useRegionData = (setValue: UseFormSetValue<any>) => {
   const [selectedVill, setSelectedVill] = useState<string>("");
 
   useEffect(() => {
-    getProvinces().then((data) =>
+    getProvinces().then((data) => {
       setProvinces(
-        data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
-      ),
-    );
+        data.map((d: RegionResponseDTO) => ({
+          id: d.id,
+          label: d.name,
+        })),
+      );
+    });
   }, []);
 
   useEffect(() => {
-    if (selectedProv) {
-      getRegencies(selectedProv).then((data) =>
-        setRegencies(
-          data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
-        ),
-      );
-    }
     setRegencies([]);
     setDistricts([]);
     setVillages([]);
@@ -46,48 +42,71 @@ export const useRegionData = (setValue: UseFormSetValue<any>) => {
     setSelectedDist("");
     setSelectedVill("");
     setValue("posyanduId", "");
+
+    if (!selectedProv) return;
+
+    getRegencies(selectedProv).then((data) => {
+      setRegencies(
+        data.map((d: RegionResponseDTO) => ({
+          id: d.id,
+          label: d.name,
+        })),
+      );
+    });
   }, [selectedProv, setValue]);
 
   useEffect(() => {
-    if (selectedReg) {
-      getDistricts(selectedReg).then((data) =>
-        setDistricts(
-          data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
-        ),
-      );
-    }
     setDistricts([]);
     setVillages([]);
     setClinics([]);
     setSelectedDist("");
     setSelectedVill("");
     setValue("posyanduId", "");
+
+    if (!selectedReg) return;
+
+    getDistricts(selectedReg).then((data) => {
+      setDistricts(
+        data.map((d: RegionResponseDTO) => ({
+          id: d.id,
+          label: d.name,
+        })),
+      );
+    });
   }, [selectedReg, setValue]);
 
   useEffect(() => {
-    if (selectedDist) {
-      getVillages(selectedDist).then((data) =>
-        setVillages(
-          data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
-        ),
-      );
-    }
     setVillages([]);
     setClinics([]);
     setSelectedVill("");
     setValue("posyanduId", "");
+
+    if (!selectedDist) return;
+
+    getVillages(selectedDist).then((data) => {
+      setVillages(
+        data.map((d: RegionResponseDTO) => ({
+          id: d.id,
+          label: d.name,
+        })),
+      );
+    });
   }, [selectedDist, setValue]);
 
   useEffect(() => {
-    if (selectedVill) {
-      getClinics(selectedVill).then((data) =>
-        setClinics(
-          data.map((d: RegionResponseDTO) => ({ id: d.id, label: d.name })),
-        ),
-      );
-    }
     setClinics([]);
     setValue("posyanduId", "");
+
+    if (!selectedVill) return;
+
+    getClinics(selectedVill).then((data) => {
+      setClinics(
+        data.map((d: RegionResponseDTO) => ({
+          id: d.id,
+          label: d.name,
+        })),
+      );
+    });
   }, [selectedVill, setValue]);
 
   return {
