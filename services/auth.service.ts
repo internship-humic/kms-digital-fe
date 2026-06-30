@@ -2,6 +2,13 @@ import { LoginFormValues, RegisterFormValues } from "@/lib/validations/auth";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
+export type ActivateCadrePayload = {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+};
+
 export const loginService = async (data: LoginFormValues) => {
   try {
     const response = await fetch(`${API_URL}/auth/login`, {
@@ -58,6 +65,28 @@ export const registerService = async (data: RegisterFormValues) => {
 
     if (!response.ok || result.success === false) {
       throw new Error(result.message || "Gagal melakukan registrasi.");
+    }
+
+    return result.data;
+  } catch (error: any) {
+    throw new Error(error.message || "Terjadi kesalahan koneksi ke server.");
+  }
+};
+
+export const activateCadreService = async (data: ActivateCadrePayload) => {
+  try {
+    const response = await fetch("/api/auth/activation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || result.success === false) {
+      throw new Error(result.message || "Gagal membuat akun kader.");
     }
 
     return result.data;

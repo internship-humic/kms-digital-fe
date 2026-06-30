@@ -39,3 +39,15 @@ export const getChildrens = async (
     return [];
   }
 };
+
+export const createChild = async (payload: any) => {
+  try {
+    const response = await fetchWithAuth("/children", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    return response;
+  } catch (error: any) {
+    throw new Error(error.message || "Gagal menyimpan data balita.");
+  }
+};
