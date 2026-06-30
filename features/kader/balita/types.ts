@@ -1,20 +1,29 @@
-export type BalitaStatus = "NORMAL" | "LOWRISK" | "HIGHRISK";
+export type GenderApi = "MALE" | "FEMALE";
+export type GenderLabel = "Laki-laki" | "Perempuan";
+export type ChildStatus = "NORMAL" | "LOWRISK" | "HIGHRISK";
 
 export type BalitaData = {
-  id: number;
+  id: string;
   name: string;
-  gender: "Laki-laki" | "Perempuan";
+  gender: GenderLabel;
+  genderApi: GenderApi;
   age: string;
-  status: BalitaStatus;
+  status: ChildStatus;
   address: string;
+  birthDate: string;
+  parentId: string;
+  parentName?: string;
+  parentPhone?: string;
 };
 
-export type BalitaDetail = {
-  id: string;
-  nama: string;
-  jk: string;
-  usia: string;
-  status: string;
-  stats: { berat: string; tinggi: string; lingkarKepala: string };
-  riwayat: { tanggal: string; berat: string; tinggi: string; zscore: string }[];
+export type ChildPayload = {
+  name: string;
+  birth_date: string;
+  parent_id: string;
+  gender: GenderApi;
+  address: string;
+  status?: ChildStatus;
+  body_weight: number;
+  body_height: number;
+  head_circumference?: number | null;
 };

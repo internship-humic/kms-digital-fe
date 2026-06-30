@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { ArrowLeft, Download } from "lucide-react";
 import GrowthChart from "@/features/parent/growth/components/GrowthChart";
-import { MOCK_CHILD_CHART_DATA } from "@/features/parent/growth/data/mockGrowth";
-import { getCombinedGrowthData } from "@/features/parent/growth/utils/getChartData";
+import {
+  getCombinedGrowthDataFromAPI,
+  mapApiToGrowthDataPoints,
+} from "@/features/parent/growth/utils/getChartData";
 import { getParentDashboard } from "@/services/dashboard.service";
+import { getMeasurementGraph } from "@/services/measurement.service";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 
@@ -41,9 +44,18 @@ export default async function ChildDetailPage({
     notFound();
   }
 
-  const preCalculatedChartData = getCombinedGrowthData(
+  const apiGraphDataRaw = await getMeasurementGraph(id);
+  const apiGraphData = apiGraphDataRaw || {
+    weight: [],
+    height: [],
+    head_circumference: [],
+    nutrition: [],
+  };
+
+  const childDataPoints = mapApiToGrowthDataPoints(apiGraphData);
+  const preCalculatedChartData = getCombinedGrowthDataFromAPI(
     child.gender === "Laki-laki" ? "Laki-laki" : "Perempuan",
-    MOCK_CHILD_CHART_DATA,
+    apiGraphData,
   );
 
   return (
@@ -86,7 +98,7 @@ export default async function ChildDetailPage({
         </div>
 
         <GrowthChart
-          data={MOCK_CHILD_CHART_DATA}
+          data={childDataPoints}
           preCalculatedChartData={preCalculatedChartData}
         />
       </div>

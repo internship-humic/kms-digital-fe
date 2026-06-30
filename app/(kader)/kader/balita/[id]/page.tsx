@@ -1,6 +1,8 @@
 import DetailBalitaFeed from "@/features/kader/balita/components/DetailBalitaFeed";
-import { getDetailBalitaMockData } from "@/features/kader/balita/data/mockDetailBalita";
-import { calculateDetailBalitaMetrics } from "@/features/kader/balita/utils/calculateMetrics";
+import { transformApiToMetrics } from "@/features/kader/balita/utils/calculateMetrics";
+import { getChildrens } from "@/services/children.service";
+import { getMeasurementGraph } from "@/services/measurement.service";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata({
   params,
@@ -20,9 +22,27 @@ export default async function DetailBalitaPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const data = await getDetailBalitaMockData(id);
 
-  const metrics = calculateDetailBalitaMetrics(data);
+  const childrenList = await getChildrens();
+  const childInfo = childrenList.find((item) => item.id.toString() === id);
 
-  return <DetailBalitaFeed data={data} metrics={metrics} />;
+  if (!childInfo) {
+    notFound();
+  }
+
+  const apiGraphData = await getMeasurementGraph(id);
+
+  const {
+    mappedData,
+    combinedChartData,
+    riwayatDenganZScoreAsli,
+    macroStatusInfo,
+  } = transformApiToMetrics(childInfo, apiGraphData);
+
+  return (
+    <DetailBalitaFeed
+      data={mappedData}
+      metrics={{ combinedChartData, riwayatDenganZScoreAsli, macroStatusInfo }}
+    />
+  );
 }

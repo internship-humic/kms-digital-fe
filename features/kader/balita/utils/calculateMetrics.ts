@@ -1,121 +1,80 @@
-import { BalitaDetail } from "../types";
-import {
-  calculateZScore,
-  classifyBBU,
-  classifyTBU,
-  classifyBBTB,
-} from "@/lib/utils/zscore";
+import { classifyBBU, classifyTBU, classifyBBTB } from "@/lib/utils/zscore";
+import { getCombinedGrowthDataFromAPI } from "@/features/parent/growth/utils/getChartData";
 
-import zScoreBBLakiLaki from "@/data/who/ZScoreBeratBadanLakiLaki.json";
-import zScoreBBPerempuan from "@/data/who/ZScoreBeratBadanPerempuan.json";
-import zScoreTBLakiLaki from "@/data/who/ZScorePanjangBadanLakiLaki.json";
-import zScoreTBPerempuan from "@/data/who/ZScorePanjangBadanPerempuan.json";
-import zScoreBBTBLakiLaki24 from "@/data/who/ZScoreBeratTinggiBadanLakiLaki24.json";
-import zScoreBBTBLakiLaki60 from "@/data/who/ZScoreBeratTinggiBadanLakiLaki60.json";
-import zScoreBBTBPerempuan24 from "@/data/who/ZScoreBeratTinggiBadanPerempuan24.json";
-import zScoreBBTBPerempuan60 from "@/data/who/ZScoreBeratTinggiBadanPerempuan60.json";
+export function transformApiToMetrics(childInfo: any, apiGraphData: any) {
+  const safeGraphData = apiGraphData || {
+    weight: [],
+    height: [],
+    head_circumference: [],
+    nutrition: [],
+  };
 
-export function calculateDetailBalitaMetrics(data: BalitaDetail) {
-  const whoDataBB =
-    data.jk === "Laki-laki" ? zScoreBBLakiLaki : zScoreBBPerempuan;
-  const whoDataTB =
-    data.jk === "Laki-laki" ? zScoreTBLakiLaki : zScoreTBPerempuan;
+  const combinedChartData = getCombinedGrowthDataFromAPI(
+    childInfo.gender,
+    safeGraphData,
+  ).bb;
 
-  const currentMonth = parseInt(data.usia.split(" ")[0]) || 24;
+  const riwayat = safeGraphData.weight
+    .map((w: any) => {
+      const t =
+        safeGraphData.height.find((h: any) => h.age_month === w.age_month) ||
+        {};
+      const n =
+        safeGraphData.nutrition.find((n: any) => n.age_month === w.age_month) ||
+        {};
 
-  const combinedChartData = whoDataBB.map((std) => {
-    const riwayatMatch = data.riwayat.find((r, index) => {
-      const rMonth = currentMonth - index;
-      return rMonth === Number(std.bulan);
-    });
-
-    return {
-      ...std,
-      aktualAnak: riwayatMatch ? parseFloat(riwayatMatch.berat) : null,
-    };
-  });
-
-  const riwayatDenganZScoreAsli = data.riwayat.map((row, index) => {
-    const rMonthNum = currentMonth - index;
-
-    const refBBU = whoDataBB.find((w) => Number(w.bulan) === rMonthNum);
-    const refTBU = whoDataTB.find((w) => Number(w.bulan) === rMonthNum);
-
-    let refBBTBList: any[] = [];
-    if (data.jk === "Laki-laki") {
-      refBBTBList =
-        rMonthNum < 24 ? zScoreBBTBLakiLaki24 : zScoreBBTBLakiLaki60;
-    } else {
-      refBBTBList =
-        rMonthNum < 24 ? zScoreBBTBPerempuan24 : zScoreBBTBPerempuan60;
-    }
-
-    const tinggiNum = parseFloat(row.tinggi);
-    const beratNum = parseFloat(row.berat);
-
-    const tinggiDibulatkan = Math.round(tinggiNum * 2) / 2;
-    const refBBTB = refBBTBList.find(
-      (w) => parseFloat(w.pb as string) === tinggiDibulatkan,
-    );
-
-    let zBB = 0,
-      zTB = 0,
-      zBBTB = 0;
-
-    if (refBBU) {
-      zBB = calculateZScore(beratNum, {
-        median: Number(refBBU.median),
-        SD1neg: Number(refBBU.SD1neg),
-        SD1pos: Number(refBBU.SD1pos),
+      const dateObj = new Date(w.measurement_date);
+      const dateStr = dateObj.toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
       });
-    }
 
-    if (refTBU) {
-      zTB = calculateZScore(tinggiNum, {
-        median: Number(refTBU.median),
-        SD1neg: Number(refTBU.SD1neg),
-        SD1pos: Number(refTBU.SD1pos),
-      });
-    }
+      return {
+        tanggal: dateStr,
+        berat: w.value.toString(),
+        tinggi: t.value?.toString() || "0",
+        zBB: w.zscore?.toFixed(2) || "0.00",
+        statusBB: classifyBBU(w.zscore),
+        zTB: t.zscore?.toFixed(2) || "0.00",
+        statusTB: classifyTBU(t.zscore),
+        zBBTB: n.zscore?.toFixed(2) || "0.00",
+        statusBBTB: classifyBBTB(n.zscore),
+      };
+    })
+    .reverse();
+  const macroStatusInfo = {
+    label:
+      childInfo.status === "HIGHRISK"
+        ? "HIGH RISK"
+        : childInfo.status === "LOWRISK"
+          ? "LOW RISK"
+          : "NORMAL",
+  };
 
-    if (refBBTB) {
-      zBBTB = calculateZScore(beratNum, {
-        median: Number(refBBTB.median),
-        SD1neg: Number(refBBTB.SD1neg),
-        SD1pos: Number(refBBTB.SD1pos),
-      });
-    }
+  const latestWeight = riwayat[0]?.berat || "0";
+  const latestHeight = riwayat[0]?.tinggi || "0";
+  const latestLK =
+    safeGraphData.head_circumference?.slice(-1)[0]?.value?.toString() || "0";
 
-    return {
-      ...row,
-      zBB: zBB.toFixed(2),
-      statusBB: classifyBBU(zBB),
-      zTB: zTB.toFixed(2),
-      statusTB: classifyTBU(zTB),
-      zBBTB: zBBTB.toFixed(2),
-      statusBBTB: classifyBBTB(zBBTB),
-    };
-  });
+  const mappedData = {
+    id: childInfo.id.toString(),
+    nama: childInfo.name,
+    jk: childInfo.gender,
+    usia: childInfo.age,
+    status: childInfo.status,
+    stats: {
+      berat: latestWeight,
+      tinggi: latestHeight,
+      lingkarKepala: latestLK,
+    },
+    riwayat: [],
+  };
 
-  const latest = riwayatDenganZScoreAsli[0];
-  let macroStatusInfo = { label: "NORMAL" };
-
-  if (latest) {
-    const isBad =
-      latest.statusBB.includes("Sangat") ||
-      latest.statusTB.includes("Sangat") ||
-      latest.statusBBTB.includes("Buruk") ||
-      latest.statusBBTB.includes("Obesitas");
-
-    const isWarn =
-      latest.statusBB.includes("Kurang") ||
-      latest.statusTB.includes("Pendek") ||
-      latest.statusBBTB.includes("Kurang") ||
-      latest.statusBBTB.includes("Berisiko");
-
-    if (isBad) macroStatusInfo.label = "HIGH RISK";
-    else if (isWarn) macroStatusInfo.label = "LOW RISK";
-  }
-
-  return { combinedChartData, riwayatDenganZScoreAsli, macroStatusInfo };
+  return {
+    mappedData,
+    combinedChartData,
+    riwayatDenganZScoreAsli: riwayat,
+    macroStatusInfo,
+  };
 }

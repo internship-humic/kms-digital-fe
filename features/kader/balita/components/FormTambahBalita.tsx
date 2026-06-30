@@ -11,12 +11,14 @@ import {
   TambahBalitaFormValues,
 } from "../validations/balita";
 import { Button } from "@/components/ui/button";
+import { createChild } from "@/services/children.service";
 
 export default function TambahBalitaForm() {
   const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [globalError, setGlobalError] = useState<string | null>(null);
 
   const {
     register,
@@ -30,6 +32,7 @@ export default function TambahBalitaForm() {
 
   const onSubmit = async (data: TambahBalitaFormValues) => {
     setIsSubmitting(true);
+    setGlobalError(null);
 
     const payloadToBackend = {
       name: data.namaLengkap,
@@ -38,13 +41,22 @@ export default function TambahBalitaForm() {
       body_weight: parseFloat(data.beratLahir),
       body_height: parseFloat(data.tinggiLahir),
       address: data.alamatRumah,
+      // TODO: Integrasikan form ini dengan pemilihan Parent.
+      // Saat ini di-hardcode agar lolos validasi required Joi di backend.
+      parent_id: "uuid-parent-1",
+      status: "NORMAL",
     };
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("Data Balita Tersimpan (Mapped):", payloadToBackend);
+    try {
+      // Memanggil endpoint backend POST /children/
+      await createChild(payloadToBackend);
 
-    setIsSubmitting(false);
-    setShowModal(true);
+      setIsSubmitting(false);
+      setShowModal(true);
+    } catch (error: any) {
+      setGlobalError(error.message);
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -76,6 +88,15 @@ export default function TambahBalitaForm() {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col flex-1 px-6 pb-10 pt-6"
       >
+        {globalError && (
+          <div
+            className="bg-danger/10 border border-danger/20 text-danger p-3.5 rounded-xl text-sm font-medium mb-5 flex items-center"
+            role="alert"
+          >
+            {globalError}
+          </div>
+        )}
+
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-1.5">
             <label
