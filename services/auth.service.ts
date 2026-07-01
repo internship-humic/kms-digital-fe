@@ -1,6 +1,6 @@
 import { LoginFormValues, RegisterFormValues } from "@/lib/validations/auth";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
 export type ActivateCadrePayload = {
   name: string;
@@ -75,7 +75,7 @@ export const registerService = async (data: RegisterFormValues) => {
 
 export const activateCadreService = async (data: ActivateCadrePayload) => {
   try {
-    const response = await fetch("/api/auth/activation", {
+    const response = await fetch(`${API_URL}/auth/activation`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

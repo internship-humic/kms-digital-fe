@@ -99,16 +99,6 @@ export default function AdminLoginPage() {
                 {isSubmitting ? "Memproses..." : "Masuk"}
               </Button>
             </form>
-
-            <div className="mt-11 flex justify-center gap-1 text-sm">
-              <span className="text-icon-muted">Tidak punya akun?</span>
-              <Link
-                href="/admin/register"
-                className="font-semibold text-btn-primary hover:underline"
-              >
-                Daftar disini
-              </Link>
-            </div>
           </div>
         </div>
       </section>
