@@ -45,43 +45,38 @@ export function getCombinedGrowthDataFromAPI(
   const whoTB = gender === "Laki-laki" ? zScoreTBLakiLaki : zScoreTBPerempuan;
   const whoLK = gender === "Laki-laki" ? zScoreLKLakiLaki : zScoreLKPerempuan;
 
-  const formatData = (whoArray: any[], apiMeasurements: any[]) => {
+  const rawMeasurements = Array.isArray(apiGraphData) ? apiGraphData : [];
+
+  const formatData = (whoArray: any[], metricKey: string) => {
     return whoArray.map((std) => {
-      const match = apiMeasurements.find(
+      const match = rawMeasurements.find(
         (m: any) => m.age_month === Number(std.bulan),
       );
       return {
         ...std,
-        aktualAnak: match ? match.value : null,
+        aktualAnak: match ? match[metricKey] : null,
       };
     });
   };
 
   return {
-    bb: formatData(whoBB, apiGraphData?.weight || []),
-    tb: formatData(whoTB, apiGraphData?.height || []),
-    lk: formatData(whoLK, apiGraphData?.head_circumference || []),
+    bb: formatData(whoBB, "body_weight"),
+    tb: formatData(whoTB, "body_height"),
+    lk: formatData(whoLK, "head_circumference"),
   };
 }
 
 export const mapApiToGrowthDataPoints = (
   apiGraphData: any,
 ): GrowthDataPoint[] => {
-  if (!apiGraphData || !apiGraphData.weight) return [];
+  if (!Array.isArray(apiGraphData)) return [];
 
-  return apiGraphData.weight.map((w: any) => {
-    const t = apiGraphData.height?.find(
-      (h: any) => h.age_month === w.age_month,
-    );
-    const lk = apiGraphData.head_circumference?.find(
-      (l: any) => l.age_month === w.age_month,
-    );
-
+  return apiGraphData.map((m: any) => {
     return {
-      month: `Bulan ${w.age_month}`,
-      weight: w.value,
-      height: t?.value || 0,
-      head: lk?.value || 0,
+      month: `Bulan ${m.age_month}`,
+      weight: m.body_weight || 0,
+      height: m.body_height || 0,
+      head: m.head_circumference || 0,
     };
   });
 };

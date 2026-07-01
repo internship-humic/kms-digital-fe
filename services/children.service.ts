@@ -38,9 +38,9 @@ export const getChildrens = async (
       queryParams.append("search", search);
     }
 
-    const response = await fetchWithAuth(`/children?${queryParams.toString()}`);
+    const children = await fetchWithAuth(`/children?${queryParams.toString()}`);
 
-    const mappedData: BalitaData[] = response.data.map((item: any) => {
+    const mappedData: BalitaData[] = children.map((item: any) => {
       const diffMonths = calculateAgeInMonths(item.birth_date);
 
       return {

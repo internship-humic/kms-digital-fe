@@ -12,6 +12,7 @@ import {
 } from "../validations/balita";
 import { Button } from "@/components/ui/button";
 import { createChild } from "@/services/children.service";
+import { fetchWithAuth } from "@/lib/fetcher";
 
 export default function TambahBalitaForm() {
   const router = useRouter();
@@ -19,6 +20,10 @@ export default function TambahBalitaForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [globalError, setGlobalError] = useState<string | null>(null);
+
+  const [parents, setParents] = useState<any[]>([]);
+  const [selectedParentId, setSelectedParentId] = useState("");
+  const [isLoadingParents, setIsLoadingParents] = useState(true);
 
   const {
     register,
@@ -30,9 +35,30 @@ export default function TambahBalitaForm() {
     mode: "onChange",
   });
 
+  useEffect(() => {
+    const fetchParents = async () => {
+      try {
+        const data = await fetchWithAuth("/parent/");
+        setParents(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Gagal memuat data orang tua:", error);
+      } finally {
+        setIsLoadingParents(false);
+      }
+    };
+
+    fetchParents();
+  }, []);
+
   const onSubmit = async (data: TambahBalitaFormValues) => {
-    setIsSubmitting(true);
     setGlobalError(null);
+
+    if (!selectedParentId) {
+      setGlobalError("Silakan pilih data orang tua terlebih dahulu.");
+      return;
+    }
+
+    setIsSubmitting(true);
 
     const payloadToBackend = {
       name: data.namaLengkap,
@@ -41,20 +67,16 @@ export default function TambahBalitaForm() {
       body_weight: parseFloat(data.beratLahir),
       body_height: parseFloat(data.tinggiLahir),
       address: data.alamatRumah,
-      // TODO: Integrasikan form ini dengan pemilihan Parent.
-      // Saat ini di-hardcode agar lolos validasi required Joi di backend.
-      parent_id: "uuid-parent-1",
+      parent_id: selectedParentId,
       status: "NORMAL",
     };
 
     try {
-      // Memanggil endpoint backend POST /children/
-      await createChild(payloadToBackend);
-
+      await createChild(payloadToBackend as any);
       setIsSubmitting(false);
       setShowModal(true);
     } catch (error: any) {
-      setGlobalError(error.message);
+      setGlobalError(error.message || "Gagal menyimpan data balita.");
       setIsSubmitting(false);
     }
   };
@@ -98,6 +120,53 @@ export default function TambahBalitaForm() {
         )}
 
         <div className="flex flex-col gap-5">
+          {/* Dropdown Orang Tua */}
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="parentId"
+              className="text-base font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle"
+            >
+              Orang Tua <span className="text-danger">*</span>
+            </label>
+            <div className="relative">
+              <select
+                id="parentId"
+                value={selectedParentId}
+                onChange={(e) => setSelectedParentId(e.target.value)}
+                disabled={isLoadingParents}
+                className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-base font-medium text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm appearance-none cursor-pointer disabled:bg-gray-100"
+              >
+                <option value="" disabled>
+                  {isLoadingParents
+                    ? "Memuat data orang tua..."
+                    : "Pilih Orang Tua"}
+                </option>
+                {parents.map((parent) => (
+                  <option key={parent.id} value={parent.id}>
+                    {parent.name} - {parent.phone_number || parent.email}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-icon-muted">
+                <svg
+                  width="12"
+                  height="8"
+                  viewBox="0 0 12 8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 1.5L6 6.5L11 1.5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="namaLengkap"
@@ -265,7 +334,9 @@ export default function TambahBalitaForm() {
           <Button
             type="submit"
             size="lg"
-            disabled={!isValid || isSubmitting || showModal}
+            disabled={
+              !isValid || !selectedParentId || isSubmitting || showModal
+            }
             className="w-full tracking-wide"
           >
             {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
@@ -274,7 +345,7 @@ export default function TambahBalitaForm() {
       </form>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-6 animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-6 animate-in fade-in duration-200">
           <div className="w-full max-w-[340px] rounded-[32px] bg-white p-8 text-center shadow-2xl animate-in zoom-in-95 duration-300">
             <Image
               src="/images/folder1.svg"
