@@ -107,7 +107,8 @@ export default function BuatAkunKaderModal({
         email: data.email,
         password: data.password,
         password_confirmation: data.confirmPassword,
-      });
+        clinic_id: data.posyanduId,
+      } as any);
 
       setGlobalSuccess("Akun kader berhasil dibuat.");
 

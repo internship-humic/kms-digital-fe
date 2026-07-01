@@ -14,6 +14,7 @@ import {
   Info,
   ChevronDown,
   ChevronUp,
+  Plus,
 } from "lucide-react";
 import {
   LineChart,
@@ -26,6 +27,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { BalitaDetail } from "../types";
+import TambahPengukuranModal from "./TambahPengukuranModal";
 
 export default function DetailBalitaFeed({
   data,
@@ -40,6 +42,7 @@ export default function DetailBalitaFeed({
 }) {
   const router = useRouter();
   const [expandedRow, setExpandedRow] = useState<number | null>(0);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const { combinedChartData, riwayatDenganZScoreAsli, macroStatusInfo } =
     metrics;
@@ -293,6 +296,12 @@ export default function DetailBalitaFeed({
             <h3 className="text-lg font-bold text-text-main">
               Riwayat Pengukuran
             </h3>
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-btn-primary text-white text-xs font-semibold rounded-lg hover:bg-btn-primary/90 transition-colors shadow-sm"
+            >
+              <Plus size={14} /> Tambah Data
+            </button>
           </div>
 
           <div className="bg-white border border-border-input/20 rounded-[16px] overflow-hidden shadow-sm flex flex-col">
@@ -312,93 +321,98 @@ export default function DetailBalitaFeed({
             </div>
 
             <div className="flex flex-col">
-              {riwayatDenganZScoreAsli.map((row, idx) => {
-                const isExpanded = expandedRow === idx;
-                return (
-                  <div
-                    key={idx}
-                    className={`flex flex-col ${idx !== riwayatDenganZScoreAsli.length - 1 ? "border-b border-gray-100" : ""}`}
-                  >
-                    {/* Diubah menjadi tag button yang bersih untuk aksesibilitas */}
-                    <button
-                      type="button"
-                      aria-expanded={isExpanded}
-                      onClick={() => setExpandedRow(isExpanded ? null : idx)}
-                      className="w-full text-left grid grid-cols-4 px-4 py-4.5 items-center cursor-pointer hover:bg-primary-light/10 focus:outline-none focus-visible:bg-primary-light/20 transition-colors"
+              {riwayatDenganZScoreAsli.length === 0 ? (
+                <div className="p-8 text-center text-icon-muted text-sm">
+                  Belum ada riwayat pengukuran.
+                </div>
+              ) : (
+                riwayatDenganZScoreAsli.map((row, idx) => {
+                  const isExpanded = expandedRow === idx;
+                  return (
+                    <div
+                      key={idx}
+                      className={`flex flex-col ${idx !== riwayatDenganZScoreAsli.length - 1 ? "border-b border-gray-100" : ""}`}
                     >
-                      <div className="text-sm text-gray-700 font-medium flex items-center gap-1.5 -ml-1">
-                        {isExpanded ? (
-                          <ChevronUp
-                            size={16}
-                            className="text-btn-primary shrink-0"
-                          />
-                        ) : (
-                          <ChevronDown
-                            size={16}
-                            className="text-icon-muted shrink-0"
-                          />
-                        )}
-                        {row.tanggal}
-                      </div>
-                      <div className="text-sm text-gray-700 text-center">
-                        {parseFloat(row.berat).toFixed(1)} kg
-                      </div>
-                      <div className="text-sm text-gray-700 text-center">
-                        {parseFloat(row.tinggi).toFixed(1)} cm
-                      </div>
-                      <div className="text-sm font-bold text-btn-primary text-right pr-2">
-                        {row.zBBTB}
-                      </div>
-                    </button>
+                      <button
+                        type="button"
+                        aria-expanded={isExpanded}
+                        onClick={() => setExpandedRow(isExpanded ? null : idx)}
+                        className="w-full text-left grid grid-cols-4 px-4 py-4.5 items-center cursor-pointer hover:bg-primary-light/10 focus:outline-none focus-visible:bg-primary-light/20 transition-colors"
+                      >
+                        <div className="text-sm text-gray-700 font-medium flex items-center gap-1.5 -ml-1">
+                          {isExpanded ? (
+                            <ChevronUp
+                              size={16}
+                              className="text-btn-primary shrink-0"
+                            />
+                          ) : (
+                            <ChevronDown
+                              size={16}
+                              className="text-icon-muted shrink-0"
+                            />
+                          )}
+                          {row.tanggal}
+                        </div>
+                        <div className="text-sm text-gray-700 text-center">
+                          {parseFloat(row.berat).toFixed(1)} kg
+                        </div>
+                        <div className="text-sm text-gray-700 text-center">
+                          {parseFloat(row.tinggi).toFixed(1)} cm
+                        </div>
+                        <div className="text-sm font-bold text-btn-primary text-right pr-2">
+                          {row.zBBTB}
+                        </div>
+                      </button>
 
-                    {isExpanded && (
-                      <div className="px-4 pb-5 pt-1 bg-gray-50/50">
-                        <div className="grid grid-cols-3 gap-3">
-                          <div className="bg-white border border-gray-200/80 rounded-xl p-3 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)]">
-                            <p className="text-[10px] text-icon-muted font-bold tracking-wider mb-1.5 uppercase">
-                              BB/U (Berat)
-                            </p>
-                            <p className="text-lg font-bold text-text-main leading-none mb-1.5">
-                              {row.zBB}
-                            </p>
-                            <p
-                              className={`text-[11px] font-semibold leading-tight ${row.statusBB.includes("Normal") ? "text-status-normal" : "text-danger"}`}
-                            >
-                              {row.statusBB}
-                            </p>
-                          </div>
-                          <div className="bg-white border border-gray-200/80 rounded-xl p-3 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)]">
-                            <p className="text-[10px] text-icon-muted font-bold tracking-wider mb-1.5 uppercase">
-                              TB/U (Tinggi)
-                            </p>
-                            <p className="text-lg font-bold text-text-main leading-none mb-1.5">
-                              {row.zTB}
-                            </p>
-                            <p
-                              className={`text-[11px] font-semibold leading-tight ${row.statusTB.includes("Normal") || row.statusTB.includes("Tinggi") ? "text-status-normal" : "text-danger"}`}
-                            >
-                              {row.statusTB}
-                            </p>
-                          </div>
-                          <div className="bg-white border border-gray-200/80 rounded-xl p-3 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)]">
-                            <p className="text-[10px] text-icon-muted font-bold tracking-wider mb-1.5 uppercase">
-                              BB/TB (Wasting)
-                            </p>
-                            <p className="text-lg font-bold text-text-main leading-none mb-1.5">
-                              {row.zBBTB}
-                            </p>
-                            <p
-                              className={`text-[11px] font-semibold leading-tight ${row.statusBBTB.includes("Normal") ? "text-status-normal" : row.statusBBTB.includes("Berisiko") ? "text-password-medium" : "text-danger"}`}
-                            >
-                              {row.statusBBTB}
-                            </p>
+                      {isExpanded && (
+                        <div className="px-4 pb-5 pt-1 bg-gray-50/50">
+                          <div className="grid grid-cols-3 gap-3">
+                            <div className="bg-white border border-gray-200/80 rounded-xl p-3 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)]">
+                              <p className="text-[10px] text-icon-muted font-bold tracking-wider mb-1.5 uppercase">
+                                BB/U (Berat)
+                              </p>
+                              <p className="text-lg font-bold text-text-main leading-none mb-1.5">
+                                {row.zBB}
+                              </p>
+                              <p
+                                className={`text-[11px] font-semibold leading-tight ${row.statusBB.includes("Normal") ? "text-status-normal" : "text-danger"}`}
+                              >
+                                {row.statusBB}
+                              </p>
+                            </div>
+                            <div className="bg-white border border-gray-200/80 rounded-xl p-3 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)]">
+                              <p className="text-[10px] text-icon-muted font-bold tracking-wider mb-1.5 uppercase">
+                                TB/U (Tinggi)
+                              </p>
+                              <p className="text-lg font-bold text-text-main leading-none mb-1.5">
+                                {row.zTB}
+                              </p>
+                              <p
+                                className={`text-[11px] font-semibold leading-tight ${row.statusTB.includes("Normal") || row.statusTB.includes("Tinggi") ? "text-status-normal" : "text-danger"}`}
+                              >
+                                {row.statusTB}
+                              </p>
+                            </div>
+                            <div className="bg-white border border-gray-200/80 rounded-xl p-3 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)]">
+                              <p className="text-[10px] text-icon-muted font-bold tracking-wider mb-1.5 uppercase">
+                                BB/TB (Wasting)
+                              </p>
+                              <p className="text-lg font-bold text-text-main leading-none mb-1.5">
+                                {row.zBBTB}
+                              </p>
+                              <p
+                                className={`text-[11px] font-semibold leading-tight ${row.statusBBTB.includes("Normal") ? "text-status-normal" : row.statusBBTB.includes("Berisiko") ? "text-password-medium" : "text-danger"}`}
+                              >
+                                {row.statusBBTB}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                      )}
+                    </div>
+                  );
+                })
+              )}
             </div>
 
             <div className="p-4 bg-gray-50/50 border-t border-gray-100 flex gap-2">
@@ -413,6 +427,17 @@ export default function DetailBalitaFeed({
           </div>
         </div>
       </div>
+
+      <TambahPengukuranModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        childId={data.id}
+        clinicId="clinic-uuid-1"
+        onSuccess={() => {
+          setIsAddModalOpen(false);
+          router.refresh();
+        }}
+      />
     </div>
   );
 }

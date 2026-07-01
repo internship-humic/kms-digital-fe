@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { createChild } from "@/services/children.service";
 import { fetchWithAuth } from "@/lib/fetcher";
 
-export default function TambahBalitaForm() {
+export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
   const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,7 +38,7 @@ export default function TambahBalitaForm() {
   useEffect(() => {
     const fetchParents = async () => {
       try {
-        const data = await fetchWithAuth("/parent/");
+        const data = await fetchWithAuth(`/parent/${clinicId}`);
         setParents(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Gagal memuat data orang tua:", error);
@@ -47,8 +47,10 @@ export default function TambahBalitaForm() {
       }
     };
 
-    fetchParents();
-  }, []);
+    if (clinicId) {
+      fetchParents();
+    }
+  }, [clinicId]);
 
   const onSubmit = async (data: TambahBalitaFormValues) => {
     setGlobalError(null);
