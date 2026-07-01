@@ -6,5 +6,7 @@ export const metadata = {
 };
 
 export default function TambahBalitaPage() {
-  return <TambahBalitaForm />;
+  const kaderClinicId = "clinic-uuid-1";
+
+  return <TambahBalitaForm clinicId={kaderClinicId} />;
 }
