@@ -9,19 +9,22 @@ import {
   tambahPosyanduSchema,
   TambahPosyanduFormValues,
 } from "../../validations/admin";
-import { createClinic } from "@/services/clinic.service";
+import { updateClinic } from "@/services/clinic.service";
+import { useEffect } from "react";
 
-type TambahPosyanduModalProps = {
+type EditPosyanduModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  editData: any;
 };
 
-export default function TambahPosyanduModal({
+export default function EditPosyanduModal({
   isOpen,
   onClose,
   onSuccess,
-}: TambahPosyanduModalProps) {
+  editData,
+}: EditPosyanduModalProps) {
   const {
     register,
     handleSubmit,
@@ -53,24 +56,35 @@ export default function TambahPosyanduModal({
     setSelectedVill,
   } = useRegionData(setValue);
 
+  useEffect(() => {
+    if (editData && isOpen) {
+      setValue("namaPosyandu", editData.name || editData.nama || "");
+      setValue("alamatLengkap", editData.address || editData.alamat || "");
+      if (editData.village_id) {
+        setValue("desaId", editData.village_id);
+      }
+    } else if (!isOpen) {
+      reset();
+    }
+  }, [editData, isOpen, setValue, reset]);
+
   if (!isOpen) return null;
 
   const onSubmit = async (data: TambahPosyanduFormValues) => {
     try {
-      const result = await createClinic({
+      if (!editData?.id) throw new Error("ID Posyandu tidak ditemukan");
+      const result = await updateClinic(editData.id, {
         name: data.namaPosyandu,
         address: data.alamatLengkap,
-        village_id: data.desaId,
       });
       if (!result?.success) {
-        throw new Error(result?.error || "Gagal menambahkan posyandu");
+        throw new Error(result?.error || "Gagal mengubah posyandu");
       }
-      reset();
       onSuccess?.();
       onClose();
     } catch (error: any) {
-      console.error("Gagal menambahkan posyandu:", error);
-      alert(error.message || "Gagal menambahkan posyandu");
+      console.error("Gagal mengubah posyandu:", error);
+      alert(error.message || "Gagal mengubah posyandu");
     }
   };
 
@@ -80,14 +94,14 @@ export default function TambahPosyanduModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div className="w-full max-w-[640px] bg-white rounded-[16px] shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 border border-border-input/40 flex flex-col max-h-[90vh]">
         <div className="p-6 border-b border-border-input/30 shrink-0">
           <h2 className="text-[22px] font-bold text-text-main mb-1">
-            Tambah Posyandu Baru
+            Edit Posyandu
           </h2>
           <p className="text-[14px] text-icon-muted">
-            Daftarkan unit Posyandu baru dan tentukan lokasi operasionalnya.
+            Perbarui data unit Posyandu.
           </p>
         </div>
 
@@ -96,8 +110,12 @@ export default function TambahPosyanduModal({
           className="flex flex-col flex-1 overflow-hidden"
         >
           <div className="p-6 flex flex-col gap-6 overflow-y-auto">
+            {/* Hanya menampilkan peringatan karena mengubah lokasi mungkin sulit di handle tanpa state region penuh */}
+            <p className="text-[13px] text-icon-muted bg-blue-50 p-3 rounded-lg text-blue-700">
+              Catatan: Jika Anda ingin mengubah lokasi (Desa/Kelurahan), Anda harus memilih ulang dari Provinsi. Jika tidak, biarkan saja (desaId sebelumnya sudah tersimpan).
+            </p>
             <p className="text-sm font-semibold text-text-main -mb-2">
-              Lokasi Wilayah <span className="text-danger">*</span>
+              Lokasi Wilayah (Opsional Jika Tidak Ingin Diubah)
             </p>
             <div className="grid grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-xl border border-border-input/30">
               <SearchableSelect
@@ -153,7 +171,7 @@ export default function TambahPosyanduModal({
               </label>
               <input
                 type="text"
-                placeholder="Masukkan nama Posyandu (contoh: Melati 1)"
+                placeholder="Masukkan nama Posyandu"
                 {...register("namaPosyandu")}
                 className={`w-full px-4 py-3 rounded-xl border bg-white text-[14px] font-medium text-text-main placeholder:text-text-placeholder outline-none focus:ring-2 transition-all ${
                   errors.namaPosyandu
@@ -182,10 +200,6 @@ export default function TambahPosyanduModal({
                     : "border-border-input/60 focus:ring-btn-primary/20 focus:border-btn-primary"
                 }`}
               ></textarea>
-              <p className="text-[12px] text-icon-muted mt-1 ml-1">
-                Sertakan detail seperti RT/RW, nama jalan, atau patokan lokasi
-                terdekat.
-              </p>
               {errors.alamatLengkap && (
                 <span className="text-xs font-medium text-danger ml-1">
                   {errors.alamatLengkap.message}
@@ -209,7 +223,7 @@ export default function TambahPosyanduModal({
               disabled={isSubmitting}
               className="px-6 gap-2 flex items-center"
             >
-              {isSubmitting ? "Menyimpan..." : "Simpan Posyandu"}
+              {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
             </Button>
           </div>
         </form>

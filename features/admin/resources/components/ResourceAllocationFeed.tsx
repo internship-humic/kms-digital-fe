@@ -14,11 +14,18 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TambahPosyanduModal from "./TambahPosyanduModal";
+import EditPosyanduModal from "./EditPosyanduModal";
+import DeletePosyanduModal from "./DeletePosyanduModal";
 import { usePagination } from "@/hooks/usePagination";
-import { mockPosyanduList } from "../data/mockResources";
+import { getAllClinics, deleteClinic } from "@/services/clinic.service";
+import { useCallback } from "react";
 
 export default function ResourceAllocationFeed() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedEditData, setSelectedEditData] = useState<any>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedDeleteData, setSelectedDeleteData] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [posyanduData, setPosyanduData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,36 +41,47 @@ export default function ResourceAllocationFeed() {
     goToPage,
   } = usePagination(5);
 
+  const fetchPosyanduData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const res = await getAllClinics();
+      const allData = Array.isArray(res) ? res : (res?.data || []);
+      const filtered = allData.filter(
+        (d: any) =>
+          d.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          d.address?.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
+      const start = (page - 1) * limit;
+
+      setPosyanduData(filtered.slice(start, start + limit));
+      setPaginationData(
+        filtered.length,
+        Math.ceil(filtered.length / limit) || 1,
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [page, limit, searchQuery, setPaginationData]);
+
   useEffect(() => {
-    const fetchPosyanduData = async () => {
-      setIsLoading(true);
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 400));
-        const filtered = mockPosyanduList.filter(
-          (d) =>
-            d.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            d.desa.toLowerCase().includes(searchQuery.toLowerCase()),
-        );
-        const start = (page - 1) * limit;
-
-        setPosyanduData(filtered.slice(start, start + limit));
-        setPaginationData(
-          filtered.length,
-          Math.ceil(filtered.length / limit) || 1,
-        );
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     const timeoutId = setTimeout(() => {
       fetchPosyanduData();
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [page, limit, searchQuery, setPaginationData]);
+  }, [fetchPosyanduData]);
+
+  const handleDeleteClick = (data: any) => {
+    setSelectedDeleteData(data);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleEdit = (data: any) => {
+    setSelectedEditData(data);
+    setIsEditModalOpen(true);
+  };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -155,25 +173,31 @@ export default function ResourceAllocationFeed() {
                           <SquarePlus size={14} strokeWidth={2.5} />
                         </div>
                         <span className="text-[15px] font-semibold text-text-main">
-                          {row.nama}
+                          {row.name || row.nama}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-5 text-[15px] text-icon-muted">
-                      {row.desa}
+                      {row.desa || (row.village_id ? "Desa ID: " + row.village_id.slice(0, 8) : "-")}
                     </td>
                     <td className="px-6 py-5 text-[15px] text-icon-muted pr-12">
-                      {row.alamat}
+                      {row.address || row.alamat}
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center justify-end gap-3">
                         <button className="text-icon-muted hover:text-text-main transition-colors cursor-pointer">
                           <Eye size={18} strokeWidth={2.5} />
                         </button>
-                        <button className="text-btn-primary hover:text-btn-hover transition-colors cursor-pointer">
+                        <button 
+                          onClick={() => handleEdit(row)}
+                          className="text-btn-primary hover:text-btn-hover transition-colors cursor-pointer"
+                        >
                           <Pencil size={18} strokeWidth={2.5} />
                         </button>
-                        <button className="text-danger hover:text-danger/80 transition-colors cursor-pointer">
+                        <button 
+                          onClick={() => handleDeleteClick(row)}
+                          className="text-danger hover:text-danger/80 transition-colors cursor-pointer"
+                        >
                           <Trash2 size={18} strokeWidth={2.5} />
                         </button>
                       </div>
@@ -243,6 +267,19 @@ export default function ResourceAllocationFeed() {
       <TambahPosyanduModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onSuccess={fetchPosyanduData}
+      />
+      <EditPosyanduModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSuccess={fetchPosyanduData}
+        editData={selectedEditData}
+      />
+      <DeletePosyanduModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onSuccess={fetchPosyanduData}
+        deleteData={selectedDeleteData}
       />
     </div>
   );
