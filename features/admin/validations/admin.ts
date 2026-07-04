@@ -31,3 +31,12 @@ export const buatAkunKaderSchema = z
   });
 
 export type BuatAkunKaderFormValues = z.infer<typeof buatAkunKaderSchema>;
+
+export const editKaderSchema = z.object({
+  namaLengkap: z.string().min(1, "Nama lengkap wajib diisi"),
+  email: z.string().min(1, "Email wajib diisi").email("Format email tidak valid"),
+  desaId: z.string().optional(),
+  posyanduId: z.string().optional(),
+});
+
+export type EditKaderFormValues = z.infer<typeof editKaderSchema>;

@@ -16,6 +16,7 @@ export const updateProfileSchema = z.object({
 
 export const updatePasswordSchema = z
   .object({
+    currentPassword: z.string().min(1, "Kata sandi saat ini wajib diisi"),
     newPassword: z
       .string()
       .min(8, "Password minimal 8 karakter")

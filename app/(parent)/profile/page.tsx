@@ -2,6 +2,7 @@ import LogoutButton from "@/features/parent/profile/actions/LogoutButton";
 import PersonalInfoSection from "@/features/parent/profile/sections/PersonalInfoSection";
 import ProfileCard from "@/features/parent/profile/sections/ProfileCard";
 import SecuritySection from "@/features/parent/profile/sections/SecuritySection";
+import { getProfile } from "@/services/profile.service";
 import { getProfileMockData } from "@/features/parent/profile/data/mockProfile";
 
 export const metadata = {
@@ -10,7 +11,12 @@ export const metadata = {
 };
 
 export default async function ProfilePage() {
-  const profile = await getProfileMockData();
+  let profile = await getProfile();
+
+  // FALLBACK: Gunakan data dummy jika endpoint backend belum siap, agar UI tetap jalan dan bisa logout
+  if (!profile) {
+    profile = await getProfileMockData();
+  }
 
   return (
     <main className="flex flex-1 flex-col bg-background px-6 pt-10 pb-28">

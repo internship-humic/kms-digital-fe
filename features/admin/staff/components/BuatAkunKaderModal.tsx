@@ -7,7 +7,7 @@ import { Shield, Key, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SearchableSelect from "@/components/ui/SearchableSelect";
 import { useRegionData } from "@/features/auth/hooks/useRegionData";
-import { activateCadreService } from "@/services/auth.service";
+import { activateCadre } from "@/services/cadre.service";
 import {
   buatAkunKaderSchema,
   BuatAkunKaderFormValues,
@@ -16,11 +16,13 @@ import {
 type BuatAkunKaderModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 };
 
 export default function BuatAkunKaderModal({
   isOpen,
   onClose,
+  onSuccess,
 }: BuatAkunKaderModalProps) {
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [globalSuccess, setGlobalSuccess] = useState<string | null>(null);
@@ -102,15 +104,20 @@ export default function BuatAkunKaderModal({
       setGlobalError(null);
       setGlobalSuccess(null);
 
-      await activateCadreService({
+      const result = await activateCadre({
         name: data.namaLengkap,
         email: data.email,
         password: data.password,
         password_confirmation: data.confirmPassword,
         clinic_id: data.posyanduId,
-      } as any);
+      });
+
+      if (!result?.success) {
+        throw new Error(result?.error || "Gagal membuat akun kader.");
+      }
 
       setGlobalSuccess("Akun kader berhasil dibuat.");
+      onSuccess?.();
 
       setTimeout(() => {
         reset();

@@ -94,3 +94,63 @@ export const activateCadreService = async (data: ActivateCadrePayload) => {
     throw new Error(error.message || "Terjadi kesalahan koneksi ke server.");
   }
 };
+
+export type UpdateProfilePayload = {
+  name: string;
+  email: string;
+  address: string;
+  phone_number: string;
+  clinic_id: string;
+};
+
+export const updateProfileService = async (data: UpdateProfilePayload, token: string) => {
+  try {
+    const response = await fetch(`${API_URL}/auth/profile`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || result.success === false) {
+      throw new Error(result.message || "Gagal memperbarui profil.");
+    }
+
+    return result.data;
+  } catch (error: any) {
+    throw new Error(error.message || "Terjadi kesalahan koneksi ke server.");
+  }
+};
+
+export type ChangePasswordPayload = {
+  current_password: string;
+  new_password: string;
+  password_confirmation: string;
+};
+
+export const changePasswordService = async (data: ChangePasswordPayload, token: string) => {
+  try {
+    const response = await fetch(`${API_URL}/auth/change-password`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || result.success === false) {
+      throw new Error(result.message || "Gagal mengubah kata sandi.");
+    }
+
+    return result.data;
+  } catch (error: any) {
+    throw new Error(error.message || "Terjadi kesalahan koneksi ke server.");
+  }
+};

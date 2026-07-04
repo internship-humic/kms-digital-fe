@@ -1,4 +1,5 @@
 import PersonalPage from "@/features/parent/profile/pages/PersonalPage";
+import { getProfile } from "@/services/profile.service";
 import { getProfileMockData } from "@/features/parent/profile/data/mockProfile";
 
 export const metadata = {
@@ -6,8 +7,13 @@ export const metadata = {
   description: "Perbarui informasi pribadi akun Anda.",
 };
 
-export default async function PersonalInfoPage() {
-  const profileData = await getProfileMockData();
+export default async function EditProfilePage() {
+  let profileData = await getProfile();
+
+  // FALLBACK: Gunakan data dummy jika endpoint backend belum siap
+  if (!profileData) {
+    profileData = await getProfileMockData();
+  }
 
   const formDefaultValues = {
     fullName: profileData.fullName,

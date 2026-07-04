@@ -13,13 +13,21 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BuatAkunKaderModal from "./BuatAkunKaderModal";
+import EditKaderModal from "./EditKaderModal";
+import DeleteKaderModal from "./DeleteKaderModal";
+import DetailKaderModal from "./DetailKaderModal";
 import { usePagination } from "@/hooks/usePagination";
-
-// import { getStaff } from "@/services/staff.service";
-import { mockStaffList } from "../data/mockStaff";
+import { getAllCadres } from "@/services/cadre.service";
+import { useCallback } from "react";
 
 export default function StaffDirectoryFeed() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedEditData, setSelectedEditData] = useState<any>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedDeleteData, setSelectedDeleteData] = useState<any>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedDetailData, setSelectedDetailData] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [staffData, setStaffData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,40 +43,57 @@ export default function StaffDirectoryFeed() {
     goToPage,
   } = usePagination(5);
 
-  useEffect(() => {
-    const fetchStaffData = async () => {
-      setIsLoading(true);
-      try {
-        // const response = await getStaff(searchQuery, page, limit);
-        // setStaffData(response.data);
-        // setPaginationData(response.pagination.total, response.pagination.totalPages);
-
-        await new Promise((resolve) => setTimeout(resolve, 400));
-        const filtered = mockStaffList.filter(
-          (s) =>
-            s.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            s.email.toLowerCase().includes(searchQuery.toLowerCase()),
-        );
+  const fetchStaffData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await getAllCadres();
+      if (response?.success && Array.isArray(response?.data)) {
+        let allData = response.data;
+        if (searchQuery) {
+          allData = allData.filter((s: any) =>
+            s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            s.email.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        }
         const start = (page - 1) * limit;
-
-        setStaffData(filtered.slice(start, start + limit));
+        setStaffData(allData.slice(start, start + limit));
         setPaginationData(
-          filtered.length,
-          Math.ceil(filtered.length / limit) || 1,
+          allData.length,
+          Math.ceil(allData.length / limit) || 1,
         );
-      } catch (error) {
-        console.error("Gagal mengambil data kader:", error);
-      } finally {
-        setIsLoading(false);
+      } else {
+        setStaffData([]);
+        setPaginationData(0, 1);
       }
-    };
+    } catch (error) {
+      console.error("Gagal mengambil data kader:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [page, limit, searchQuery, setPaginationData]);
 
+  useEffect(() => {
     const timeoutId = setTimeout(() => {
       fetchStaffData();
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [page, limit, searchQuery, setPaginationData]);
+  }, [fetchStaffData]);
+
+  const handleEditClick = (data: any) => {
+    setSelectedEditData(data);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteClick = (data: any) => {
+    setSelectedDeleteData(data);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDetailClick = (data: any) => {
+    setSelectedDetailData(data);
+    setIsDetailModalOpen(true);
+  };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -189,9 +214,7 @@ export default function StaffDirectoryFeed() {
                 <th className="px-6 py-4 text-[14px] font-bold text-text-main w-[20%]">
                   Email/Username
                 </th>
-                <th className="px-6 py-4 text-[14px] font-bold text-text-main w-[15%]">
-                  Desa
-                </th>
+
                 <th className="px-6 py-4 text-[14px] font-bold text-text-main w-[15%]">
                   Posyandu
                 </th>
@@ -222,45 +245,46 @@ export default function StaffDirectoryFeed() {
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-4">
                         <div className="w-9 h-9 rounded-full bg-btn-primary flex items-center justify-center text-white text-[13px] font-bold shrink-0">
-                          {row.inisial}
+                          {row.name ? row.name.substring(0, 2).toUpperCase() : "KD"}
                         </div>
                         <span className="text-[15px] font-semibold text-text-main">
-                          {row.nama}
+                          {row.name}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-5 text-[15px] text-icon-muted">
                       {row.email}
                     </td>
+
                     <td className="px-6 py-5 text-[15px] text-icon-muted">
-                      {row.desa}
-                    </td>
-                    <td className="px-6 py-5 text-[15px] text-icon-muted">
-                      {row.posyandu}
+                      {row.clinic?.name || "-"}
                     </td>
                     <td className="px-6 py-5">
                       <div
-                        className={`inline-flex justify-center min-w-[100px] py-1.5 rounded-full text-[13px] font-semibold ${getStatusStyle(row.status)}`}
+                        className={`inline-flex justify-center min-w-[100px] py-1.5 rounded-full text-[13px] font-semibold bg-primary-light text-btn-primary`}
                       >
-                        {row.status}
+                        Aktif
                       </div>
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center justify-end gap-3">
                         <button
-                          aria-label={`Lihat detail kader ${row.nama}`}
+                          onClick={() => handleDetailClick(row)}
+                          aria-label={`Lihat detail kader ${row.name || row.nama}`}
                           className="text-icon-muted hover:text-text-main transition-colors cursor-pointer"
                         >
                           <Eye size={18} strokeWidth={2.5} />
                         </button>
                         <button
-                          aria-label={`Edit data kader ${row.nama}`}
+                          onClick={() => handleEditClick(row)}
+                          aria-label={`Edit data kader ${row.name}`}
                           className="text-btn-primary hover:text-btn-hover transition-colors cursor-pointer"
                         >
                           <Pencil size={18} strokeWidth={2.5} />
                         </button>
                         <button
-                          aria-label={`Hapus data kader ${row.nama}`}
+                          onClick={() => handleDeleteClick(row)}
+                          aria-label={`Hapus data kader ${row.name}`}
                           className="text-danger hover:text-danger/80 transition-colors cursor-pointer"
                         >
                           <Trash2 size={18} strokeWidth={2.5} />
@@ -338,6 +362,24 @@ export default function StaffDirectoryFeed() {
       <BuatAkunKaderModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onSuccess={fetchStaffData}
+      />
+      <EditKaderModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSuccess={fetchStaffData}
+        editData={selectedEditData}
+      />
+      <DeleteKaderModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onSuccess={fetchStaffData}
+        deleteData={selectedDeleteData}
+      />
+      <DetailKaderModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        detailData={selectedDetailData}
       />
     </div>
   );

@@ -43,4 +43,4 @@ export const getVillages = (districtId: string) =>
   fetchRegionData(`/region/village/${districtId}`);
 
 export const getClinics = (villageId: string) =>
-  fetchRegionData(`/clinic/${villageId}`);
+  fetchRegionData(`/clinic/village/${villageId}`);

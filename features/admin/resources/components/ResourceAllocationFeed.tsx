@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import TambahPosyanduModal from "./TambahPosyanduModal";
 import EditPosyanduModal from "./EditPosyanduModal";
 import DeletePosyanduModal from "./DeletePosyanduModal";
+import DetailPosyanduModal from "./DetailPosyanduModal";
 import { usePagination } from "@/hooks/usePagination";
 import { getAllClinics, deleteClinic } from "@/services/clinic.service";
 import { useCallback } from "react";
@@ -26,6 +27,8 @@ export default function ResourceAllocationFeed() {
   const [selectedEditData, setSelectedEditData] = useState<any>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedDeleteData, setSelectedDeleteData] = useState<any>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedDetailData, setSelectedDetailData] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [posyanduData, setPosyanduData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -81,6 +84,11 @@ export default function ResourceAllocationFeed() {
   const handleEdit = (data: any) => {
     setSelectedEditData(data);
     setIsEditModalOpen(true);
+  };
+
+  const handleDetailClick = (data: any) => {
+    setSelectedDetailData(data);
+    setIsDetailModalOpen(true);
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -185,7 +193,10 @@ export default function ResourceAllocationFeed() {
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center justify-end gap-3">
-                        <button className="text-icon-muted hover:text-text-main transition-colors cursor-pointer">
+                        <button 
+                          onClick={() => handleDetailClick(row)}
+                          className="text-icon-muted hover:text-text-main transition-colors cursor-pointer"
+                        >
                           <Eye size={18} strokeWidth={2.5} />
                         </button>
                         <button 
@@ -280,6 +291,11 @@ export default function ResourceAllocationFeed() {
         onClose={() => setIsDeleteModalOpen(false)}
         onSuccess={fetchPosyanduData}
         deleteData={selectedDeleteData}
+      />
+      <DetailPosyanduModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        detailData={selectedDetailData}
       />
     </div>
   );

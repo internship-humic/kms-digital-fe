@@ -13,10 +13,21 @@ import {
   updatePasswordSchema,
   UpdatePasswordFormValues,
 } from "@/lib/validations/profile";
+import { changePasswordService } from "@/services/auth.service";
+
+// Helper function to get cookie by name
+const getCookie = (name: string) => {
+  if (typeof document === "undefined") return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift();
+  return null;
+};
 
 export default function ChangePasswordForm() {
   const router = useRouter();
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [globalError, setGlobalError] = useState<string | null>(null);
 
   const {
     register,
@@ -45,10 +56,26 @@ export default function ChangePasswordForm() {
     newPassword.length > 0 && newPassword === confirmPassword;
 
   const onSubmit = async (data: UpdatePasswordFormValues) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("Password berhasil diubah", data);
+    setGlobalError(null);
+    try {
+      const token = getCookie("token");
+      if (!token) {
+        throw new Error("Sesi Anda telah berakhir, silakan login kembali.");
+      }
 
-    setIsSuccessModalOpen(true);
+      await changePasswordService(
+        {
+          current_password: data.currentPassword,
+          new_password: data.newPassword,
+          password_confirmation: data.confirmPassword,
+        },
+        token
+      );
+
+      setIsSuccessModalOpen(true);
+    } catch (error: any) {
+      setGlobalError(error.message || "Gagal mengubah kata sandi.");
+    }
   };
 
   const handleModalClose = () => {
@@ -72,6 +99,21 @@ export default function ChangePasswordForm() {
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+            {globalError && (
+              <div className="mb-4 p-3 rounded-md bg-red-50 text-red-600 text-sm border border-red-200">
+                {globalError}
+              </div>
+            )}
+
+            <div className="mb-6">
+              <PasswordField
+                label="Kata Sandi Saat Ini"
+                placeholder="Masukan Kata Sandi Saat Ini"
+                {...register("currentPassword")}
+                error={errors.currentPassword?.message}
+              />
+            </div>
+            
             <div className="mb-6">
               <PasswordField
                 label="Kata Sandi Baru"

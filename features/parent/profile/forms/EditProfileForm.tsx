@@ -15,6 +15,16 @@ import {
   updateProfileSchema,
   UpdateProfileFormValues,
 } from "@/lib/validations/profile";
+import { updateProfileService } from "@/services/auth.service";
+
+// Helper function to get cookie by name
+const getCookie = (name: string) => {
+  if (typeof document === "undefined") return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift();
+  return null;
+};
 
 type EditProfileFormProps = {
   defaultValues: UpdateProfileFormValues;
@@ -25,6 +35,7 @@ export default function EditProfileForm({
 }: EditProfileFormProps) {
   const router = useRouter();
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [globalError, setGlobalError] = useState<string | null>(null);
 
   const {
     register,
@@ -37,10 +48,28 @@ export default function EditProfileForm({
   });
 
   const onSubmit = async (data: UpdateProfileFormValues) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("Data Profil Baru:", data);
+    setGlobalError(null);
+    try {
+      const token = getCookie("token");
+      if (!token) {
+        throw new Error("Sesi Anda telah berakhir, silakan login kembali.");
+      }
 
-    setIsSuccessModalOpen(true);
+      await updateProfileService(
+        {
+          name: data.fullName,
+          email: data.email,
+          phone_number: data.phone,
+          address: data.address,
+          clinic_id: data.posyanduId,
+        },
+        token
+      );
+
+      setIsSuccessModalOpen(true);
+    } catch (error: any) {
+      setGlobalError(error.message || "Gagal memperbarui profil.");
+    }
   };
 
   const handleModalClose = () => {
@@ -67,6 +96,12 @@ export default function EditProfileForm({
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4"
           >
+            {globalError && (
+              <div className="p-3 rounded-md bg-red-50 text-red-600 text-sm border border-red-200">
+                {globalError}
+              </div>
+            )}
+            
             <InputField
               label="Nama Lengkap"
               placeholder="Masukan Nama Lengkap"
