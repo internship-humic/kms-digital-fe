@@ -13,16 +13,7 @@ import {
   updatePasswordSchema,
   UpdatePasswordFormValues,
 } from "@/lib/validations/profile";
-import { changePasswordService } from "@/services/auth.service";
-
-// Helper function to get cookie by name
-const getCookie = (name: string) => {
-  if (typeof document === "undefined") return null;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift();
-  return null;
-};
+import { changePasswordAction } from "@/app/actions/auth";
 
 export default function ChangePasswordForm() {
   const router = useRouter();
@@ -58,18 +49,12 @@ export default function ChangePasswordForm() {
   const onSubmit = async (data: UpdatePasswordFormValues) => {
     setGlobalError(null);
     try {
-      const token = getCookie("token");
-      if (!token) {
-        throw new Error("Sesi Anda telah berakhir, silakan login kembali.");
-      }
-
-      await changePasswordService(
+      await changePasswordAction(
         {
           current_password: data.currentPassword,
           new_password: data.newPassword,
           password_confirmation: data.confirmPassword,
-        },
-        token
+        }
       );
 
       setIsSuccessModalOpen(true);

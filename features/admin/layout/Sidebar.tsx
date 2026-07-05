@@ -12,6 +12,7 @@ import {
   HelpCircle,
   LogOut,
 } from "lucide-react";
+import { logoutAction } from "@/app/actions/auth";
 
 const sidebarMenus = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
@@ -73,15 +74,27 @@ export default function Sidebar() {
           const Icon = link.icon;
           const isLogout = link.name === "Logout";
 
+          if (isLogout) {
+            return (
+              <button
+                key={link.name}
+                onClick={async () => {
+                  await logoutAction();
+                  window.location.href = link.href;
+                }}
+                className={`flex items-center gap-4 py-3 text-[14px] font-semibold leading-[20px] tracking-[0px] align-middle whitespace-nowrap transition-colors cursor-pointer text-icon-muted hover:text-danger w-full text-left`}
+              >
+                <Icon size={20} strokeWidth={2} />
+                {link.name}
+              </button>
+            );
+          }
+
           return (
             <Link
               key={link.name}
               href={link.href}
-              className={`flex items-center gap-4 py-3 text-[14px] font-semibold leading-[20px] tracking-[0px] align-middle whitespace-nowrap transition-colors cursor-pointer ${
-                isLogout
-                  ? "text-icon-muted hover:text-danger"
-                  : "text-icon-muted hover:text-text-main"
-              }`}
+              className={`flex items-center gap-4 py-3 text-[14px] font-semibold leading-[20px] tracking-[0px] align-middle whitespace-nowrap transition-colors cursor-pointer text-icon-muted hover:text-text-main`}
             >
               <Icon size={20} strokeWidth={2} />
               {link.name}
