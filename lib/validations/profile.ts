@@ -2,7 +2,8 @@ import * as z from "zod";
 
 export const updateProfileSchema = z.object({
   fullName: z.string().min(3, "Nama lengkap minimal 3 karakter"),
-  posyanduId: z.string().min(1, "Silakan pilih Posyandu"),
+  desaId: z.string().optional(),
+  posyanduId: z.string().optional(),
   email: z
     .string()
     .min(1, "Email wajib diisi")

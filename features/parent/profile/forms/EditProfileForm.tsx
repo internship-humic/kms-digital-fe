@@ -10,21 +10,13 @@ import CustomSelect from "@/components/ui/CustomSelect";
 import InputField from "@/components/ui/InputField";
 import TextAreaField from "@/components/ui/TextAreaField";
 import SuccessModal from "@/components/ui/SuccessModal";
-import { POSYANDU_OPTIONS } from "@/lib/constants";
+import SearchableSelect from "@/components/ui/SearchableSelect";
+import { useRegionData } from "@/features/auth/hooks/useRegionData";
 import {
   updateProfileSchema,
   UpdateProfileFormValues,
 } from "@/lib/validations/profile";
-import { updateProfileService } from "@/services/auth.service";
-
-// Helper function to get cookie by name
-const getCookie = (name: string) => {
-  if (typeof document === "undefined") return null;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift();
-  return null;
-};
+import { updateProfileAction } from "@/app/actions/auth";
 
 type EditProfileFormProps = {
   defaultValues: UpdateProfileFormValues;
@@ -41,29 +33,43 @@ export default function EditProfileForm({
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<UpdateProfileFormValues>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues,
   });
 
+  const {
+    provinces,
+    regencies,
+    districts,
+    villages,
+    clinics,
+    selectedProv,
+    setSelectedProv,
+    selectedReg,
+    setSelectedReg,
+    selectedDist,
+    setSelectedDist,
+    selectedVill,
+    setSelectedVill,
+  } = useRegionData(setValue);
+
   const onSubmit = async (data: UpdateProfileFormValues) => {
     setGlobalError(null);
     try {
-      const token = getCookie("token");
-      if (!token) {
-        throw new Error("Sesi Anda telah berakhir, silakan login kembali.");
-      }
+      // Gunakan posyanduId baru jika dipilih, jika tidak gunakan yang lama
+      const posyanduIdToUpdate = data.posyanduId || defaultValues.posyanduId;
 
-      await updateProfileService(
+      await updateProfileAction(
         {
           name: data.fullName,
           email: data.email,
           phone_number: data.phone,
           address: data.address,
-          clinic_id: data.posyanduId,
-        },
-        token
+          clinic_id: posyanduIdToUpdate,
+        }
       );
 
       setIsSuccessModalOpen(true);
@@ -110,23 +116,88 @@ export default function EditProfileForm({
               error={errors.fullName?.message}
             />
 
-            <Controller
-              name="posyanduId"
-              control={control}
-              render={({ field }) => (
-                <CustomSelect
-                  label="Posyandu"
-                  placeholder="Pilih Posyandu"
-                  options={POSYANDU_OPTIONS}
-                  value={
-                    POSYANDU_OPTIONS.find((opt) => opt.id === field.value) ||
-                    null
-                  }
-                  onChange={(option) => field.onChange(option.id)}
-                  error={errors.posyanduId?.message}
+            <div className="flex flex-col gap-2">
+              <p className="text-[13px] text-icon-muted bg-blue-50 p-3 rounded-lg text-blue-700 mb-2">
+                Posyandu saat ini: <span className="font-bold">{(defaultValues as any).posyanduName || "Tidak diketahui"}</span>. 
+                Jika Anda ingin mengubah posyandu, silakan pilih lokasi baru di bawah ini. Jika tidak, kosongkan saja pilihan posyandu.
+              </p>
+              
+              <div className="grid grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-xl border border-border-input/30">
+                <SearchableSelect
+                  label="Provinsi"
+                  placeholder="Pilih Provinsi"
+                  searchPlaceholder="Cari provinsi..."
+                  options={provinces}
+                  value={selectedProv}
+                  onChange={(val) => setSelectedProv(val)}
                 />
-              )}
-            />
+
+                <SearchableSelect
+                  label="Kabupaten/Kota"
+                  placeholder="Pilih Kabupaten"
+                  searchPlaceholder="Cari kabupaten..."
+                  options={regencies}
+                  value={selectedReg}
+                  onChange={(val) => setSelectedReg(val)}
+                  disabled={!selectedProv}
+                />
+
+                <SearchableSelect
+                  label="Kecamatan"
+                  placeholder="Pilih Kecamatan"
+                  searchPlaceholder="Cari kecamatan..."
+                  options={districts}
+                  value={selectedDist}
+                  onChange={(val) => setSelectedDist(val)}
+                  disabled={!selectedReg}
+                />
+
+                <Controller
+                  name="desaId"
+                  control={control}
+                  render={({ field }) => (
+                    <SearchableSelect
+                      label="Desa/Kelurahan"
+                      placeholder="Pilih Desa"
+                      searchPlaceholder="Cari desa..."
+                      options={villages}
+                      value={selectedVill}
+                      onChange={(val) => {
+                        setSelectedVill(val);
+                        field.onChange(val);
+                      }}
+                      error={errors.desaId?.message}
+                      disabled={!selectedDist}
+                    />
+                  )}
+                />
+              </div>
+
+              <div className="mt-2 mb-2">
+                <Controller
+                  name="posyanduId"
+                  control={control}
+                  render={({ field }) => (
+                    <SearchableSelect
+                      label="Posyandu Baru"
+                      placeholder={
+                        selectedVill
+                          ? clinics.length > 0
+                            ? "Pilih Posyandu Baru"
+                            : "Posyandu tidak tersedia di desa ini"
+                          : "Pilih desa terlebih dahulu untuk mengubah Posyandu"
+                      }
+                      searchPlaceholder="Cari posyandu..."
+                      options={clinics}
+                      value={field.value || null}
+                      onChange={(val) => field.onChange(val)}
+                      error={errors.posyanduId?.message}
+                      disabled={!selectedVill || clinics.length === 0}
+                    />
+                  )}
+                />
+              </div>
+            </div>
 
             <InputField
               label="Email"

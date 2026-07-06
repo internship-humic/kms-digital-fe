@@ -20,7 +20,9 @@ export default async function EditProfilePage() {
     email: profileData.email,
     phone: profileData.phone,
     address: profileData.address,
-    posyanduId: "posyandu-2",
+    posyanduId: profileData.posyanduId || "",
+    posyanduName: profileData.posyandu || "",
+    desaId: "",
   };
 
   return <PersonalPage profile={formDefaultValues} />;
