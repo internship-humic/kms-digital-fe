@@ -15,15 +15,14 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import TambahDesaModal from "./TambahDesaModal";
+import { getRegionalReports } from "@/services/region.service";
 import { usePagination } from "@/hooks/usePagination";
-import { mockDesaList } from "../data/mockReports";
 
 export default function RegionalReportsFeed() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [desaData, setDesaData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [coverageData, setCoverageData] = useState<any>(null);
 
   const {
     page,
@@ -34,23 +33,21 @@ export default function RegionalReportsFeed() {
     nextPage,
     prevPage,
     goToPage,
-  } = usePagination(3);
+  } = usePagination(10);
 
   useEffect(() => {
     const fetchRegionalData = async () => {
       setIsLoading(true);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 400));
-        const filtered = mockDesaList.filter((d) =>
-          d.nama.toLowerCase().includes(searchQuery.toLowerCase()),
-        );
-        const start = (page - 1) * limit;
-
-        setDesaData(filtered.slice(start, start + limit));
-        setPaginationData(
-          filtered.length,
-          Math.ceil(filtered.length / limit) || 1,
-        );
+        const response = await getRegionalReports(page, limit, searchQuery);
+        if (response?.data) {
+          setDesaData(response.data.riskRegions);
+          setCoverageData(response.data.coverage);
+          setPaginationData(
+            response.pagination?.total || 0,
+            response.pagination?.totalPages || 1
+          );
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -72,11 +69,11 @@ export default function RegionalReportsFeed() {
 
   const getStatusStyle = (status: string) => {
     switch (status) {
-      case "Optimal":
+      case "LOW":
         return "bg-primary-light text-btn-primary";
-      case "Rendah":
+      case "HIGH":
         return "bg-danger/10 text-danger";
-      case "Sedang":
+      case "MEDIUM":
         return "bg-primary-base/20 text-primary";
       default:
         return "bg-border-input/30 text-icon-muted";
@@ -85,14 +82,27 @@ export default function RegionalReportsFeed() {
 
   const getProgressBarColor = (status: string) => {
     switch (status) {
-      case "Optimal":
+      case "LOW":
         return "bg-btn-primary";
-      case "Rendah":
+      case "HIGH":
         return "bg-danger";
-      case "Sedang":
+      case "MEDIUM":
         return "bg-primary-base";
       default:
         return "bg-border-input";
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "LOW":
+        return "Risiko Rendah";
+      case "MEDIUM":
+        return "Risiko Sedang";
+      case "HIGH":
+        return "Risiko Tinggi";
+      default:
+        return "Tidak Diketahui";
     }
   };
 
@@ -101,20 +111,12 @@ export default function RegionalReportsFeed() {
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-[32px] font-bold leading-[40px] tracking-[-0.64px] align-middle text-text-main">
-            Manajemen Wilayah & Desa
+            Laporan Wilayah
           </h1>
           <p className="text-icon-muted mt-2 font-medium">
-            Kelola data cakupan wilayah untuk pemantauan kesehatan daerah.
+            Pantau tingkat peluang resiko stunting berdasarkan cakupan data dari setiap wilayah.
           </p>
         </div>
-
-        <Button
-          onClick={() => setIsModalOpen(true)}
-          className="px-5 gap-2 shadow-md shadow-blue-500/20"
-        >
-          <Plus size={18} strokeWidth={2.5} />
-          <span className="font-semibold">Tambah Desa</span>
-        </Button>
       </div>
 
       <div className="grid grid-cols-3 gap-6 mb-8">
@@ -124,7 +126,7 @@ export default function RegionalReportsFeed() {
           </div>
           <div>
             <div className="text-[32px] font-bold leading-[40px] tracking-[-0.64px] align-middle text-text-main mb-1.5">
-              142
+              {coverageData?.totalVillages || 0}
             </div>
             <div className="text-xs font-medium text-icon-muted">
               Total Desa Terdaftar
@@ -138,10 +140,10 @@ export default function RegionalReportsFeed() {
           </div>
           <div>
             <div className="text-[32px] font-bold leading-[40px] tracking-[-0.64px] align-middle text-text-main mb-1.5">
-              87%
+              {coverageData?.coveredVillagePercentage || 0}%
             </div>
             <div className="text-xs font-medium text-icon-muted">
-              Rata-rata Cakupan
+              Rata-rata Cakupan ({coverageData?.totalCoveredVillages || 0} dari {coverageData?.totalVillages || 0} Desa)
             </div>
           </div>
         </div>
@@ -152,10 +154,10 @@ export default function RegionalReportsFeed() {
           </div>
           <div>
             <div className="text-[32px] font-bold leading-[40px] tracking-[-0.64px] align-middle text-text-main mb-1.5">
-              12
+              {coverageData?.uncoveredVillages || 0}
             </div>
             <div className="text-xs font-medium text-icon-muted">
-              Desa Perlu Perhatian
+              Desa Belum Tercakup (Perlu Perhatian)
             </div>
           </div>
         </div>
@@ -222,13 +224,10 @@ export default function RegionalReportsFeed() {
                   Kecamatan/Kabupaten
                 </th>
                 <th className="px-6 py-4 text-[14px] font-bold text-text-main">
-                  Cakupan Wilayah
+                  Peluang Resiko
                 </th>
                 <th className="px-6 py-4 text-[14px] font-bold text-text-main">
                   Status
-                </th>
-                <th className="px-6 py-4 text-[14px] font-bold text-text-main text-right">
-                  Aksi
                 </th>
               </tr>
             </thead>
@@ -236,7 +235,7 @@ export default function RegionalReportsFeed() {
               {!isLoading && desaData.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={5}
+                    colSpan={4}
                     className="px-6 py-10 text-center text-[15px] text-icon-muted"
                   >
                     Data wilayah atau desa tidak ditemukan.
@@ -245,57 +244,35 @@ export default function RegionalReportsFeed() {
               ) : (
                 desaData.map((row) => (
                   <tr
-                    key={row.id}
+                    key={row.villageId}
                     className="border-b border-border-input/20 last:border-b-0 hover:bg-background transition-colors"
                   >
                     <td className="px-6 py-5">
                       <span className="text-[15px] font-semibold text-text-main">
-                        {row.nama}
+                        {row.village}
                       </span>
                     </td>
                     <td className="px-6 py-5 text-[15px] text-icon-muted">
-                      {row.kecamatan}
+                      {row.district}
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-4">
                         <div className="w-[120px] h-2.5 bg-border-input/30 rounded-full overflow-hidden">
                           <div
-                            className={`h-full ${getProgressBarColor(row.status)} rounded-full`}
-                            style={{ width: `${row.cakupan}%` }}
+                            className={`h-full ${getProgressBarColor(row.label)} rounded-full`}
+                            style={{ width: `${row.percentage}%` }}
                           />
                         </div>
                         <span className="text-[14px] font-medium text-icon-muted">
-                          {row.cakupan}%
+                          {row.percentage}%
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-5">
                       <div
-                        className={`inline-flex justify-center min-w-[100px] py-1.5 rounded-full text-[13px] font-semibold ${getStatusStyle(row.status)}`}
+                        className={`inline-flex justify-center min-w-[100px] py-1.5 rounded-full text-[13px] font-semibold ${getStatusStyle(row.label)}`}
                       >
-                        {row.status}
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center justify-end gap-3">
-                        <button
-                          aria-label="Lihat"
-                          className="text-icon-muted hover:text-text-main transition-colors"
-                        >
-                          <Eye size={18} strokeWidth={2.5} />
-                        </button>
-                        <button
-                          aria-label="Edit"
-                          className="text-btn-primary hover:text-btn-hover transition-colors"
-                        >
-                          <Pencil size={18} strokeWidth={2.5} />
-                        </button>
-                        <button
-                          aria-label="Hapus"
-                          className="text-danger hover:text-danger/80 transition-colors"
-                        >
-                          <Trash2 size={18} strokeWidth={2.5} />
-                        </button>
+                        {getStatusLabel(row.label)}
                       </div>
                     </td>
                   </tr>
@@ -357,11 +334,6 @@ export default function RegionalReportsFeed() {
           </div>
         </div>
       </div>
-
-      <TambahDesaModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </div>
   );
 }

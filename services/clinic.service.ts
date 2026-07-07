@@ -1,9 +1,14 @@
 "use server";
 
-import { fetchWithAuth } from "@/lib/fetcher";
+import { fetchWithAuth, fetchPaginatedWithAuth } from "@/lib/fetcher";
 
-export const getAllClinics = async () => {
-  return await fetchWithAuth("/clinic/");
+export const getAllClinics = async (page = 1, limit = 10, search = "") => {
+  const query = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    search,
+  });
+  return await fetchPaginatedWithAuth(`/clinic?${query.toString()}`);
 };
 
 export const createClinic = async (data: {

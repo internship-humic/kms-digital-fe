@@ -1,10 +1,15 @@
 "use server";
 
-import { fetchWithAuth } from "@/lib/fetcher";
+import { fetchWithAuth, fetchPaginatedWithAuth } from "@/lib/fetcher";
 
-export const getAllCadres = async () => {
+export const getAllCadres = async (page = 1, limit = 10, search = "") => {
   try {
-    const res = await fetchWithAuth("/cadre/");
+    const query = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      search,
+    });
+    const res = await fetchPaginatedWithAuth(`/cadre?${query.toString()}`);
     return { success: true, data: res };
   } catch (error: any) {
     return { success: false, error: error.message };

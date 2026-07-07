@@ -35,3 +35,40 @@ export async function fetchWithAuth(
     throw new Error(error.message || "Gagal terhubung ke server.");
   }
 }
+
+export async function fetchPaginatedWithAuth(
+  endpoint: string,
+  options: RequestInit = {},
+) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  const headers = {
+    "Content-Type": "application/json",
+    ...(token && { Authorization: `Bearer ${token}` }),
+    ...options.headers,
+  };
+
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      ...options,
+      headers,
+      cache: "no-store",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || result.success === false) {
+      throw new Error(
+        result.message || "Terjadi kesalahan saat mengambil data",
+      );
+    }
+
+    return {
+      data: result.data,
+      pagination: result.pagination || {},
+    };
+  } catch (error: any) {
+    throw new Error(error.message || "Gagal terhubung ke server.");
+  }
+}

@@ -10,12 +10,6 @@ import {
   PieChart,
   Pie,
 } from "recharts";
-import {
-  adminMetrics,
-  balitaChartData,
-  wilayahChartData,
-  jadwalPosyandu,
-} from "../data/mockDashboard";
 
 interface AdminDashboardFeedProps {
   initialData?: any;
@@ -64,6 +58,47 @@ export default function AdminDashboardFeed({
     }
   };
 
+  const dynamicAdminMetrics = [
+    {
+      id: 1,
+      title: "Total Balita Terdaftar",
+      value: initialData?.childrens?.total_children?.toLocaleString() || "0",
+      trend: "Total keseluruhan balita",
+      icon: "smile",
+    },
+    {
+      id: 2,
+      title: "Total Posyandu",
+      value: initialData?.clinics?.total_clinics?.toLocaleString() || "0",
+      trend: "Aktif beroperasi",
+      icon: "plus",
+    },
+    {
+      id: 3,
+      title: "Total Desa",
+      value: initialData?.regions?.total_villages?.toLocaleString() || "0",
+      trend: "Terdaftar dalam sistem",
+      icon: "building",
+    },
+    {
+      id: 4,
+      title: "Total Kader",
+      value: initialData?.total_cadres?.toLocaleString() || "0",
+      trend: "Total keseluruhan kader",
+      icon: "users",
+    },
+  ];
+
+  const dynamicBalitaChartData = [
+    { name: "Normal", value: initialData?.childrens?.total_normal_children || 0 },
+    { name: "Beresiko", value: initialData?.childrens?.total_risky_children || 0 },
+  ];
+
+  const dynamicWilayahChartData = [
+    { name: "Tercakup", value: initialData?.regions?.total_covered_villages || 0 },
+    { name: "Belum Tercakup", value: initialData?.regions?.total_uncovered_villages || 0 },
+  ];
+
   return (
     <div className="p-8 pb-20">
       <div className="mb-8">
@@ -77,7 +112,7 @@ export default function AdminDashboardFeed({
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {adminMetrics.map((metric) => (
+        {dynamicAdminMetrics.map((metric) => (
           <div
             key={metric.id}
             className="bg-white p-6 rounded-[16px] border border-border-input/40 shadow-sm flex flex-col justify-between"
@@ -117,7 +152,7 @@ export default function AdminDashboardFeed({
           </h3>
           <div className="h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={balitaChartData}>
+              <BarChart data={dynamicBalitaChartData}>
                 <XAxis
                   dataKey="name"
                   axisLine={false}
@@ -126,7 +161,7 @@ export default function AdminDashboardFeed({
                   dy={10}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={160}>
-                  {balitaChartData.map((entry, index) => (
+                  {dynamicBalitaChartData.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={
@@ -149,14 +184,14 @@ export default function AdminDashboardFeed({
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={wilayahChartData}
+                  data={dynamicWilayahChartData}
                   innerRadius={85}
                   outerRadius={100}
                   paddingAngle={0}
                   dataKey="value"
                   stroke="none"
                 >
-                  {wilayahChartData.map((entry, index) => (
+                  {dynamicWilayahChartData.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={
@@ -175,7 +210,7 @@ export default function AdminDashboardFeed({
       <div className="bg-white rounded-[16px] border border-border-input/40 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-border-input/30">
           <h3 className="text-lg font-bold text-text-main">
-            Jadwal Posyandu Aktif
+            Posyandu Terbaru
           </h3>
         </div>
         <div className="overflow-x-auto">
@@ -189,43 +224,45 @@ export default function AdminDashboardFeed({
                   Desa
                 </th>
                 <th className="py-4 px-6 text-sm font-bold text-text-main">
-                  Tanggal
-                </th>
-                <th className="py-4 px-6 text-sm font-bold text-text-main">
-                  Status
+                  Dibuat Pada
                 </th>
               </tr>
             </thead>
             <tbody>
-              {jadwalPosyandu.map((row, index) => (
+              {initialData?.clinics?.latest_clinics?.map((row: any, index: number) => (
                 <tr
                   key={row.id}
                   className={
-                    index !== jadwalPosyandu.length - 1
+                    index !== initialData.clinics.latest_clinics.length - 1
                       ? "border-b border-border-input/20"
                       : ""
                   }
                 >
                   <td className="py-5 px-6 text-sm text-text-main">
-                    {row.nama}
+                    {row.name}
                   </td>
                   <td className="py-5 px-6 text-sm text-icon-muted">
-                    {row.desa}
+                    {row.village?.name || "-"}
                   </td>
                   <td className="py-5 px-6 text-sm text-icon-muted">
-                    {row.tanggal}
-                  </td>
-                  <td className="py-5 px-6 text-sm">
-                    <span
-                      className={`px-4 py-1.5 rounded-full text-xs font-semibold ${getStatusBadge(
-                        row.status,
-                      )}`}
-                    >
-                      {row.status}
-                    </span>
+                    {new Date(row.created_at).toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
                   </td>
                 </tr>
               ))}
+              {!initialData?.clinics?.latest_clinics?.length && (
+                <tr>
+                  <td
+                    colSpan={3}
+                    className="px-6 py-10 text-center text-[15px] text-icon-muted"
+                  >
+                    Data posyandu belum tersedia.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

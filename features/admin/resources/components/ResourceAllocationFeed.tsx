@@ -47,22 +47,23 @@ export default function ResourceAllocationFeed() {
   const fetchPosyanduData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await getAllClinics();
-      const allData = Array.isArray(res) ? res : (res?.data || []);
-      const filtered = allData.filter(
-        (d: any) =>
-          d.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          d.address?.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
-      const start = (page - 1) * limit;
-
-      setPosyanduData(filtered.slice(start, start + limit));
-      setPaginationData(
-        filtered.length,
-        Math.ceil(filtered.length / limit) || 1,
-      );
+      const res = await getAllClinics(page, limit, searchQuery);
+      
+      // Assuming backend returns { data: [...], pagination: { total_items, total_pages } }
+      // or similar structure based on the recent backend update
+      if (res?.data) {
+        setPosyanduData(res.data);
+        setPaginationData(
+          res.pagination?.total || 0,
+          res.pagination?.totalPages || 1
+        );
+      } else {
+        // Fallback if backend structure is different
+        setPosyanduData(Array.isArray(res) ? res : []);
+        setPaginationData(0, 1);
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Gagal mengambil data posyandu:", error);
     } finally {
       setIsLoading(false);
     }

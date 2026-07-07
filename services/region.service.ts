@@ -1,4 +1,7 @@
+"use server";
+
 import { RegionResponseDTO } from "@/features/auth/types";
+import { fetchPaginatedWithAuth } from "@/lib/fetcher";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -31,16 +34,25 @@ async function fetchRegionData(endpoint: string): Promise<RegionResponseDTO[]> {
   }
 }
 
-export const getProvinces = () => fetchRegionData("/region/province");
+export const getProvinces = async () => fetchRegionData("/region/province");
 
-export const getRegencies = (provinceId: string) =>
+export const getRegencies = async (provinceId: string) =>
   fetchRegionData(`/region/regency/${provinceId}`);
 
-export const getDistricts = (regencyId: string) =>
+export const getDistricts = async (regencyId: string) =>
   fetchRegionData(`/region/district/${regencyId}`);
 
-export const getVillages = (districtId: string) =>
+export const getVillages = async (districtId: string) =>
   fetchRegionData(`/region/village/${districtId}`);
 
-export const getClinics = (villageId: string) =>
+export const getClinics = async (villageId: string) =>
   fetchRegionData(`/clinic/village/${villageId}`);
+
+export const getRegionalReports = async (page = 1, limit = 10, search = "") => {
+  const query = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+  });
+  if (search) query.append("search", search);
+  return fetchPaginatedWithAuth(`/region/covered?${query.toString()}`);
+};

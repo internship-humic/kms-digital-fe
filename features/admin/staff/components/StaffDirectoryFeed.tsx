@@ -46,21 +46,17 @@ export default function StaffDirectoryFeed() {
   const fetchStaffData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await getAllCadres();
-      if (response?.success && Array.isArray(response?.data)) {
-        let allData = response.data;
-        if (searchQuery) {
-          allData = allData.filter((s: any) =>
-            s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            s.email.toLowerCase().includes(searchQuery.toLowerCase())
-          );
-        }
-        const start = (page - 1) * limit;
-        setStaffData(allData.slice(start, start + limit));
+      const response = await getAllCadres(page, limit, searchQuery);
+      if (response?.success && response?.data?.data) {
+        setStaffData(response.data.data);
         setPaginationData(
-          allData.length,
-          Math.ceil(allData.length / limit) || 1,
+          response.data.pagination?.total || 0,
+          response.data.pagination?.totalPages || 1
         );
+      } else if (response?.success && Array.isArray(response?.data)) {
+        // Fallback if backend structure is just an array
+        setStaffData(response.data);
+        setPaginationData(0, 1);
       } else {
         setStaffData([]);
         setPaginationData(0, 1);
