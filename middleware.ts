@@ -10,13 +10,21 @@ export function middleware(request: NextRequest) {
     path === "/" ||
     path.startsWith("/login") ||
     path.startsWith("/register") ||
+    path.startsWith("/forgot-password") ||
+    path.startsWith("/reset-password") ||
     path.startsWith("/admin/login") ||
     path.startsWith("/admin/register") ||
+    path.startsWith("/admin/forgot-password") ||
+    path.startsWith("/admin/reset-password") ||
     path.startsWith("/kader/login") ||
+    path.startsWith("/kader/forgot-password") ||
+    path.startsWith("/kader/reset-password") ||
     path.startsWith("/kader/onboarding");
 
+  const validRoles = ["admin", "kader", "parent"];
+
   if (isPublicRoute) {
-    if (token && role) {
+    if (token && role && validRoles.includes(role)) {
       if (role === "admin")
         return NextResponse.redirect(new URL("/admin/dashboard", request.url));
       if (role === "kader")
@@ -33,6 +41,13 @@ export function middleware(request: NextRequest) {
     if (path.startsWith("/kader"))
       return NextResponse.redirect(new URL("/kader/login", request.url));
     return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  if (!validRoles.includes(role)) {
+    const response = NextResponse.redirect(new URL("/login", request.url));
+    response.cookies.delete("token");
+    response.cookies.delete("role");
+    return response;
   }
 
   if (path.startsWith("/admin") && role !== "admin") {
@@ -58,7 +73,8 @@ export function middleware(request: NextRequest) {
 function getFallbackRoute(role: string) {
   if (role === "admin") return "/admin/dashboard";
   if (role === "kader") return "/kader/dashboard";
-  return "/dashboard";
+  if (role === "parent") return "/dashboard";
+  return "/login";
 }
 
 export const config = {

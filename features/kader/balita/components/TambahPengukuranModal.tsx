@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { createMeasurementClient } from "@/services/measurement-client.service";
+import { createMeasurementAction } from "@/app/actions/measurement";
 
 type TambahPengukuranModalProps = {
   isOpen: boolean;
@@ -42,7 +42,7 @@ export default function TambahPengukuranModal({
 
     try {
       setIsSubmitting(true);
-      await createMeasurementClient({
+      const result = await createMeasurementAction({
         children_id: childId,
         clinic_id: clinicId,
         measurement_date: measurementDate,
@@ -51,6 +51,8 @@ export default function TambahPengukuranModal({
         head_circumference: headCirc ? parseFloat(headCirc) : null,
         description: description || undefined,
       });
+
+      if (!result.success) throw new Error(result.error);
 
       setMeasurementDate("");
       setBodyWeight("");

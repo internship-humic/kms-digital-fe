@@ -9,12 +9,18 @@ import {
   TriangleAlert,
   UserRoundCheck,
 } from "lucide-react";
-import { tindakanCases } from "../data/mockTindakan";
-import { TindakanCase } from "../types";
 import Link from "next/link";
 
-const getRiskStyle = (riskLevel: TindakanCase["riskLevel"]) => {
-  if (riskLevel === "high") {
+type TindakanFeedProps = {
+  initialData: {
+    items: any[];
+    total_case: number;
+    need_referral: number;
+  };
+};
+
+const getRiskStyle = (status: string) => {
+  if (status === "HIGHRISK") {
     return {
       border: "border-l-danger",
       badge: "bg-danger/10 text-danger",
@@ -22,6 +28,7 @@ const getRiskStyle = (riskLevel: TindakanCase["riskLevel"]) => {
       icon: <TriangleAlert size={13} strokeWidth={2.5} />,
       action: "Ambil Tindakan",
       buttonIcon: <BriefcaseMedical size={15} strokeWidth={2.5} />,
+      riskLabel: "Risiko Tinggi",
     };
   }
 
@@ -33,14 +40,14 @@ const getRiskStyle = (riskLevel: TindakanCase["riskLevel"]) => {
     icon: <Info size={13} strokeWidth={2.5} />,
     action: "Tinjau Kasus",
     buttonIcon: <Eye size={15} strokeWidth={2.5} />,
+    riskLabel: "Risiko Sedang/Rendah",
   };
 };
 
-export default function TindakanFeed() {
-  const totalCases = tindakanCases.length;
-  const referralCases = tindakanCases.filter(
-    (item) => item.riskLevel === "high",
-  ).length;
+export default function TindakanFeed({ initialData }: TindakanFeedProps) {
+  const totalCases = initialData?.total_case || 0;
+  const referralCases = initialData?.need_referral || 0;
+  const cases = initialData?.items || [];
 
   return (
     <main className="px-6 pt-10 pb-8">
@@ -53,70 +60,81 @@ export default function TindakanFeed() {
       <section className="mb-7 grid grid-cols-2 gap-2">
         <div className="rounded-[12px] border border-border-input/40 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-start justify-between">
-            <p className="text-base text-icon-muted">Total Kasus</p>
+            <p className="text-base font-medium text-icon-muted">Total Kasus</p>
             <UserRoundCheck size={18} className="text-border-input" />
           </div>
-
-          <p className="text-6xl font-bold leading-none text-text-main">
-            {totalCases + 9}
+          <p className="text-5xl font-bold leading-none text-text-main">
+            {totalCases}
           </p>
         </div>
 
         <div className="rounded-[12px] border border-danger/20 bg-danger/5 p-4 shadow-sm">
           <div className="mb-2 flex items-start justify-between">
-            <p className="text-base text-danger">Perlu Rujukan</p>
+            <p className="text-base font-medium text-danger">Perlu Rujukan</p>
             <Asterisk size={22} className="text-danger" strokeWidth={3} />
           </div>
-
-          <p className="text-6xl font-bold leading-none text-danger">
-            {referralCases + 2}
+          <p className="text-5xl font-bold leading-none text-danger">
+            {referralCases}
           </p>
         </div>
       </section>
 
       <section className="flex flex-col gap-4">
-        {tindakanCases.map((item) => {
-          const style = getRiskStyle(item.riskLevel);
+        {cases.length === 0 ? (
+          <div className="text-center text-icon-muted py-10 bg-white border border-border-input/30 rounded-2xl">
+            Tidak ada balita yang memerlukan tindakan lanjutan saat ini.
+          </div>
+        ) : (
+          cases.map((item: any) => {
+            const style = getRiskStyle(item.status);
+            const initial = item.name.substring(0, 2).toUpperCase();
 
-          return (
-            <article
-              key={item.id}
-              className={`rounded-[14px] border-l-[4px] ${style.border} bg-white p-4 shadow-[0_8px_24px_rgba(15,23,42,0.06)]`}
-            >
-              <div className="mb-3 flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h2 className="truncate text-[21px] font-bold text-text-main">
-                    {item.name}
-                  </h2>
+            let measuredAtStr = "Belum ada pengukuran";
+            if (item.measurements && item.measurements.length > 0) {
+              const dateObj = new Date(item.measurements[0].measurement_date);
+              measuredAtStr = `Diukur: ${dateObj.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}`;
+            }
 
-                  <div
-                    className={`mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.badge}`}
-                  >
-                    {style.icon}
-                    {item.riskLabel}
+            return (
+              <article
+                key={item.id}
+                className={`rounded-[14px] border-l-[4px] ${style.border} bg-white p-4 shadow-[0_8px_24px_rgba(15,23,42,0.06)]`}
+              >
+                <div className="mb-3 flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2 className="truncate text-[21px] font-bold text-text-main">
+                      {item.name}
+                    </h2>
+
+                    <div
+                      className={`mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${style.badge}`}
+                    >
+                      {style.icon}
+                      {style.riskLabel}
+                    </div>
+                  </div>
+
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border-input/40 bg-background text-xl font-bold text-icon-alt shadow-sm">
+                    {initial}
                   </div>
                 </div>
 
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border-input/40 bg-background text-2xl font-bold text-icon-alt shadow-sm">
-                  {item.initial}
+                <div className="mb-4 flex items-center gap-2 text-base text-icon-muted">
+                  <CalendarDays size={15} strokeWidth={2} />
+                  <span>{measuredAtStr}</span>
                 </div>
-              </div>
 
-              <div className="mb-4 flex items-center gap-2 text-base text-icon-muted">
-                <CalendarDays size={15} strokeWidth={2} />
-                <span>{item.measuredAt}</span>
-              </div>
-
-              <Link
-                href={`/kader/tindakan/${item.id}`}
-                className={`flex w-full items-center justify-center gap-2 rounded-[8px] py-3 text-md font-semibold transition-all active:scale-95 cursor-pointer ${style.button}`}
-              >
-                {style.buttonIcon}
-                {style.action}
-              </Link>
-            </article>
-          );
-        })}
+                <Link
+                  href={`/kader/tindakan/${item.id}`}
+                  className={`flex w-full items-center justify-center gap-2 rounded-[8px] py-3 text-md font-semibold transition-all active:scale-95 cursor-pointer ${style.button}`}
+                >
+                  {style.buttonIcon}
+                  {style.action}
+                </Link>
+              </article>
+            );
+          })
+        )}
       </section>
     </main>
   );

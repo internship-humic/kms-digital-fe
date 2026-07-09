@@ -9,7 +9,7 @@ import {
   tambahPosyanduSchema,
   TambahPosyanduFormValues,
 } from "../../validations/admin";
-import { createClinic } from "@/services/clinic.service";
+import { createClinicAction } from "@/app/actions/clinic";
 
 type TambahPosyanduModalProps = {
   isOpen: boolean;
@@ -57,14 +57,16 @@ export default function TambahPosyanduModal({
 
   const onSubmit = async (data: TambahPosyanduFormValues) => {
     try {
-      const result = await createClinic({
+      const result = await createClinicAction({
         name: data.namaPosyandu,
         address: data.alamatLengkap,
         village_id: data.desaId,
       });
-      if (!result?.success) {
-        throw new Error(result?.error || "Gagal menambahkan posyandu");
+
+      if (!result.success) {
+        throw new Error(result.error || "Gagal menambahkan posyandu");
       }
+
       reset();
       onSuccess?.();
       onClose();

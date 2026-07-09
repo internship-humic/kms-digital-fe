@@ -64,7 +64,7 @@ export default function LoginPage() {
           />
           <div className="flex justify-end mt-1">
             <Link
-              href="#"
+              href="/forgot-password"
               className="text-xs leading-[16px] tracking-[0.48px] text-btn-primary font-medium hover:underline transition-all cursor-pointer"
             >
               Lupa password?

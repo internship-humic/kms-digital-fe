@@ -1,13 +1,8 @@
 import ProfileKaderFeed from "@/features/kader/profile/components/ProfileKaderFeed";
 
-export const metadata = {
-  title: "Profil Kader | JagaCilik",
-  description: "Kelola profil dan akun kader posyandu.",
-};
-
-export default function KaderProfilePage() {
+export default function ProfileKaderPage() {
   return (
-    <div className="flex-1 bg-background flex flex-col relative overflow-y-auto pb-28">
+    <div className="flex flex-col flex-1 min-h-screen bg-background">
       <ProfileKaderFeed />
     </div>
   );

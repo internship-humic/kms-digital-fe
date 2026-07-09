@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
-import { deleteClinic } from "@/services/clinic.service";
+import { deleteClinicAction } from "@/app/actions/clinic";
 
 type DeletePosyanduModalProps = {
   isOpen: boolean;
@@ -27,16 +27,17 @@ export default function DeletePosyanduModal({
     setIsDeleting(true);
     setErrorMsg("");
     try {
-      const result = await deleteClinic(deleteData.id);
-      if (!result?.success) {
-        throw new Error(result?.error || "Gagal menghapus posyandu");
+      const result = await deleteClinicAction(deleteData.id);
+
+      if (!result.success) {
+        throw new Error(result.error || "Gagal menghapus posyandu");
       }
+
       onSuccess();
       onClose();
     } catch (error: any) {
       console.error(error);
       const msg = error.message || "";
-      // Handle Prisma foreign key constraint error friendly message
       if (
         msg.includes("violates RESTRICT setting of foreign key constraint") ||
         msg.includes("parents_clinic_id_fkey") ||

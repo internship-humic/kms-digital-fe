@@ -11,8 +11,8 @@ import {
   TambahBalitaFormValues,
 } from "../validations/balita";
 import { Button } from "@/components/ui/button";
-import { createChild } from "@/services/children.service";
-import { fetchWithAuth } from "@/lib/fetcher";
+import { createChildAction } from "@/app/actions/children";
+import { getParentsByClinic } from "@/services/parent.service";
 
 export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
   const router = useRouter();
@@ -38,8 +38,8 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
   useEffect(() => {
     const fetchParents = async () => {
       try {
-        const data = await fetchWithAuth(`/parent/${clinicId}`);
-        setParents(Array.isArray(data) ? data : []);
+        const data = await getParentsByClinic(clinicId);
+        setParents(data);
       } catch (error) {
         console.error("Gagal memuat data orang tua:", error);
       } finally {
@@ -74,7 +74,8 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
     };
 
     try {
-      await createChild(payloadToBackend as any);
+      const result = await createChildAction(payloadToBackend);
+      if (!result.success) throw new Error(result.error);
       setIsSubmitting(false);
       setShowModal(true);
     } catch (error: any) {
@@ -122,7 +123,6 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
         )}
 
         <div className="flex flex-col gap-5">
-          {/* Dropdown Orang Tua */}
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="parentId"

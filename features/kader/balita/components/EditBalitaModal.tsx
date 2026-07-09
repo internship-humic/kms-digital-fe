@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { updateChildClient } from "@/services/children-client.service";
+import { updateChildAction } from "@/app/actions/children";
 import type {
   BalitaData,
   ChildPayload,
@@ -98,7 +98,8 @@ export default function EditBalitaModal({
           : null,
       };
 
-      await updateChildClient(data.id, payload);
+      const result = await updateChildAction(data.id, payload);
+      if (!result.success) throw new Error(result.error);
 
       onSuccess();
       onClose();

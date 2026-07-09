@@ -1,6 +1,6 @@
+import { redirect } from "next/navigation";
 import PersonalPage from "@/features/parent/profile/pages/PersonalPage";
 import { getProfile } from "@/services/profile.service";
-import { getProfileMockData } from "@/features/parent/profile/data/mockProfile";
 
 export const metadata = {
   title: "Edit Profil | JagaCilik",
@@ -8,11 +8,10 @@ export const metadata = {
 };
 
 export default async function EditProfilePage() {
-  let profileData = await getProfile();
+  const profileData = await getProfile();
 
-  // FALLBACK: Gunakan data dummy jika endpoint backend belum siap
   if (!profileData) {
-    profileData = await getProfileMockData();
+    redirect("/login");
   }
 
   const formDefaultValues = {

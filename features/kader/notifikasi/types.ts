@@ -1,14 +1,19 @@
-export type NotifikasiType =
-  | "Peringatan Penting"
-  | "Jadwal"
-  | "Informasi"
-  | "Sistem";
+export type NotificationCategory =
+  | "ARTICLE"
+  | "MEASUREMENT"
+  | "SCHEDULE"
+  | "ANNOUNCEMENT"
+  | "ACCOUNT";
 
 export interface NotifikasiItem {
-  id: string | number;
-  tipe: "peringatan" | "jadwal" | "informasi" | "sistem";
-  judul: string;
-  waktu: string;
-  pesan: string;
-  ikonSistem?: "check" | string;
+  id: string;
+  recipient_id: string;
+  recipient_role: string;
+  title: string;
+  message: string;
+  category: NotificationCategory;
+  is_read: boolean;
+  reference_id?: string | null;
+  reference_type?: string | null;
+  created_at: string;
 }

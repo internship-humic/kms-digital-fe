@@ -14,7 +14,7 @@ import {
 import type { BalitaData, ChildStatus } from "../types";
 import EditBalitaModal from "./EditBalitaModal";
 import DeleteBalitaModal from "./DeleteBalitaModal";
-import { deleteChildClient } from "@/services/children-client.service";
+import { deleteChildAction } from "@/app/actions/children";
 
 type BalitaFeedProps = {
   initialData: BalitaData[];
@@ -116,7 +116,8 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
       setIsDeleting(true);
       setDeleteError(null);
 
-      await deleteChildClient(selectedDeleteData.id);
+      const result = await deleteChildAction(selectedDeleteData.id);
+      if (!result.success) throw new Error(result.error);
 
       setDataBalita((prev) =>
         prev.filter((item) => item.id !== selectedDeleteData.id),
@@ -137,7 +138,6 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
 
   const handleEditSuccess = () => {
     setSuccessMessage("Data balita berhasil diperbarui.");
-
     router.refresh();
 
     setTimeout(() => {

@@ -3,6 +3,7 @@ export type ProfileData = {
   email: string;
   phone: string;
   posyandu: string;
+  posyanduId: string;
   address: string;
   avatar: string;
   isVerified: boolean;

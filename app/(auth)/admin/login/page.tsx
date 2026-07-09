@@ -82,7 +82,8 @@ export default function AdminLoginPage() {
 
                 <div className="mt-3 flex justify-end">
                   <Link
-                    href="#"
+                    href="/admin/forgot-password"
+                    onClick={() => console.log("Link diklik")}
                     className="text-sm font-semibold text-btn-primary hover:underline"
                   >
                     Lupa Password?

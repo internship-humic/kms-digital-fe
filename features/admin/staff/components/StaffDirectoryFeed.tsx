@@ -47,16 +47,13 @@ export default function StaffDirectoryFeed() {
     setIsLoading(true);
     try {
       const response = await getAllCadres(page, limit, searchQuery);
-      if (response?.success && response?.data?.data) {
-        setStaffData(response.data.data);
+
+      if (response?.success) {
+        setStaffData(response.data || []);
         setPaginationData(
-          response.data.pagination?.total || 0,
-          response.data.pagination?.totalPages || 1
+          response.pagination?.total || 0,
+          response.pagination?.totalPages || 1,
         );
-      } else if (response?.success && Array.isArray(response?.data)) {
-        // Fallback if backend structure is just an array
-        setStaffData(response.data);
-        setPaginationData(0, 1);
       } else {
         setStaffData([]);
         setPaginationData(0, 1);
@@ -112,7 +109,7 @@ export default function StaffDirectoryFeed() {
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-[32px] font-bold leading-[40px] tracking-[-0.64px] align-middle text-text-main">
-            Manajemen Pengguna (Kader)
+            Manajemen Kader
           </h1>
           <p className="text-[16px] font-normal leading-[24px] tracking-[0px] align-middle text-icon-muted mt-2">
             Kelola akses dan data kader Posyandu di sistem.
@@ -241,7 +238,9 @@ export default function StaffDirectoryFeed() {
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-4">
                         <div className="w-9 h-9 rounded-full bg-btn-primary flex items-center justify-center text-white text-[13px] font-bold shrink-0">
-                          {row.name ? row.name.substring(0, 2).toUpperCase() : "KD"}
+                          {row.name
+                            ? row.name.substring(0, 2).toUpperCase()
+                            : "KD"}
                         </div>
                         <span className="text-[15px] font-semibold text-text-main">
                           {row.name}

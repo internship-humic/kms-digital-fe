@@ -1,3 +1,5 @@
+"use server";
+
 import { fetchWithAuth } from "@/lib/fetcher";
 
 export const getMeasurementGraph = async (childrenId: string) => {

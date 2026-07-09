@@ -5,11 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import SearchableSelect from "@/components/ui/SearchableSelect";
 import { useRegionData } from "@/features/auth/hooks/useRegionData";
-import {
-  editKaderSchema,
-  EditKaderFormValues,
-} from "../../validations/admin";
-import { updateCadre } from "@/services/cadre.service";
+import { editKaderSchema, EditKaderFormValues } from "../../validations/admin";
+import { updateCadreAction } from "@/app/actions/cadre";
 import { useEffect, useState } from "react";
 
 type EditKaderModalProps = {
@@ -77,24 +74,22 @@ export default function EditKaderModal({
       setGlobalError(null);
       if (!editData?.id) throw new Error("ID Kader tidak ditemukan");
 
-      // If they selected a new posyandu via the region picker, use it.
-      // Otherwise, use the existing clinic ID.
       const clinicToUpdate = data.posyanduId || editData.clinic?.id;
 
       if (!clinicToUpdate) {
         throw new Error("Posyandu tidak valid");
       }
 
-      const result = await updateCadre(editData.id, {
+      const result = await updateCadreAction(editData.id, {
         name: data.namaLengkap,
         email: data.email,
         clinic_id: clinicToUpdate,
       });
 
-      if (!result?.success) {
-        throw new Error(result?.error || "Gagal mengubah data kader");
+      if (!result.success) {
+        throw new Error(result.error || "Gagal mengubah data kader");
       }
-      
+
       onSuccess?.();
       onClose();
     } catch (error: any) {
@@ -180,13 +175,17 @@ export default function EditKaderModal({
             </div>
 
             <div className="h-[1px] w-full bg-border-input/40"></div>
-            
+
             <div>
               <p className="text-[13px] text-icon-muted bg-blue-50 p-3 rounded-lg text-blue-700 mb-4">
-                Posyandu saat ini: <span className="font-bold">{editData?.clinic?.name || "Tidak diketahui"}</span>. 
-                Jika Anda ingin mengubah posyandu, silakan pilih lokasi baru di bawah ini. Jika tidak, kosongkan saja form lokasi ini.
+                Posyandu saat ini:{" "}
+                <span className="font-bold">
+                  {editData?.clinic?.name || "Tidak diketahui"}
+                </span>
+                . Jika Anda ingin mengubah posyandu, silakan pilih lokasi baru
+                di bawah ini. Jika tidak, kosongkan saja form lokasi ini.
               </p>
-              
+
               <p className="text-sm font-semibold text-text-main mb-2">
                 Ubah Lokasi Penugasan Kader (Opsional)
               </p>

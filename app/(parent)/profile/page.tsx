@@ -1,9 +1,9 @@
+import { redirect } from "next/navigation";
 import LogoutButton from "@/features/parent/profile/actions/LogoutButton";
 import PersonalInfoSection from "@/features/parent/profile/sections/PersonalInfoSection";
 import ProfileCard from "@/features/parent/profile/sections/ProfileCard";
 import SecuritySection from "@/features/parent/profile/sections/SecuritySection";
 import { getProfile } from "@/services/profile.service";
-import { getProfileMockData } from "@/features/parent/profile/data/mockProfile";
 
 export const metadata = {
   title: "Profil | JagaCilik",
@@ -11,11 +11,10 @@ export const metadata = {
 };
 
 export default async function ProfilePage() {
-  let profile = await getProfile();
+  const profile = await getProfile();
 
-  // FALLBACK: Gunakan data dummy jika endpoint backend belum siap, agar UI tetap jalan dan bisa logout
   if (!profile) {
-    profile = await getProfileMockData();
+    redirect("/login");
   }
 
   return (
@@ -24,7 +23,6 @@ export default async function ProfilePage() {
         <h1 className="text-4xl font-bold leading-tight text-text-main">
           Profil Orang Tua
         </h1>
-
         <p className="mt-1 text-sm text-text-main/70">
           Kelola data diri dan preferensi akun Anda.
         </p>

@@ -1,5 +1,5 @@
-import Insights from "@/features/parent/insights/components/InsightsFeed";
-import { getInsightsMockData } from "@/features/parent/insights/data/mockInsights";
+import InsightsFeed from "@/features/parent/artikel/components/InsightsFeed";
+import { getArticles } from "@/services/article.service";
 
 export const metadata = {
   title: "Edukasi | JagaCilik",
@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 export default async function InsightsPage() {
-  const data = await getInsightsMockData();
+  const articlesData = await getArticles({ limit: 50 });
 
   return (
     <div className="flex-1 bg-background flex flex-col relative overflow-y-auto pb-6">
@@ -17,7 +17,7 @@ export default async function InsightsPage() {
         </h1>
       </div>
 
-      <Insights initialData={data} />
+      <InsightsFeed initialArticles={articlesData} />
     </div>
   );
 }

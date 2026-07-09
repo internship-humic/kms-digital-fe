@@ -1,15 +1,17 @@
-import { LucideIcon } from "lucide-react";
+export interface KaderProfile {
+  id: string;
+  name: string;
+  email: string;
+  phone_number?: string | null;
+  role: "KADER" | string;
+  posyandu_name?: string | null;
+  posyandu_address?: string | null;
+  avatar_url?: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
-export type KaderStat = {
-  id: number;
-  label: string;
-  value: string;
-  icon: LucideIcon;
-};
-
-export type KaderProfileMenu = {
-  id: number;
-  title: string;
-  description: string;
-  icon: LucideIcon;
-};
+export interface GetProfileResponse<T> {
+  user: T;
+  role: string;
+}

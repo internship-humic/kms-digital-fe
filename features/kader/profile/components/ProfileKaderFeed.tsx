@@ -1,18 +1,114 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BadgeCheck, ChevronRight, LogOut } from "lucide-react";
-import { kaderMenus, kaderProfile, kaderStats } from "../data/mockProfileKader";
+import {
+  BadgeCheck,
+  ChevronRight,
+  LogOut,
+  Loader2,
+  UserPen,
+  KeyRound,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { logoutAction } from "@/app/actions/auth";
+import { getProfile } from "@/services/auth.service";
+import type { KaderProfile } from "../types";
+
+type RawGetMeResponse = {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    phone_number?: string | null;
+    avatar_url?: string | null;
+    created_at: string;
+    updated_at: string;
+    clinic?: { id: string; name: string; address: string } | null;
+  };
+  role: string;
+};
+
+const kaderMenus = [
+  {
+    id: "edit-profile",
+    title: "Edit Profil",
+    description: "Ubah nama, email, dan data lainnya",
+    icon: UserPen,
+    href: "/kader/profile/edit",
+  },
+  {
+    id: "change-password",
+    title: "Ubah Kata Sandi",
+    description: "Perbarui kata sandi akun Anda",
+    icon: KeyRound,
+    href: "/kader/profile/change-password",
+  },
+];
 
 export default function ProfileKaderFeed() {
   const router = useRouter();
+  const [profile, setProfile] = useState<KaderProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+
+      const res = await getProfile<RawGetMeResponse>();
+
+      if (res?.user) {
+        setProfile({
+          id: res.user.id,
+          name: res.user.name,
+          email: res.user.email,
+          phone_number: res.user.phone_number ?? null,
+          role: res.role,
+          posyandu_name: res.user.clinic?.name ?? null,
+          posyandu_address: res.user.clinic?.address ?? null,
+          avatar_url: res.user.avatar_url ?? null,
+          created_at: res.user.created_at,
+          updated_at: res.user.updated_at,
+        });
+      } else {
+        setProfile(null);
+      }
+
+      setIsLoading(false);
+    };
+
+    fetchData();
+  }, []);
 
   const handleLogout = async () => {
     await logoutAction();
     router.replace("/");
   };
+
+  const getInitials = (name?: string) => {
+    if (!name) return "KD";
+    const names = name.trim().split(/\s+/);
+    if (names.length >= 2) return `${names[0][0]}${names[1][0]}`.toUpperCase();
+    return names[0] ? names[0][0].toUpperCase() : "KD";
+  };
+
+  if (isLoading) {
+    return (
+      <main className="flex flex-1 items-center justify-center py-24">
+        <Loader2 className="w-8 h-8 text-btn-primary animate-spin" />
+      </main>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <main className="flex flex-col items-center justify-center px-6 py-24 text-center">
+        <p className="text-sm font-medium text-icon-muted">
+          Gagal memuat data profil.
+        </p>
+      </main>
+    );
+  }
 
   return (
     <main className="px-6 pt-10 pb-8">
@@ -22,8 +118,16 @@ export default function ProfileKaderFeed() {
 
       <section className="mb-8 flex flex-col items-center text-center">
         <div className="relative mb-4">
-          <div className="flex h-24 w-24 items-center justify-center rounded-full border-[4px] border-white bg-primary-light text-7xl font-bold text-btn-primary shadow-[0_8px_24px_rgba(15,23,42,0.12)]">
-            {kaderProfile.initial}
+          <div className="flex h-24 w-24 items-center justify-center rounded-full border-[4px] border-white bg-primary-light text-7xl font-bold text-btn-primary shadow-[0_8px_24px_rgba(15,23,42,0.12)] overflow-hidden">
+            {profile.avatar_url ? (
+              <img
+                src={profile.avatar_url}
+                alt={profile.name}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              getInitials(profile.name)
+            )}
           </div>
 
           <div className="absolute bottom-1 right-0 flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-white bg-btn-primary text-white shadow-md">
@@ -31,60 +135,16 @@ export default function ProfileKaderFeed() {
           </div>
         </div>
 
-        <h2 className="text-4xl font-bold text-text-main">
-          {kaderProfile.name}
-        </h2>
+        <h2 className="text-4xl font-bold text-text-main">{profile.name}</h2>
 
-        <p className="mt-1 text-lg text-icon-muted">{kaderProfile.role}</p>
+        <p className="mt-1 text-lg text-icon-muted">Kader Posyandu</p>
 
-        <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary-light/70 px-3 py-1.5 text-sm font-semibold text-btn-primary">
-          <BadgeCheck size={14} strokeWidth={2.5} />
-          {kaderProfile.badge}
-        </div>
-      </section>
-
-      <section className="mb-8 rounded-[18px] bg-white p-4 shadow-[0_10px_28px_rgba(15,23,42,0.05)]">
-        <div className="grid grid-cols-2 gap-3">
-          {kaderStats.slice(0, 2).map((stat) => {
-            const Icon = stat.icon;
-
-            return (
-              <div
-                key={stat.id}
-                className="flex min-h-[118px] flex-col items-center justify-center rounded-[14px] bg-white text-center shadow-[0_8px_22px_rgba(15,23,42,0.04)]"
-              >
-                <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-primary-light text-btn-primary">
-                  <Icon size={22} strokeWidth={2.4} />
-                </div>
-
-                <p className="text-base text-icon-muted">{stat.label}</p>
-                <p className="mt-1 text-6xl font-bold leading-none text-text-main">
-                  {stat.value}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="mt-3 flex min-h-[118px] flex-col items-center justify-center rounded-[14px] bg-white text-center shadow-[0_8px_22px_rgba(15,23,42,0.04)]">
-          {(() => {
-            const stat = kaderStats[2];
-            const Icon = stat.icon;
-
-            return (
-              <>
-                <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-primary-light text-btn-primary">
-                  <Icon size={23} strokeWidth={2.4} />
-                </div>
-
-                <p className="text-base text-icon-muted">{stat.label}</p>
-                <p className="mt-1 text-6xl font-bold leading-none text-text-main">
-                  {stat.value}
-                </p>
-              </>
-            );
-          })()}
-        </div>
+        {profile.posyandu_name && (
+          <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary-light/70 px-3 py-1.5 text-sm font-semibold text-btn-primary">
+            <BadgeCheck size={14} strokeWidth={2.5} />
+            {profile.posyandu_name}
+          </div>
+        )}
       </section>
 
       <section className="mb-6 overflow-hidden rounded-[16px] bg-white shadow-[0_10px_28px_rgba(15,23,42,0.04)]">
@@ -95,6 +155,7 @@ export default function ProfileKaderFeed() {
             <button
               key={menu.id}
               type="button"
+              onClick={() => router.push(menu.href)}
               className={`flex w-full cursor-pointer items-center gap-4 px-4 py-4 text-left transition-colors hover:bg-background ${
                 index !== kaderMenus.length - 1
                   ? "border-b border-border-input/30"
