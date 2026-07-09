@@ -3,13 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
-import { deleteCadre } from "@/services/cadre.service";
+import { deleteCadreAction } from "@/app/actions/cadre";
 
 type DeleteKaderModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  deleteData: any;
+  deleteData: any;  
 };
 
 export default function DeleteKaderModal({
@@ -27,10 +27,12 @@ export default function DeleteKaderModal({
     setIsDeleting(true);
     setErrorMsg("");
     try {
-      const result = await deleteCadre(deleteData.id);
-      if (!result?.success) {
-        throw new Error(result?.error || "Gagal menghapus kader");
+      const result = await deleteCadreAction(deleteData.id);
+
+      if (!result.success) {
+        throw new Error(result.error || "Gagal menghapus kader");
       }
+
       onSuccess();
       onClose();
     } catch (error: any) {

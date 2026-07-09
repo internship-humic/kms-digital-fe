@@ -6,7 +6,6 @@ import { User, Mail, Phone, Home } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import CustomSelect from "@/components/ui/CustomSelect";
 import InputField from "@/components/ui/InputField";
 import TextAreaField from "@/components/ui/TextAreaField";
 import SuccessModal from "@/components/ui/SuccessModal";
@@ -58,19 +57,24 @@ export default function EditProfileForm({
 
   const onSubmit = async (data: UpdateProfileFormValues) => {
     setGlobalError(null);
-    try {
-      // Gunakan posyanduId baru jika dipilih, jika tidak gunakan yang lama
-      const posyanduIdToUpdate = data.posyanduId || defaultValues.posyanduId;
 
-      await updateProfileAction(
-        {
-          name: data.fullName,
-          email: data.email,
-          phone_number: data.phone,
-          address: data.address,
-          clinic_id: posyanduIdToUpdate,
-        }
+    const posyanduIdToUpdate = data.posyanduId || defaultValues.posyanduId;
+
+    if (!posyanduIdToUpdate) {
+      setGlobalError(
+        "Posyandu tidak ditemukan. Silakan pilih posyandu Anda sebelum menyimpan.",
       );
+      return;
+    }
+
+    try {
+      await updateProfileAction({
+        name: data.fullName,
+        email: data.email,
+        phone_number: data.phone,
+        address: data.address,
+        clinic_id: posyanduIdToUpdate,
+      });
 
       setIsSuccessModalOpen(true);
     } catch (error: any) {
@@ -107,7 +111,7 @@ export default function EditProfileForm({
                 {globalError}
               </div>
             )}
-            
+
             <InputField
               label="Nama Lengkap"
               placeholder="Masukan Nama Lengkap"
@@ -118,10 +122,14 @@ export default function EditProfileForm({
 
             <div className="flex flex-col gap-2">
               <p className="text-[13px] text-icon-muted bg-blue-50 p-3 rounded-lg text-blue-700 mb-2">
-                Posyandu saat ini: <span className="font-bold">{(defaultValues as any).posyanduName || "Tidak diketahui"}</span>. 
-                Jika Anda ingin mengubah posyandu, silakan pilih lokasi baru di bawah ini. Jika tidak, kosongkan saja pilihan posyandu.
+                Posyandu saat ini:{" "}
+                <span className="font-bold">
+                  {(defaultValues as any).posyanduName || "Tidak diketahui"}
+                </span>
+                . Jika Anda ingin mengubah posyandu, silakan pilih lokasi baru
+                di bawah ini. Jika tidak, kosongkan saja pilihan posyandu.
               </p>
-              
+
               <div className="grid grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-xl border border-border-input/30">
                 <SearchableSelect
                   label="Provinsi"

@@ -1,0 +1,129 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { User, Mail, Phone, MapPin, Building2, X } from "lucide-react";
+
+type DetailParentModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  detailData: any;
+};
+
+export default function DetailParentModal({
+  isOpen,
+  onClose,
+  detailData,
+}: DetailParentModalProps) {
+  if (!isOpen || !detailData) return null;
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="w-full max-w-[500px] bg-white rounded-[16px] shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 border border-border-input/40 flex flex-col">
+        <div className="p-6 flex justify-between items-start border-b border-border-input/30">
+          <div>
+            <h2 className="text-[20px] font-bold text-text-main mb-1">
+              Detail Orang Tua
+            </h2>
+            <p className="text-[14px] text-icon-muted">
+              Informasi lengkap profil dan kontak pengguna.
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-icon-muted hover:text-text-main transition-colors"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <div className="p-6 flex flex-col gap-6">
+          <div className="flex items-center gap-4 p-4 rounded-xl bg-emerald-50 border border-emerald-100">
+            <div className="w-16 h-16 rounded-full bg-emerald-600 flex items-center justify-center text-white text-[24px] font-bold shrink-0 shadow-md">
+              {detailData.name
+                ? detailData.name.substring(0, 2).toUpperCase()
+                : "OT"}
+            </div>
+            <div>
+              <p className="text-[13px] font-semibold text-emerald-700 mb-1">
+                Akun Orang Tua
+              </p>
+              <h3 className="text-[20px] font-bold text-text-main leading-tight">
+                {detailData.name}
+              </h3>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-5 px-2">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-btn-primary shrink-0">
+                <Mail size={16} />
+              </div>
+              <div>
+                <p className="text-[13px] font-semibold text-icon-muted mb-0.5">
+                  Email
+                </p>
+                <p className="text-[15px] font-medium text-text-main">
+                  {detailData.email || "-"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-500 shrink-0">
+                <Phone size={16} />
+              </div>
+              <div>
+                <p className="text-[13px] font-semibold text-icon-muted mb-0.5">
+                  Nomor Telepon
+                </p>
+                <p className="text-[15px] font-medium text-text-main">
+                  {detailData.phone_number || "-"}
+                </p>
+              </div>
+            </div>
+
+            <div className="h-[1px] w-full bg-border-input/40"></div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 shrink-0">
+                <Building2 size={16} />
+              </div>
+              <div>
+                <p className="text-[13px] font-semibold text-icon-muted mb-0.5">
+                  Posyandu Induk
+                </p>
+                <p className="text-[15px] font-medium text-text-main">
+                  {detailData.clinic?.name || "Belum Diatur"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 shrink-0">
+                <MapPin size={16} />
+              </div>
+              <div>
+                <p className="text-[13px] font-semibold text-icon-muted mb-0.5">
+                  Alamat Lengkap
+                </p>
+                <p className="text-[14px] font-medium text-text-main leading-relaxed">
+                  {detailData.address || "-"}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-t border-border-input/30 bg-background">
+          <Button
+            type="button"
+            onClick={onClose}
+            className="w-full py-6 rounded-xl font-semibold text-[15px]"
+          >
+            Tutup
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}

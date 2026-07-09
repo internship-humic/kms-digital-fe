@@ -8,7 +8,8 @@ export const getAllClinics = async (page = 1, limit = 10, search = "") => {
     limit: limit.toString(),
     search,
   });
-  return await fetchPaginatedWithAuth(`/clinic?${query.toString()}`);
+  const res = await fetchPaginatedWithAuth(`/clinic?${query.toString()}`);
+  return { success: true, ...res };
 };
 
 export const createClinic = async (data: {

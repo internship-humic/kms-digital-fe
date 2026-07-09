@@ -4,8 +4,7 @@ import type { ProfileData } from "@/features/parent/profile/types";
 export const getProfile = async (): Promise<ProfileData | null> => {
   try {
     const data = await fetchWithAuth("/auth/me");
-    
-    // API responses might nest the profile inside 'user' or return it directly
+
     const user = data.user || data;
 
     return {
@@ -15,11 +14,13 @@ export const getProfile = async (): Promise<ProfileData | null> => {
       posyandu: user.clinic?.name || "Posyandu Belum Diatur",
       posyanduId: user.clinic?.id || "",
       address: user.address || "-",
-      avatar: "https://i.pravatar.cc/150?img=1", // diabaikan menggunakan inisial
+      avatar: "https://i.pravatar.cc/150?img=1",
       isVerified: true,
     };
-  } catch (error) {
-    console.error("Gagal mengambil data profil:", error);
+  } catch (error: any) {
+    if (error.message !== "NO_TOKEN") {
+      console.error("Gagal mengambil data profil:", error.message);
+    }
     return null;
   }
 };

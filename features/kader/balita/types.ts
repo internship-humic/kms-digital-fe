@@ -27,3 +27,15 @@ export type ChildPayload = {
   body_height: number;
   head_circumference?: number | null;
 };
+
+export type BalitaDetail = {
+  id: string;
+  nama: string;
+  jk: string;
+  usia: string;
+  stats: {
+    berat: number | string;
+    tinggi: number | string;
+    lingkarKepala: number | string;
+  };
+};

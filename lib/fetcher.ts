@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
 export async function fetchWithAuth(
   endpoint: string,
@@ -9,9 +9,13 @@ export async function fetchWithAuth(
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
+  if (!token) {
+    throw new Error("NO_TOKEN");
+  }
+
   const headers = {
     "Content-Type": "application/json",
-    ...(token && { Authorization: `Bearer ${token}` }),
+    Authorization: `Bearer ${token}`,
     ...options.headers,
   };
 
@@ -32,6 +36,7 @@ export async function fetchWithAuth(
 
     return result.data;
   } catch (error: any) {
+    if (error.message === "NO_TOKEN") throw error;
     throw new Error(error.message || "Gagal terhubung ke server.");
   }
 }
@@ -43,9 +48,13 @@ export async function fetchPaginatedWithAuth(
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
+  if (!token) {
+    throw new Error("NO_TOKEN");
+  }
+
   const headers = {
     "Content-Type": "application/json",
-    ...(token && { Authorization: `Bearer ${token}` }),
+    Authorization: `Bearer ${token}`,
     ...options.headers,
   };
 
@@ -69,6 +78,7 @@ export async function fetchPaginatedWithAuth(
       pagination: result.pagination || {},
     };
   } catch (error: any) {
+    if (error.message === "NO_TOKEN") throw error;
     throw new Error(error.message || "Gagal terhubung ke server.");
   }
 }

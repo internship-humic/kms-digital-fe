@@ -9,7 +9,7 @@ import {
   tambahPosyanduSchema,
   TambahPosyanduFormValues,
 } from "../../validations/admin";
-import { updateClinic } from "@/services/clinic.service";
+import { updateClinicAction } from "@/app/actions/clinic";
 import { useEffect } from "react";
 
 type EditPosyanduModalProps = {
@@ -73,13 +73,16 @@ export default function EditPosyanduModal({
   const onSubmit = async (data: TambahPosyanduFormValues) => {
     try {
       if (!editData?.id) throw new Error("ID Posyandu tidak ditemukan");
-      const result = await updateClinic(editData.id, {
+
+      const result = await updateClinicAction(editData.id, {
         name: data.namaPosyandu,
         address: data.alamatLengkap,
       });
-      if (!result?.success) {
-        throw new Error(result?.error || "Gagal mengubah posyandu");
+
+      if (!result.success) {
+        throw new Error(result.error || "Gagal mengubah posyandu");
       }
+
       onSuccess?.();
       onClose();
     } catch (error: any) {
@@ -110,9 +113,10 @@ export default function EditPosyanduModal({
           className="flex flex-col flex-1 overflow-hidden"
         >
           <div className="p-6 flex flex-col gap-6 overflow-y-auto">
-            {/* Hanya menampilkan peringatan karena mengubah lokasi mungkin sulit di handle tanpa state region penuh */}
             <p className="text-[13px] text-icon-muted bg-blue-50 p-3 rounded-lg text-blue-700">
-              Catatan: Jika Anda ingin mengubah lokasi (Desa/Kelurahan), Anda harus memilih ulang dari Provinsi. Jika tidak, biarkan saja (desaId sebelumnya sudah tersimpan).
+              Catatan: Jika Anda ingin mengubah lokasi (Desa/Kelurahan), Anda
+              harus memilih ulang dari Provinsi. Jika tidak, biarkan saja
+              (desaId sebelumnya sudah tersimpan).
             </p>
             <p className="text-sm font-semibold text-text-main -mb-2">
               Lokasi Wilayah (Opsional Jika Tidak Ingin Diubah)

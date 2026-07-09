@@ -4,29 +4,25 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Activity,
   Briefcase,
   BarChart2,
   Users,
-  Settings,
-  HelpCircle,
+  UserCircle,
   LogOut,
+  Newspaper,
 } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
 
 const sidebarMenus = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-  //   { name: "Pantauan Kesehatan", href: "/admin/surveillance", icon: Activity },
   { name: "Manajemen Posyandu", href: "/admin/resources", icon: Briefcase },
   { name: "Manajemen Wilayah", href: "/admin/reports", icon: BarChart2 },
-  { name: "Manajemen Pengguna", href: "/admin/staff", icon: Users },
-  //   { name: "Pengaturan Sistem", href: "/admin/settings", icon: Settings },
+  { name: "Manajemen Kader", href: "/admin/staff", icon: Users },
+  { name: "Manajemen Orang Tua", href: "/admin/parents", icon: UserCircle },
+  { name: "Manajemen Artikel", href: "/admin/articles", icon: Newspaper },
 ];
 
-const bottomLinks = [
-  //   { name: "Support", href: "/admin/support", icon: HelpCircle },
-  { name: "Logout", href: "/admin/login", icon: LogOut },
-];
+const bottomLinks = [{ name: "Logout", href: "/admin/login", icon: LogOut }];
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -34,7 +30,6 @@ export default function Sidebar() {
   return (
     <aside className="w-[280px] bg-white border-r border-border-input/30 flex flex-col justify-between shrink-0 z-10">
       <div>
-        {/* Logo */}
         <div className="p-8 pb-10">
           <h2 className="text-2xl font-bold text-btn-primary tracking-tight">
             JagaCilik
@@ -44,7 +39,6 @@ export default function Sidebar() {
           </p>
         </div>
 
-        {/* Nav Items */}
         <nav className="flex flex-col">
           {sidebarMenus.map((menu) => {
             const Icon = menu.icon;
@@ -68,37 +62,21 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      {/* Bottom Actions */}
       <div className="pb-8 pt-4 border-t border-border-input/30 mx-8 mt-auto flex flex-col gap-2">
         {bottomLinks.map((link) => {
           const Icon = link.icon;
-          const isLogout = link.name === "Logout";
-
-          if (isLogout) {
-            return (
-              <button
-                key={link.name}
-                onClick={async () => {
-                  await logoutAction();
-                  window.location.href = link.href;
-                }}
-                className={`flex items-center gap-4 py-3 text-[14px] font-semibold leading-[20px] tracking-[0px] align-middle whitespace-nowrap transition-colors cursor-pointer text-icon-muted hover:text-danger w-full text-left`}
-              >
-                <Icon size={20} strokeWidth={2} />
-                {link.name}
-              </button>
-            );
-          }
-
           return (
-            <Link
+            <button
               key={link.name}
-              href={link.href}
-              className={`flex items-center gap-4 py-3 text-[14px] font-semibold leading-[20px] tracking-[0px] align-middle whitespace-nowrap transition-colors cursor-pointer text-icon-muted hover:text-text-main`}
+              onClick={async () => {
+                await logoutAction();
+                window.location.href = link.href;
+              }}
+              className="flex items-center gap-4 py-3 text-[14px] font-semibold leading-[20px] tracking-[0px] align-middle whitespace-nowrap transition-colors cursor-pointer text-icon-muted hover:text-danger w-full text-left"
             >
               <Icon size={20} strokeWidth={2} />
               {link.name}
-            </Link>
+            </button>
           );
         })}
       </div>

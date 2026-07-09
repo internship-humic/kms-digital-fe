@@ -10,9 +10,9 @@ export const getAllCadres = async (page = 1, limit = 10, search = "") => {
       search,
     });
     const res = await fetchPaginatedWithAuth(`/cadre?${query.toString()}`);
-    return { success: true, data: res };
+    return { success: true as const, ...res };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    return { success: false as const, error: error.message };
   }
 };
 

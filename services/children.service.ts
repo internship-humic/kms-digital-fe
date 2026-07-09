@@ -1,4 +1,6 @@
-import { fetchWithAuth } from "@/lib/fetcher";
+"use server";
+
+import { fetchWithAuth, fetchPaginatedWithAuth } from "@/lib/fetcher";
 import type { BalitaData, ChildPayload } from "@/features/kader/balita/types";
 
 function calculateAgeInMonths(birthDateValue: string) {
@@ -100,5 +102,39 @@ export const deleteChild = async (id: string) => {
     return response;
   } catch (error: any) {
     throw new Error(error.message || "Gagal menghapus data balita.");
+  }
+};
+
+export const getRiskyChildren = async (page = 1, limit = 50, search = "") => {
+  try {
+    const queryParams = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    if (search) {
+      queryParams.append("search", search);
+    }
+
+    const response = await fetchPaginatedWithAuth(
+      `/children/risky?${queryParams.toString()}`,
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching risky childrens:", error);
+    return {
+      data: { items: [], total_case: 0, need_referral: 0 },
+      pagination: null,
+    };
+  }
+};
+
+export const getChildIntervention = async (id: string) => {
+  try {
+    const response = await fetchWithAuth(`/children/${id}/intervention`);
+    return response;
+  } catch (error) {
+    console.error("Error fetching intervention:", error);
+    return null;
   }
 };

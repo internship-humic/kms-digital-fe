@@ -6,10 +6,9 @@ import {
   Calendar,
   FileText,
   Settings,
-  CheckCircle2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { NotifikasiItem } from "../types";
+import { NotifikasiItem, NotificationCategory } from "../types";
 
 export default function NotifikasiFeed({
   initialData,
@@ -18,9 +17,9 @@ export default function NotifikasiFeed({
 }) {
   const router = useRouter();
 
-  const getStyleByTipe = (item: NotifikasiItem) => {
-    switch (item.tipe) {
-      case "peringatan":
+  const getStyleByCategory = (category: NotificationCategory) => {
+    switch (category) {
+      case "MEASUREMENT":
         return {
           border: "border-l-[4px] border-l-red-600",
           title: "text-red-600",
@@ -33,43 +32,47 @@ export default function NotifikasiFeed({
             />
           ),
         };
-      case "jadwal":
+      case "SCHEDULE":
         return {
           border: "border-l-[4px] border-l-btn-primary",
           title: "text-btn-primary",
           iconWrapper: "bg-btn-primary",
           icon: <Calendar size={20} className="text-white" strokeWidth={2} />,
         };
-      case "informasi":
+      case "ARTICLE":
+      case "ANNOUNCEMENT":
         return {
           border: "border-l-[4px] border-l-btn-primary",
           title: "text-btn-primary",
           iconWrapper: "bg-btn-primary",
           icon: <FileText size={20} className="text-white" strokeWidth={2} />,
         };
-      case "sistem":
+      case "ACCOUNT":
       default:
-        const iconNode =
-          item.ikonSistem === "check" ? (
-            <CheckCircle2
-              size={26}
-              className="text-white fill-gray-500"
-              strokeWidth={1.5}
-            />
-          ) : (
+        return {
+          border: "border-l-[4px] border-l-gray-400",
+          title: "text-gray-500",
+          iconWrapper: "bg-gray-100",
+          icon: (
             <Settings
               size={22}
               className="text-white fill-gray-600"
               strokeWidth={1.5}
             />
-          );
-        return {
-          border: "border-l-[4px] border-l-gray-400",
-          title: "text-gray-500",
-          iconWrapper: "bg-gray-100",
-          icon: iconNode,
+          ),
         };
     }
+  };
+
+  const formatWaktu = (createdAt: string) => {
+    const date = new Date(createdAt);
+    if (Number.isNaN(date.getTime())) return createdAt;
+    return date.toLocaleString("id-ID", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   return (
@@ -89,11 +92,13 @@ export default function NotifikasiFeed({
       {/* List Notifikasi */}
       <div className="flex-1 px-4 py-6 flex flex-col gap-4">
         {initialData.map((item) => {
-          const style = getStyleByTipe(item);
+          const style = getStyleByCategory(item.category);
           return (
             <div
               key={item.id}
-              className={`bg-white rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden flex ${style.border}`}
+              className={`bg-white rounded-xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden flex ${style.border} ${
+                item.is_read ? "opacity-60" : ""
+              }`}
             >
               <div className="p-4 flex items-start gap-4 w-full">
                 {/* Ikon */}
@@ -107,14 +112,14 @@ export default function NotifikasiFeed({
                 <div className="flex-1 min-w-0 pt-0.5">
                   <div className="flex items-center justify-between mb-1">
                     <span className={`text-sm font-semibold ${style.title}`}>
-                      {item.judul}
+                      {item.title}
                     </span>
                     <span className="text-xs font-medium text-gray-500">
-                      {item.waktu}
+                      {formatWaktu(item.created_at)}
                     </span>
                   </div>
                   <p className="text-base text-gray-800 leading-snug">
-                    {item.pesan}
+                    {item.message}
                   </p>
                 </div>
               </div>

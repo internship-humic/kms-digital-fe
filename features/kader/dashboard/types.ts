@@ -1,23 +1,17 @@
-export type PemeriksaanTerbaru = {
-  id: number;
-  inisial: string;
-  nama: string;
-  jenisPemeriksaan: string;
-  waktu: string;
-  status: string;
+export type MeasurementApiData = {
+  id: string | number;
+  child_name?: string;
+  type?: string;
+  description?: string;
+  created_at?: string;
+  measurement_date?: string;
 };
 
 export type DashboardKaderData = {
-  kaderName: string;
-  posyanduName: string;
-  location: string;
-  totalBalita: {
-    value: number;
-    trend: string;
-  };
-  kasusRisiko: {
-    value: number;
-    label: string;
-  };
-  pemeriksaanTerbaru: PemeriksaanTerbaru[];
+  kaderName?: string;
+  posyanduName?: string;
+  location?: string;
+  total_children: number;
+  total_risky_children: number;
+  latest_measurements: MeasurementApiData[];
 };

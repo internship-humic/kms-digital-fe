@@ -26,6 +26,32 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
     router.push("/kader/dashboard/tambah");
   };
 
+  const displayData = {
+    kaderName: data?.kaderName || "",
+    posyanduName: data?.posyanduName || "Posyandu",
+    location: data?.location || "-",
+    totalBalita: {
+      value: data?.total_children || 0,
+      trend: "Data Terkini",
+    },
+    kasusRisiko: {
+      value: data?.total_risky_children || 0,
+      label: "Perlu Pantau",
+    },
+    pemeriksaanTerbaru: Array.isArray(data?.latest_measurements)
+      ? data.latest_measurements.map((m: any) => ({
+          id: m.id,
+          inisial: m.child_name
+            ? m.child_name.substring(0, 2).toUpperCase()
+            : "XX",
+          nama: m.child_name || "Tanpa Nama",
+          jenisPemeriksaan: m.description || "Pemeriksaan Rutin",
+          waktu: "Baru saja",
+          status: "Normal",
+        }))
+      : [],
+  };
+
   return (
     <div className="flex flex-col flex-1 bg-background relative px-6 pb-32">
       <div className="flex items-center justify-between pt-10 pb-4 sticky top-0 bg-background/95 backdrop-blur-md z-30 border-b border-border-input/10 -mx-6 px-6">
@@ -50,10 +76,10 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
 
       <div className="mt-8 mb-6">
         <h1 className="text-4xl font-semibold leading-[100%] tracking-[0px] text-text-main mb-1.5 align-middle">
-          Halo, Kader {data.kaderName}👋
+          Halo, Kader {displayData.kaderName}👋
         </h1>
         <p className="text-base font-normal leading-[100%] tracking-[0px] text-btn-primary align-middle">
-          {data.posyanduName} &bull; {data.location}
+          {displayData.posyanduName} &bull; {displayData.location}
         </p>
       </div>
 
@@ -65,7 +91,7 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
             </div>
             <div className="flex items-center gap-0.5 text-status-normal text-xs font-bold leading-none">
               <TrendingUp size={12} strokeWidth={2.5} />
-              <span>{data.totalBalita.trend}</span>
+              <span>{displayData.totalBalita.trend}</span>
             </div>
           </div>
           <div className="mt-auto">
@@ -73,7 +99,7 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
               Total Balita
             </p>
             <span className="text-5xl font-bold leading-[32px] tracking-[-0.24px] text-text-main align-middle">
-              {data.totalBalita.value}
+              {displayData.totalBalita.value}
             </span>
           </div>
         </div>
@@ -85,7 +111,7 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
             </div>
 
             <span className="inline-flex items-center justify-center text-[10px] font-normal leading-[15px] tracking-[0px] text-danger bg-rose-50 border border-rose-100 px-2 py-0.5 rounded-md align-middle">
-              {data.kasusRisiko.label}
+              {displayData.kasusRisiko.label}
             </span>
           </div>
           <div className="mt-auto">
@@ -94,7 +120,7 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
             </p>
 
             <span className="text-5xl font-bold leading-[32px] tracking-[-0.24px] text-text-main align-middle">
-              {data.kasusRisiko.value}
+              {displayData.kasusRisiko.value}
             </span>
           </div>
         </div>
@@ -152,33 +178,41 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
         </div>
 
         <div className="flex flex-col gap-3">
-          {data.pemeriksaanTerbaru.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center gap-3 p-4 border border-border-input/30 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.02)] rounded-xl bg-white hover:border-btn-primary/30 transition-colors cursor-pointer"
-            >
-              <div className="w-[48px] h-[48px] bg-primary-light/70 rounded-full flex items-center justify-center text-btn-primary font-bold text-lg tracking-wide shrink-0 border border-primary-light shadow-sm select-none">
-                {item.inisial}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-base font-semibold leading-[20px] tracking-[0.14px] text-text-main align-middle mb-0.5 truncate">
-                  {item.nama}
-                </h3>
+          {displayData.pemeriksaanTerbaru.length > 0 ? (
+            displayData.pemeriksaanTerbaru.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center gap-3 p-4 border border-border-input/30 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.02)] rounded-xl bg-white hover:border-btn-primary/30 transition-colors cursor-pointer"
+              >
+                <div className="w-[48px] h-[48px] bg-primary-light/70 rounded-full flex items-center justify-center text-btn-primary font-bold text-lg tracking-wide shrink-0 border border-primary-light shadow-sm select-none">
+                  {item.inisial}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-semibold leading-[20px] tracking-[0.14px] text-text-main align-middle mb-0.5 truncate">
+                    {item.nama}
+                  </h3>
 
-                <p className="text-base font-normal leading-[20px] tracking-[0px] text-icon-muted align-middle truncate">
-                  {item.jenisPemeriksaan}
-                </p>
-                <p className="text-xs font-normal leading-[16px] text-text-main/50 mt-1">
-                  {item.waktu}
-                </p>
+                  <p className="text-base font-normal leading-[20px] tracking-[0px] text-icon-muted align-middle truncate">
+                    {item.jenisPemeriksaan}
+                  </p>
+                  <p className="text-xs font-normal leading-[16px] text-text-main/50 mt-1">
+                    {item.waktu}
+                  </p>
+                </div>
+                <div className="shrink-0 pl-2">
+                  <span className="text-base font-semibold leading-[20px] tracking-[0.14px] text-status-normal text-right align-middle">
+                    {item.status}
+                  </span>
+                </div>
               </div>
-              <div className="shrink-0 pl-2">
-                <span className="text-base font-semibold leading-[20px] tracking-[0.14px] text-status-normal text-right align-middle">
-                  {item.status}
-                </span>
-              </div>
+            ))
+          ) : (
+            <div className="text-center p-6 bg-white border border-border-input/30 rounded-xl">
+              <p className="text-sm text-icon-muted">
+                Belum ada pemeriksaan terbaru.
+              </p>
             </div>
-          ))}
+          )}
         </div>
       </div>
 

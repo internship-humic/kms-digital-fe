@@ -1,12 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import NotifikasiList from "@/features/kader/notifikasi/components/NotifikasiList";
-import { NOTIFIKASI_MOCK_DATA } from "@/features/kader/notifikasi/data/mockNotifikasi";
+import type { NotifikasiItem } from "@/features/kader/notifikasi/types";
+import { getNotifications } from "@/services/notification.service";
 
 export default function NotifikasiPage() {
   const router = useRouter();
+  const [items, setItems] = useState<NotifikasiItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      const data = await getNotifications({ limit: 50 });
+      setItems(data);
+      setIsLoading(false);
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-background">
@@ -22,7 +37,13 @@ export default function NotifikasiPage() {
         </h1>
       </div>
 
-      <NotifikasiList items={NOTIFIKASI_MOCK_DATA} />
+      {isLoading ? (
+        <div className="flex flex-1 items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 text-btn-primary animate-spin" />
+        </div>
+      ) : (
+        <NotifikasiList items={items} />
+      )}
     </div>
   );
 }

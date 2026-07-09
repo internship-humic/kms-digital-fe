@@ -48,17 +48,14 @@ export default function ResourceAllocationFeed() {
     setIsLoading(true);
     try {
       const res = await getAllClinics(page, limit, searchQuery);
-      
-      // Assuming backend returns { data: [...], pagination: { total_items, total_pages } }
-      // or similar structure based on the recent backend update
+
       if (res?.data) {
         setPosyanduData(res.data);
         setPaginationData(
           res.pagination?.total || 0,
-          res.pagination?.totalPages || 1
+          res.pagination?.totalPages || 1,
         );
       } else {
-        // Fallback if backend structure is different
         setPosyanduData(Array.isArray(res) ? res : []);
         setPaginationData(0, 1);
       }
@@ -187,26 +184,29 @@ export default function ResourceAllocationFeed() {
                       </div>
                     </td>
                     <td className="px-6 py-5 text-[15px] text-icon-muted">
-                      {row.desa || (row.village_id ? "Desa ID: " + row.village_id.slice(0, 8) : "-")}
+                      {row.desa ||
+                        (row.village_id
+                          ? "Desa ID: " + row.village_id.slice(0, 8)
+                          : "-")}
                     </td>
                     <td className="px-6 py-5 text-[15px] text-icon-muted pr-12">
                       {row.address || row.alamat}
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center justify-end gap-3">
-                        <button 
+                        <button
                           onClick={() => handleDetailClick(row)}
                           className="text-icon-muted hover:text-text-main transition-colors cursor-pointer"
                         >
                           <Eye size={18} strokeWidth={2.5} />
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleEdit(row)}
                           className="text-btn-primary hover:text-btn-hover transition-colors cursor-pointer"
                         >
                           <Pencil size={18} strokeWidth={2.5} />
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleDeleteClick(row)}
                           className="text-danger hover:text-danger/80 transition-colors cursor-pointer"
                         >

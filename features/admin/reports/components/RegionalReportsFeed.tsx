@@ -3,10 +3,6 @@
 import { useState, useEffect } from "react";
 import {
   Search,
-  Plus,
-  Eye,
-  Pencil,
-  Trash2,
   ChevronLeft,
   ChevronRight,
   Map,
@@ -45,7 +41,7 @@ export default function RegionalReportsFeed() {
           setCoverageData(response.data.coverage);
           setPaginationData(
             response.pagination?.total || 0,
-            response.pagination?.totalPages || 1
+            response.pagination?.totalPages || 1,
           );
         }
       } catch (error) {
@@ -114,7 +110,8 @@ export default function RegionalReportsFeed() {
             Laporan Wilayah
           </h1>
           <p className="text-icon-muted mt-2 font-medium">
-            Pantau tingkat peluang resiko stunting berdasarkan cakupan data dari setiap wilayah.
+            Pantau tingkat peluang resiko stunting berdasarkan cakupan data dari
+            setiap wilayah.
           </p>
         </div>
       </div>
@@ -143,7 +140,8 @@ export default function RegionalReportsFeed() {
               {coverageData?.coveredVillagePercentage || 0}%
             </div>
             <div className="text-xs font-medium text-icon-muted">
-              Rata-rata Cakupan ({coverageData?.totalCoveredVillages || 0} dari {coverageData?.totalVillages || 0} Desa)
+              Rata-rata Cakupan ({coverageData?.totalCoveredVillages || 0} dari{" "}
+              {coverageData?.totalVillages || 0} Desa)
             </div>
           </div>
         </div>

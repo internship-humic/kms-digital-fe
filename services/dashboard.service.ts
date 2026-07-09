@@ -6,8 +6,10 @@ export const getParentDashboard = async (): Promise<DashboardChildData[]> => {
   try {
     const data = await fetchWithAuth("/dashboard/parent");
     return data;
-  } catch (error) {
-    console.error("Gagal mengambil data dashboard parent:", error);
+  } catch (error: any) {
+    if (error.message !== "NO_TOKEN") {
+      console.error("Gagal mengambil data dashboard parent:", error.message);
+    }
     return [];
   }
 };
@@ -15,10 +17,12 @@ export const getParentDashboard = async (): Promise<DashboardChildData[]> => {
 export const getKaderDashboard =
   async (): Promise<DashboardKaderData | null> => {
     try {
-      const data = await fetchWithAuth("/dashboard/kader");
+      const data = await fetchWithAuth("/dashboard/cadre");
       return data;
-    } catch (error) {
-      console.error("Gagal mengambil data dashboard kader:", error);
+    } catch (error: any) {
+      if (error.message !== "NO_TOKEN") {
+        console.error("Gagal mengambil data dashboard kader:", error.message);
+      }
       return null;
     }
   };
@@ -27,8 +31,10 @@ export const getAdminDashboard = async () => {
   try {
     const data = await fetchWithAuth("/dashboard/admin");
     return data;
-  } catch (error) {
-    console.error("Gagal mengambil data dashboard admin:", error);
+  } catch (error: any) {
+    if (error.message !== "NO_TOKEN") {
+      console.error("Gagal mengambil data dashboard admin:", error.message);
+    }
     return null;
   }
 };

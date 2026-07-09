@@ -19,9 +19,13 @@ export function transformApiToMetrics(childInfo: any, apiGraphData: any) {
       });
 
       return {
+        id: m.id,
+        rawDate: m.measurement_date.split("T")[0],
         tanggal: dateStr,
         berat: m.body_weight?.toString() || "0",
         tinggi: m.body_height?.toString() || "0",
+        lingkarKepala: m.head_circumference?.toString() || "",
+        keterangan: m.description || "",
         zBB: m.zscore_bb?.toFixed(2) || "0.00",
         statusBB: classifyBBU(m.zscore_bb),
         zTB: m.zscore_tb?.toFixed(2) || "0.00",

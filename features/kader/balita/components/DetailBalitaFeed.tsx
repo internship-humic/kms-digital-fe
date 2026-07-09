@@ -15,6 +15,8 @@ import {
   ChevronDown,
   ChevronUp,
   Plus,
+  Edit3,
+  Trash2,
 } from "lucide-react";
 import {
   LineChart,
@@ -28,6 +30,8 @@ import {
 } from "recharts";
 import { BalitaDetail } from "../types";
 import TambahPengukuranModal from "./TambahPengukuranModal";
+import EditPengukuranModal from "./EditPengukuranModal";
+import DeletePengukuranModal from "./DeletePengukuranModal";
 
 export default function DetailBalitaFeed({
   data,
@@ -42,7 +46,11 @@ export default function DetailBalitaFeed({
 }) {
   const router = useRouter();
   const [expandedRow, setExpandedRow] = useState<number | null>(0);
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditMeasurementOpen, setIsEditMeasurementOpen] = useState(false);
+  const [isDeleteMeasurementOpen, setIsDeleteMeasurementOpen] = useState(false);
+  const [selectedMeasurement, setSelectedMeasurement] = useState<any>(null);
 
   const { combinedChartData, riwayatDenganZScoreAsli, macroStatusInfo } =
     metrics;
@@ -330,7 +338,7 @@ export default function DetailBalitaFeed({
                   const isExpanded = expandedRow === idx;
                   return (
                     <div
-                      key={idx}
+                      key={row.id || idx}
                       className={`flex flex-col ${idx !== riwayatDenganZScoreAsli.length - 1 ? "border-b border-gray-100" : ""}`}
                     >
                       <button
@@ -407,6 +415,30 @@ export default function DetailBalitaFeed({
                               </p>
                             </div>
                           </div>
+
+                          {/* Action Buttons inside Expanded row */}
+                          <div className="mt-3 pt-3 flex justify-end gap-4 border-t border-gray-200/60">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedMeasurement(row);
+                                setIsEditMeasurementOpen(true);
+                              }}
+                              className="flex items-center gap-1.5 text-xs font-semibold text-btn-primary hover:underline"
+                            >
+                              <Edit3 size={14} strokeWidth={2.5} /> Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedMeasurement(row);
+                                setIsDeleteMeasurementOpen(true);
+                              }}
+                              className="flex items-center gap-1.5 text-xs font-semibold text-danger hover:underline"
+                            >
+                              <Trash2 size={14} strokeWidth={2.5} /> Hapus
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -419,9 +451,7 @@ export default function DetailBalitaFeed({
               <Info size={16} className="text-gray-400 shrink-0 mt-0.5" />
               <p className="text-[10px] text-gray-500 leading-relaxed text-justify">
                 Audit Trail: Seluruh data pertumbuhan telah divalidasi secara
-                sistem menggunakan algoritma WHO Anthro 2005. Perubahan data
-                historis hanya dapat dilakukan melalui otoritas Admin Puskesmas
-                dengan alasan medis yang valid.
+                sistem menggunakan algoritma WHO Anthro 2005.
               </p>
             </div>
           </div>
@@ -435,6 +465,29 @@ export default function DetailBalitaFeed({
         clinicId="clinic-uuid-1"
         onSuccess={() => {
           setIsAddModalOpen(false);
+          router.refresh();
+        }}
+      />
+
+      {/* Modal Edit dan Delete */}
+      <EditPengukuranModal
+        isOpen={isEditMeasurementOpen}
+        onClose={() => setIsEditMeasurementOpen(false)}
+        data={selectedMeasurement}
+        childId={data.id}
+        clinicId="clinic-uuid-1"
+        onSuccess={() => {
+          setIsEditMeasurementOpen(false);
+          router.refresh();
+        }}
+      />
+
+      <DeletePengukuranModal
+        isOpen={isDeleteMeasurementOpen}
+        onClose={() => setIsDeleteMeasurementOpen(false)}
+        measurementId={selectedMeasurement?.id}
+        onSuccess={() => {
+          setIsDeleteMeasurementOpen(false);
           router.refresh();
         }}
       />
