@@ -28,7 +28,7 @@ export const loginService = async (data: LoginFormValues) => {
     const result = await response.json();
 
     if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Gagal melakukan login.");
+      throw new Error(result.error?.message || result.message || "Gagal melakukan login.");
     }
 
     const normalizedRole = result.data.role.toLowerCase();
@@ -74,7 +74,13 @@ export const registerService = async (data: RegisterFormValues) => {
     const result = await response.json();
 
     if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Gagal melakukan registrasi.");
+      let errorMsg = result.error?.message || result.message || "Gagal melakukan registrasi.";
+      if (result.error?.details && Array.isArray(result.error.details)) {
+        errorMsg += " " + result.error.details.map((d: any) => d.message || d).join(", ");
+      } else if (result.error?.details) {
+        errorMsg += " " + JSON.stringify(result.error.details);
+      }
+      throw new Error(errorMsg);
     }
 
     return result.data;
@@ -96,7 +102,7 @@ export const activateCadreService = async (data: ActivateCadrePayload) => {
     const result = await response.json();
 
     if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Gagal membuat akun kader.");
+      throw new Error(result.error?.message || result.message || "Gagal membuat akun kader.");
     }
 
     return result.data;
@@ -130,7 +136,7 @@ export const updateProfileService = async (
     const result = await response.json();
 
     if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Gagal memperbarui profil.");
+      throw new Error(result.error?.message || result.message || "Gagal memperbarui profil.");
     }
 
     return result.data;
@@ -162,7 +168,7 @@ export const changePasswordService = async (
     const result = await response.json();
 
     if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Gagal mengubah kata sandi.");
+      throw new Error(result.error?.message || result.message || "Gagal mengubah kata sandi.");
     }
 
     return result.data;
@@ -199,7 +205,7 @@ export const requestPasswordResetService = async (
 
     if (!response.ok || result.success === false) {
       throw new Error(
-        result.message || "Gagal mengirim permintaan reset password.",
+        result.error?.message || result.message || "Gagal mengirim permintaan reset password.",
       );
     }
 
@@ -226,7 +232,7 @@ export const resetPasswordService = async (data: ResetPasswordPayload) => {
     const result = await response.json();
 
     if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Gagal mereset password.");
+      throw new Error(result.error?.message || result.message || "Gagal mereset password.");
     }
 
     return result.data;

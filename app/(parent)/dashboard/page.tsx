@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpDown } from "lucide-react";
-import DashboardActions from "@/features/parent/dashboard/components/FloatingAddButton";
+import { ArrowUpDown, Baby } from "lucide-react";
 import ChildOptionButton from "@/features/parent/dashboard/components/ChildCardMenu";
 import { getParentDashboard } from "@/services/dashboard.service";
 import { getProfile } from "@/services/profile.service";
@@ -79,49 +78,61 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <div className="px-6 flex flex-col gap-5">
-        {childrenData?.map((child) => (
-          <Link
-            href={`/dashboard/child/${child.id}`}
-            key={child.id}
-            className="bg-white rounded-[20px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-border-input/40 p-5 block transition-transform hover:scale-[1.02] active:scale-95"
-          >
-            <div className="flex justify-between items-start mb-3">
-              <div className="w-[60px] h-[60px] rounded-full flex items-center justify-center shrink-0 border border-primary-light/80 bg-primary-light/60 shadow-sm">
-                <span className="text-3xl font-bold text-btn-primary tracking-widest select-none">
-                  {getInitials(child.name)}
-                </span>
+      {(!childrenData || childrenData.length === 0) ? (
+        <div className="px-6 flex flex-col items-center justify-center text-center mt-12 mb-10">
+          <div className="w-24 h-24 rounded-full bg-primary-light/30 flex items-center justify-center mb-6 border border-primary-light/50">
+            <Baby size={48} className="text-btn-primary/70" strokeWidth={1.5} />
+          </div>
+          <h2 className="text-xl font-semibold text-text-main mb-2">
+            Belum Ada Data Balita
+          </h2>
+          <p className="text-sm font-normal text-text-main/70 max-w-[280px]">
+            Data si kecil belum tersedia. Silakan hubungi Kader Posyandu terdekat untuk mendaftarkan data tumbuh kembang anak Anda.
+          </p>
+        </div>
+      ) : (
+        <div className="px-6 flex flex-col gap-5">
+          {childrenData.map((child) => (
+            <Link
+              href={`/dashboard/child/${child.id}`}
+              key={child.id}
+              className="bg-white rounded-[20px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-border-input/40 p-5 block transition-transform hover:scale-[1.02] active:scale-95"
+            >
+              <div className="flex justify-between items-start mb-3">
+                <div className="w-[60px] h-[60px] rounded-full flex items-center justify-center shrink-0 border border-primary-light/80 bg-primary-light/60 shadow-sm">
+                  <span className="text-3xl font-bold text-btn-primary tracking-widest select-none">
+                    {getInitials(child.name)}
+                  </span>
+                </div>
+
+                <ChildOptionButton childName={child.name} />
               </div>
 
-              <ChildOptionButton childName={child.name} />
-            </div>
+              <h3 className="text-lg font-medium text-text-main mb-0.5">
+                {child.name}
+              </h3>
+              <p className="text-sm font-normal text-icon-muted mb-4">
+                {child.gender} &bull; {child.age}
+              </p>
 
-            <h3 className="text-lg font-medium text-text-main mb-0.5">
-              {child.name}
-            </h3>
-            <p className="text-sm font-normal text-icon-muted mb-4">
-              {child.gender} &bull; {child.age}
-            </p>
-
-            <div className="flex gap-2.5">
-              <div className="flex items-center gap-1.5 bg-primary-light/40 px-3.5 py-1.5 rounded-full border border-border-input/20">
-                <ScaleIcon className="text-icon-muted" />
-                <span className="text-sm font-normal text-text-main">
-                  {child.weight}
-                </span>
+              <div className="flex gap-2.5">
+                <div className="flex items-center gap-1.5 bg-primary-light/40 px-3.5 py-1.5 rounded-full border border-border-input/20">
+                  <ScaleIcon className="text-icon-muted" />
+                  <span className="text-sm font-normal text-text-main">
+                    {child.weight}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 bg-primary-light/40 px-3.5 py-1.5 rounded-full border border-border-input/20">
+                  <ArrowUpDown size={14} className="text-icon-muted" />
+                  <span className="text-sm font-normal text-text-main">
+                    {child.height}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5 bg-primary-light/40 px-3.5 py-1.5 rounded-full border border-border-input/20">
-                <ArrowUpDown size={14} className="text-icon-muted" />
-                <span className="text-sm font-normal text-text-main">
-                  {child.height}
-                </span>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
-
-      <DashboardActions />
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
