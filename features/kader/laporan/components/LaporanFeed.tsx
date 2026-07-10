@@ -12,40 +12,65 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { LaporanItem } from "../types";
+import { createMeasurementAction } from "@/app/actions/measurement";
+import type { BalitaData } from "../../balita/types";
 
 export default function LaporanFeed({
   initialReports = [],
+  childrenData = [],
+  clinicId = "",
 }: {
   initialReports?: LaporanItem[];
+  childrenData?: BalitaData[];
+  clinicId?: string;
 }) {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
   const [openMenu, setOpenMenu] = useState<number | null>(null);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [reportsData, setReportsData] = useState<LaporanItem[]>(initialReports);
 
-  const uploadedFileSize = uploadedFile
-    ? `${(uploadedFile.size / (1024 * 1024)).toFixed(1)} MB`
-    : "";
+  const [selectedChild, setSelectedChild] = useState("");
+  const [measurementDate, setMeasurementDate] = useState("");
+  const [bodyWeight, setBodyWeight] = useState("");
+  const [bodyHeight, setBodyHeight] = useState("");
+  const [headCirc, setHeadCirc] = useState("");
+  const [description, setDescription] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const handleChooseFile = () => {
-    fileInputRef.current?.click();
-  };
+  const handleSubmitPengukuran = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (!file) return;
-
-    const MAX_FILE_SIZE = 50 * 1024 * 1024;
-
-    if (file.size > MAX_FILE_SIZE) {
-      alert("Ukuran file terlalu besar! Maksimal 50 MB.");
-      event.target.value = "";
+    if (!selectedChild || !measurementDate || !bodyWeight || !bodyHeight) {
+      setErrorMsg("Balita, Tanggal, Berat Badan, dan Tinggi Badan wajib diisi.");
       return;
     }
 
-    setUploadedFile(file);
+    try {
+      setIsSubmitting(true);
+      const result = await createMeasurementAction({
+        children_id: selectedChild,
+        clinic_id: clinicId,
+        measurement_date: measurementDate,
+        body_weight: parseFloat(bodyWeight),
+        body_height: parseFloat(bodyHeight),
+        head_circumference: headCirc ? parseFloat(headCirc) : null,
+        description: description || undefined,
+      });
+
+      if (!result.success) throw new Error(result.error);
+
+      setMeasurementDate("");
+      setBodyWeight("");
+      setBodyHeight("");
+      setHeadCirc("");
+      setDescription("");
+      setSelectedChild("");
+      alert("Data pengukuran berhasil ditambahkan!");
+    } catch (err: any) {
+      setErrorMsg(err.message || "Gagal menyimpan pengukuran.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleEdit = (reportId: number) => {
@@ -62,66 +87,115 @@ export default function LaporanFeed({
     <main className="px-6 pt-10 pb-8">
       <section className="mb-7 text-center">
         <h1 className="mb-1.5 text-[21px] font-bold text-btn-primary">
-          Ekspor Laporan
+          Laporan & Pengukuran
         </h1>
         <p className="text-lg leading-relaxed text-icon-muted">
-          Ekspor Laporan dalam Satu Klik. Tidak perlu menulis manual.
+          Catat data pengukuran manual dan kelola laporan.
         </p>
       </section>
 
       <section className="mb-8 rounded-[12px] border border-border-input/40 bg-white p-6 shadow-sm">
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="application/pdf"
-          className="hidden"
-          onChange={handleFileChange}
-        />
-
-        <button
-          type="button"
-          onClick={handleChooseFile}
-          className="flex h-[288px] w-full cursor-pointer flex-col items-center justify-center rounded-[10px] border-2 border-dashed border-border-input bg-background text-center"
-        >
-          {uploadedFile ? (
-            <>
-              <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-[18px] bg-danger/10">
-                <Image
-                  src="/images/pdf.svg"
-                  alt="PDF Icon"
-                  width={42}
-                  height={42}
-                />
-              </div>
-              <h2 className="max-w-[260px] truncate text-2xl font-bold text-text-main">
-                {uploadedFile.name}
-              </h2>
-              <p className="mt-1 text-sm text-icon-muted">
-                Diupload • {uploadedFileSize}
-              </p>
-            </>
-          ) : (
-            <>
-              <UploadCloud size={60} className="mb-3 text-text-secondary" />
-              <p className="text-2xl font-semibold text-text-secondary">
-                Drag your files or{" "}
-                <span className="text-btn-primary">browse</span>
-              </p>
-              <p className="mt-1 text-sm text-text-main/30">
-                Max 50 MB files are allowed
-              </p>
-            </>
+        <div className="mb-4">
+          <h2 className="text-xl font-bold text-text-main">Catat Pengukuran Manual</h2>
+          <p className="text-sm text-icon-muted">Isi form di bawah ini untuk mencatat data pengukuran balita.</p>
+        </div>
+        
+        <form onSubmit={handleSubmitPengukuran} className="flex flex-col gap-4">
+          {errorMsg && (
+            <div className="rounded-xl border border-danger/20 bg-danger/10 p-3 text-sm font-medium text-danger">
+              {errorMsg}
+            </div>
           )}
-        </button>
 
-        <Button
-          type="button"
-          size="xl"
-          disabled={!uploadedFile}
-          className="mt-6 w-full"
-        >
-          Upload Laporan PDF
-        </Button>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-semibold text-text-main">
+              Pilih Balita <span className="text-danger">*</span>
+            </label>
+            <select
+              value={selectedChild}
+              onChange={(e) => setSelectedChild(e.target.value)}
+              className="rounded-xl border border-border-input/60 px-4 py-3 text-sm font-medium outline-none transition focus:border-btn-primary focus:ring-2 focus:ring-btn-primary/20 bg-white"
+            >
+              <option value="">-- Pilih Balita --</option>
+              {childrenData.map((child) => (
+                <option key={child.id} value={child.id}>
+                  {child.name} ({child.age})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-semibold text-text-main">
+              Tanggal Pengukuran <span className="text-danger">*</span>
+            </label>
+            <input
+              type="date"
+              value={measurementDate}
+              onChange={(e) => setMeasurementDate(e.target.value)}
+              className="rounded-xl border border-border-input/60 px-4 py-3 text-sm font-medium outline-none transition focus:border-btn-primary focus:ring-2 focus:ring-btn-primary/20"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-semibold text-text-main">
+                Berat (kg) <span className="text-danger">*</span>
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                value={bodyWeight}
+                onChange={(e) => setBodyWeight(e.target.value)}
+                placeholder="Contoh: 10.5"
+                className="rounded-xl border border-border-input/60 px-4 py-3 text-sm font-medium outline-none transition focus:border-btn-primary focus:ring-2 focus:ring-btn-primary/20"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-semibold text-text-main">
+                Tinggi (cm) <span className="text-danger">*</span>
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                value={bodyHeight}
+                onChange={(e) => setBodyHeight(e.target.value)}
+                placeholder="Contoh: 85"
+                className="rounded-xl border border-border-input/60 px-4 py-3 text-sm font-medium outline-none transition focus:border-btn-primary focus:ring-2 focus:ring-btn-primary/20"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-semibold text-text-main">Lingkar Kepala (cm)</label>
+            <input
+              type="number"
+              step="0.1"
+              min="0"
+              value={headCirc}
+              onChange={(e) => setHeadCirc(e.target.value)}
+              placeholder="Opsional, Contoh: 45"
+              className="rounded-xl border border-border-input/60 px-4 py-3 text-sm font-medium outline-none transition focus:border-btn-primary focus:ring-2 focus:ring-btn-primary/20"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-semibold text-text-main">Keterangan</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Catatan tambahan (opsional)"
+              rows={3}
+              className="resize-none rounded-xl border border-border-input/60 px-4 py-3 text-sm font-medium outline-none transition focus:border-btn-primary focus:ring-2 focus:ring-btn-primary/20"
+            />
+          </div>
+
+          <Button type="submit" disabled={isSubmitting} className="mt-2 w-full h-12 rounded-xl">
+            {isSubmitting ? "Menyimpan..." : "Simpan Pengukuran"}
+          </Button>
+        </form>
       </section>
 
       <section className="mb-8">
