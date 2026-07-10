@@ -4,8 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import {
   Search,
   Eye,
-  Pencil,
-  Trash2,
   ChevronLeft,
   ChevronRight,
   Loader2,
@@ -221,18 +219,6 @@ export default function ParentsFeed() {
                           className="text-icon-muted hover:text-text-main transition-colors cursor-pointer"
                         >
                           <Eye size={18} strokeWidth={2.5} />
-                        </button>
-                        <button
-                          onClick={() => handleEditClick(row)}
-                          className="text-btn-primary hover:text-btn-hover transition-colors cursor-pointer"
-                        >
-                          <Pencil size={18} strokeWidth={2.5} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClick(row)}
-                          className="text-danger hover:text-danger/80 transition-colors cursor-pointer"
-                        >
-                          <Trash2 size={18} strokeWidth={2.5} />
                         </button>
                       </div>
                     </td>
