@@ -23,6 +23,7 @@ export default function RootLayout({
     <html
       lang="id"
       className={cn(
+        "scroll-smooth",
         "antialiased",
         plusJakarta.variable,
         "font-sans",

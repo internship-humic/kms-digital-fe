@@ -57,20 +57,12 @@ export default function HeroSection() {
         </div>
 
         {/* Right Illustration */}
-        <div className="relative z-10 h-[500px] lg:h-[600px] w-full flex items-center justify-center">
-          <div className="absolute inset-0 bg-gradient-to-tr from-blue-50 to-purple-50 rounded-[40px] transform rotate-3 scale-105 -z-10" />
-          <div className="absolute inset-0 bg-white rounded-[40px] shadow-[0_30px_60px_rgba(0,0,0,0.12)] overflow-hidden">
-            {/* Generate Image here using generate_image if needed, or put a placeholder for now */}
-            <div className="w-full h-full relative">
-              <img 
-                src="https://images.unsplash.com/photo-1576091160550-2173ff9e5eb2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-                alt="Dokter menggunakan tablet JagaCilik" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-          
-
+        <div className="relative z-10 w-full flex items-center justify-center lg:justify-end mt-8 lg:mt-0">
+          <img 
+            src="/images/landingPage.png" 
+            alt="Ilustrasi JagaCilik" 
+            className="w-full max-w-[400px] lg:max-w-[480px] h-auto object-contain rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
+          />
         </div>
       </div>
       
