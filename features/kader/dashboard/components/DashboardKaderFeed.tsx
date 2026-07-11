@@ -27,9 +27,9 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
   };
 
   const displayData = {
-    kaderName: data?.kaderName || "",
-    posyanduName: data?.posyanduName || "Posyandu",
-    location: data?.location || "-",
+    kaderName: data?.cadre?.name || data?.kaderName || "",
+    posyanduName: data?.cadre?.clinic?.name || data?.posyanduName || "Posyandu",
+    location: data?.cadre?.clinic?.address || data?.location || "-",
     totalBalita: {
       value: data?.total_children || 0,
       trend: "Data Terkini",

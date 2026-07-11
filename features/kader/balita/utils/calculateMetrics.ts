@@ -1,13 +1,11 @@
 import { classifyBBU, classifyTBU, classifyBBTB } from "@/lib/utils/zscore";
 import { getCombinedGrowthDataFromAPI } from "@/features/parent/growth/utils/getChartData";
 
-export function transformApiToMetrics(childInfo: any, apiGraphData: any) {
-  const rawMeasurements = Array.isArray(apiGraphData) ? apiGraphData : [];
+export function transformApiToMetrics(childInfo: any, apiGraphData: any, rawMeasurementsArray: any[] = []) {
+  const rawMeasurements = Array.isArray(rawMeasurementsArray) ? rawMeasurementsArray : [];
 
-  const combinedChartData = getCombinedGrowthDataFromAPI(
-    childInfo.gender,
-    rawMeasurements,
-  ).bb;
+  // apiGraphData contains { weight: [], height: [], head_circumference: [], nutrition: [] }
+  // We will build combinedChartData below using chartMeasurements
 
   const riwayat = rawMeasurements
     .map((m: any) => {
@@ -33,8 +31,14 @@ export function transformApiToMetrics(childInfo: any, apiGraphData: any) {
         zBBTB: m.zscore_gizi?.toFixed(2) || "0.00",
         statusBBTB: classifyBBTB(m.zscore_gizi),
       };
-    })
-    .reverse();
+    }); // Keep it descending so riwayat[0] is the latest
+
+  // For the chart, we need ascending order (oldest to newest)
+  const chartMeasurements = [...rawMeasurements].reverse();
+  const combinedChartData = getCombinedGrowthDataFromAPI(
+    childInfo.gender,
+    chartMeasurements,
+  ).bb;
 
   const macroStatusInfo = {
     label:
@@ -48,8 +52,7 @@ export function transformApiToMetrics(childInfo: any, apiGraphData: any) {
   const latestWeight = riwayat[0]?.berat || "0";
   const latestHeight = riwayat[0]?.tinggi || "0";
 
-  const latestRaw = rawMeasurements[rawMeasurements.length - 1];
-  const latestLK = latestRaw?.head_circumference?.toString() || "0";
+  const latestLK = riwayat[0]?.lingkarKepala || "0";
 
   const mappedData = {
     id: childInfo.id.toString(),

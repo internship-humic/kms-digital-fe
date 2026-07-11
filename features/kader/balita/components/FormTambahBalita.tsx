@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { createChildAction } from "@/app/actions/children";
 import { getParentsByClinic } from "@/services/parent.service";
+import { getProfile } from "@/services/auth.service";
 
 export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
   const [parents, setParents] = useState<any[]>([]);
   const [selectedParentId, setSelectedParentId] = useState("");
   const [isLoadingParents, setIsLoadingParents] = useState(true);
+  const [validClinicId, setValidClinicId] = useState(clinicId);
 
   const {
     register,
@@ -37,9 +39,19 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
 
   useEffect(() => {
     const fetchParents = async () => {
+      let currentClinicId = clinicId;
+      
       try {
-        const data = await getParentsByClinic(clinicId);
-        setParents(data);
+        if (!currentClinicId || currentClinicId === "clinic-uuid-1") {
+          const profile: any = await getProfile();
+          currentClinicId = profile?.user?.clinic_id;
+        }
+        setValidClinicId(currentClinicId);
+
+        if (currentClinicId) {
+          const data = await getParentsByClinic(currentClinicId);
+          setParents(data);
+        }
       } catch (error) {
         console.error("Gagal memuat data orang tua:", error);
       } finally {
@@ -47,9 +59,7 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
       }
     };
 
-    if (clinicId) {
-      fetchParents();
-    }
+    fetchParents();
   }, [clinicId]);
 
   const onSubmit = async (data: TambahBalitaFormValues) => {
@@ -70,6 +80,7 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
       body_height: parseFloat(data.tinggiLahir),
       address: data.alamatRumah,
       parent_id: selectedParentId,
+      clinic_id: validClinicId,
       status: "NORMAL",
     };
 

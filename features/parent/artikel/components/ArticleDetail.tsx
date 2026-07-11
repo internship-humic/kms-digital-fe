@@ -11,6 +11,10 @@ import {
 } from "lucide-react";
 import { formatRelativeTime } from "@/lib/utils";
 import type { ArtikelItem } from "../types";
+import { generateHTML } from "@tiptap/html";
+import StarterKit from "@tiptap/starter-kit";
+import ImageExtension from "@tiptap/extension-image";
+import LinkExtension from "@tiptap/extension-link";
 
 export default function ArticleDetail({ article }: { article: ArtikelItem }) {
   const router = useRouter();
@@ -31,6 +35,22 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
   const imageUrl = article.cover_image
     ? `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}${article.cover_image}`
     : null;
+
+  let renderedContent = article.content as string;
+  if (typeof article.content === "object" && article.content !== null) {
+    try {
+      renderedContent = generateHTML(article.content as any, [
+        StarterKit,
+        ImageExtension.configure({
+          inline: true,
+          allowBase64: true,
+        }),
+        LinkExtension,
+      ]);
+    } catch (e) {
+      console.error("Failed to generate HTML from Tiptap JSON", e);
+    }
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -99,31 +119,12 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
         </div>
 
         {/* Article Prose */}
-        <article className="prose prose-sm max-w-none text-[#434654] text-md leading-relaxed whitespace-pre-line">
-          {typeof article.content === "object" && article.content !== null
-            ? article.content.content?.map((node: any, index: number) => {
-                if (node.type === "paragraph") {
-                  return (
-                    <p key={index} className="mb-5">
-                      {node.content?.[0]?.text}
-                    </p>
-                  );
-                }
-                if (node.type === "heading") {
-                  const Tag =
-                    `h${node.attrs.level || 1}` as keyof JSX.IntrinsicElements;
-                  return (
-                    <Tag
-                      key={index}
-                      className="text-2xl font-bold text-text-main mt-8 mb-3"
-                    >
-                      {node.content?.[0]?.text}
-                    </Tag>
-                  );
-                }
-                return null;
-              })
-            : article.content}
+        <article className="prose prose-sm sm:prose-base max-w-none text-[#434654] text-md leading-relaxed">
+          {typeof renderedContent === "string" && renderedContent.startsWith("<") ? (
+            <div dangerouslySetInnerHTML={{ __html: renderedContent }} />
+          ) : (
+            <div className="whitespace-pre-line">{renderedContent}</div>
+          )}
         </article>
       </div>
     </div>

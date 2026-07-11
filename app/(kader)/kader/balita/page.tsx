@@ -1,5 +1,6 @@
 import BalitaFeed from "@/features/kader/balita/components/BalitaFeed";
 import { getChildrens } from "@/services/children.service";
+import { getProfile } from "@/services/auth.service";
 
 export const metadata = {
   title: "Data Balita | JagaCilik",
@@ -9,6 +10,9 @@ export const metadata = {
 export default async function DataBalitaPage() {
   const dataBalita = await getChildrens();
 
+  const profile = await getProfile<any>();
+  const clinicId = profile?.user?.clinic_id || "";
+
   return (
     <div className="flex-1 bg-background flex flex-col relative overflow-y-auto">
       <div className="flex items-center justify-center px-6 pt-10 pb-5 bg-background/95 backdrop-blur-md sticky top-0 z-30 border-b border-border-input/10">
@@ -17,7 +21,7 @@ export default async function DataBalitaPage() {
         </h1>
       </div>
 
-      <BalitaFeed initialData={dataBalita} />
+      <BalitaFeed initialData={dataBalita} clinicId={clinicId} />
     </div>
   );
 }

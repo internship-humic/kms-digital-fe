@@ -1,7 +1,8 @@
 import DetailBalitaFeed from "@/features/kader/balita/components/DetailBalitaFeed";
 import { transformApiToMetrics } from "@/features/kader/balita/utils/calculateMetrics";
 import { getChildrens } from "@/services/children.service";
-import { getMeasurementGraph } from "@/services/measurement.service";
+import { getMeasurementGraph, getMeasurementsByChild } from "@/services/measurement.service";
+import { getProfile } from "@/services/auth.service";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata({
@@ -31,18 +32,24 @@ export default async function DetailBalitaPage({
   }
 
   const apiGraphData = await getMeasurementGraph(id);
+  const rawMeasurementsRes = await getMeasurementsByChild(id);
+  const rawMeasurements = Array.isArray(rawMeasurementsRes) ? rawMeasurementsRes : [];
 
   const {
     mappedData,
     combinedChartData,
     riwayatDenganZScoreAsli,
     macroStatusInfo,
-  } = transformApiToMetrics(childInfo, apiGraphData);
+  } = transformApiToMetrics(childInfo, apiGraphData, rawMeasurements);
+
+  const profile = await getProfile<any>();
+  const clinicId = profile?.user?.clinic_id || "";
 
   return (
     <DetailBalitaFeed
       data={mappedData}
       metrics={{ combinedChartData, riwayatDenganZScoreAsli, macroStatusInfo }}
+      clinicId={clinicId}
     />
   );
 }

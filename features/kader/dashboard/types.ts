@@ -11,6 +11,14 @@ export type DashboardKaderData = {
   kaderName?: string;
   posyanduName?: string;
   location?: string;
+  cadre?: {
+    name: string;
+    clinic?: {
+      name: string;
+      address: string;
+      village_id?: string;
+    };
+  };
   total_children: number;
   total_risky_children: number;
   latest_measurements: MeasurementApiData[];

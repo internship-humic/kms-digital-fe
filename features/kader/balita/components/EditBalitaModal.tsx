@@ -12,8 +12,8 @@ import type {
 } from "../types";
 
 type EditBalitaModalProps = {
-  isOpen: boolean;
   data: BalitaData | null;
+  clinicId: string;
   onClose: () => void;
   onSuccess: () => void;
 };
@@ -21,6 +21,7 @@ type EditBalitaModalProps = {
 export default function EditBalitaModal({
   isOpen,
   data,
+  clinicId,
   onClose,
   onSuccess,
 }: EditBalitaModalProps) {
@@ -29,9 +30,6 @@ export default function EditBalitaModal({
   const [gender, setGender] = useState<GenderApi>("MALE");
   const [address, setAddress] = useState("");
   const [status, setStatus] = useState<ChildStatus>("NORMAL");
-  const [bodyWeight, setBodyWeight] = useState("");
-  const [bodyHeight, setBodyHeight] = useState("");
-  const [headCircumference, setHeadCircumference] = useState("");
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -44,9 +42,6 @@ export default function EditBalitaModal({
     setAddress(data.address || "");
     setStatus(data.status || "NORMAL");
 
-    setBodyWeight("");
-    setBodyHeight("");
-    setHeadCircumference("");
     setGlobalError(null);
   }, [data]);
 
@@ -70,16 +65,6 @@ export default function EditBalitaModal({
       return;
     }
 
-    if (!bodyWeight || Number(bodyWeight) <= 0) {
-      setGlobalError("Berat badan wajib diisi.");
-      return;
-    }
-
-    if (!bodyHeight || Number(bodyHeight) <= 0) {
-      setGlobalError("Tinggi badan wajib diisi.");
-      return;
-    }
-
     try {
       setIsSubmitting(true);
       setGlobalError(null);
@@ -91,11 +76,10 @@ export default function EditBalitaModal({
         gender,
         address: address.trim(),
         status,
-        body_weight: Number(bodyWeight),
-        body_height: Number(bodyHeight),
-        head_circumference: headCircumference
-          ? Number(headCircumference)
-          : null,
+        clinic_id: clinicId,
+        body_weight: 1, // Dummy value (ignored by backend)
+        body_height: 50, // Dummy value (ignored by backend)
+        head_circumference: null,
       };
 
       const result = await updateChildAction(data.id, payload);
@@ -215,65 +199,7 @@ export default function EditBalitaModal({
               </select>
             </div>
 
-            <div className="rounded-2xl border border-border-input/40 bg-background p-4">
-              <p className="mb-1 text-sm font-bold text-text-main">
-                Data Ukur untuk Validasi API
-              </p>
-              <p className="mb-4 text-xs leading-relaxed text-icon-muted">
-                Backend masih memakai schema yang mewajibkan berat dan tinggi
-                pada proses update, jadi field ini tetap dikirim.
-              </p>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-text-main">
-                    Berat Badan / Lahir
-                  </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    value={bodyWeight}
-                    onChange={(event) => setBodyWeight(event.target.value)}
-                    placeholder="Contoh: 8.5"
-                    className="rounded-xl border border-border-input/60 px-4 py-3 text-sm font-medium outline-none transition focus:border-btn-primary focus:ring-2 focus:ring-btn-primary/20"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-text-main">
-                    Tinggi Badan / Lahir
-                  </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    value={bodyHeight}
-                    onChange={(event) => setBodyHeight(event.target.value)}
-                    placeholder="Contoh: 70"
-                    className="rounded-xl border border-border-input/60 px-4 py-3 text-sm font-medium outline-none transition focus:border-btn-primary focus:ring-2 focus:ring-btn-primary/20"
-                  />
-                </div>
-
-                <div className="col-span-2 flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-text-main">
-                    Lingkar Kepala
-                  </label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    value={headCircumference}
-                    onChange={(event) =>
-                      setHeadCircumference(event.target.value)
-                    }
-                    placeholder="Opsional"
-                    className="rounded-xl border border-border-input/60 px-4 py-3 text-sm font-medium outline-none transition focus:border-btn-primary focus:ring-2 focus:ring-btn-primary/20"
-                  />
-                </div>
-              </div>
             </div>
-          </div>
 
           <div className="flex gap-3 border-t border-border-input/30 bg-white px-5 py-4">
             <Button

@@ -23,6 +23,7 @@ export type ChildPayload = {
   gender: GenderApi;
   address: string;
   status?: ChildStatus;
+  clinic_id: string;
   body_weight: number;
   body_height: number;
   head_circumference?: number | null;

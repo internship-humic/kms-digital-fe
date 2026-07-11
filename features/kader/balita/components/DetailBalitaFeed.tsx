@@ -36,6 +36,7 @@ import DeletePengukuranModal from "./DeletePengukuranModal";
 export default function DetailBalitaFeed({
   data,
   metrics,
+  clinicId,
 }: {
   data: BalitaDetail;
   metrics: {
@@ -43,6 +44,7 @@ export default function DetailBalitaFeed({
     riwayatDenganZScoreAsli: any[];
     macroStatusInfo: { label: string };
   };
+  clinicId: string;
 }) {
   const router = useRouter();
   const [expandedRow, setExpandedRow] = useState<number | null>(0);
@@ -462,7 +464,7 @@ export default function DetailBalitaFeed({
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         childId={data.id}
-        clinicId="clinic-uuid-1"
+        clinicId={clinicId}
         onSuccess={() => {
           setIsAddModalOpen(false);
           router.refresh();
@@ -475,7 +477,7 @@ export default function DetailBalitaFeed({
         onClose={() => setIsEditMeasurementOpen(false)}
         data={selectedMeasurement}
         childId={data.id}
-        clinicId="clinic-uuid-1"
+        clinicId={clinicId}
         onSuccess={() => {
           setIsEditMeasurementOpen(false);
           router.refresh();

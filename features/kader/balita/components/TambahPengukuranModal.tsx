@@ -31,6 +31,8 @@ export default function TambahPengukuranModal({
 
   if (!isOpen) return null;
 
+  const today = new Date().toISOString().split("T")[0];
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -106,6 +108,7 @@ export default function TambahPengukuranModal({
                 type="date"
                 value={measurementDate}
                 onChange={(e) => setMeasurementDate(e.target.value)}
+                max={today}
                 className="rounded-xl border border-border-input/60 px-4 py-3 text-sm font-medium outline-none transition focus:border-btn-primary focus:ring-2 focus:ring-btn-primary/20"
               />
             </div>
