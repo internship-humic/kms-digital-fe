@@ -27,7 +27,7 @@ export default function HeroSection() {
 
           <div className="flex flex-wrap items-center gap-4 mb-12">
             <Button asChild size="lg" className="rounded-xl px-8 bg-[#0a3594] hover:bg-[#0a3594]/90 text-white font-medium text-[15px] h-14">
-              <Link href="/login" className="flex items-center gap-2">
+              <Link href="/onboarding" className="flex items-center gap-2">
                 Daftar Sekarang <ArrowRight size={18} />
               </Link>
             </Button>

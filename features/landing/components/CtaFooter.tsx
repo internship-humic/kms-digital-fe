@@ -21,7 +21,7 @@ export default function CtaFooter() {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button asChild size="lg" className="rounded-xl px-10 bg-white hover:bg-gray-50 text-[#0b48c4] font-medium text-[15px] h-12 w-full sm:w-auto">
-              <Link href="/login">Gabung Sekarang</Link>
+              <Link href="/onboarding">Gabung Sekarang</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-xl px-10 bg-transparent border-white/30 hover:bg-white/10 text-white font-medium text-[15px] h-12 w-full sm:w-auto">
               <Link href="mailto:support@jagacilik.com">Hubungi Tim Kami</Link>

@@ -31,14 +31,14 @@ export default function Navbar() {
           </div>
           
           <Button asChild className="rounded-full px-8 bg-[#0a3594] hover:bg-[#0a3594]/90 text-white font-medium">
-            <Link href="/login">Daftar Sekarang</Link>
+            <Link href="/onboarding">Daftar Sekarang</Link>
           </Button>
         </div>
         
         {/* Mobile Button (shown when links are hidden) */}
         <div className="md:hidden flex items-center">
           <Button asChild className="rounded-full px-6 bg-[#0a3594] hover:bg-[#0a3594]/90 text-white font-medium text-sm">
-            <Link href="/login">Daftar</Link>
+            <Link href="/onboarding">Daftar</Link>
           </Button>
         </div>
       </div>
