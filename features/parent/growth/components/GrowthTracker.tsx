@@ -22,6 +22,7 @@ export default function GrowthPage({
 }) {
   const [activeChild, setActiveChild] = useState(initialData[0]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showAllRiwayat, setShowAllRiwayat] = useState(false);
 
   const getInitials = (name: string) => {
     const names = name.trim().split(/\s+/);
@@ -221,15 +222,20 @@ export default function GrowthPage({
               Riwayat Pemeriksaan
             </h3>
 
-            <button className="text-xs font-semibold text-btn-primary hover:underline">
-              Lihat Semua
-            </button>
+            {activeChild?.riwayatPemeriksaan && activeChild.riwayatPemeriksaan.length > 2 && (
+              <button 
+                onClick={() => setShowAllRiwayat(!showAllRiwayat)}
+                className="text-xs font-semibold text-btn-primary hover:underline"
+              >
+                {showAllRiwayat ? "Tutup" : "Lihat Semua"}
+              </button>
+            )}
           </div>
 
           <div className="relative">
             <div className="absolute top-2 bottom-8 left-[15px] w-[2px] bg-gray-100 rounded-full" />
 
-            {activeChild?.riwayatPemeriksaan?.map((item) => (
+            {activeChild?.riwayatPemeriksaan?.slice(0, showAllRiwayat ? undefined : 2).map((item) => (
               <div key={item.id} className="relative mb-6 pl-11">
                 <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100 z-10">
                   <BriefcaseMedical
