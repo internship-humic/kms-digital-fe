@@ -418,6 +418,18 @@ export default function DetailBalitaFeed({
                             </div>
                           </div>
 
+                          {/* Keterangan Field */}
+                          {row.keterangan && (
+                            <div className="mt-3 p-3 bg-white border border-gray-200/80 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)]">
+                              <p className="text-[10px] text-icon-muted font-bold tracking-wider mb-1 uppercase">
+                                Keterangan
+                              </p>
+                              <p className="text-sm font-medium text-text-main whitespace-pre-wrap leading-relaxed">
+                                {row.keterangan}
+                              </p>
+                            </div>
+                          )}
+
                           {/* Action Buttons inside Expanded row */}
                           <div className="mt-3 pt-3 flex justify-end gap-4 border-t border-gray-200/60">
                             <button
