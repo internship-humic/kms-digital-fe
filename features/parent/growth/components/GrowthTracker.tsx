@@ -46,7 +46,7 @@ export default function GrowthPage({
       };
     }
 
-    if (activeChild.stats.status === "LOW_RISK") {
+    if (activeChild.stats.status === "LOW_RISK" || activeChild.stats.status === "LOWRISK") {
       return {
         label: "LOW RISK",
       };

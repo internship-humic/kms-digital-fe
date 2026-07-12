@@ -44,7 +44,7 @@ export default async function GrowthPage() {
         weight: rawMeasurements.length > 0 ? rawMeasurements[0].body_weight.toString() : child.weight.replace(" kg", ""),
         height: rawMeasurements.length > 0 ? rawMeasurements[0].body_height.toString() : child.height.replace(" cm", ""),
         head: rawMeasurements.length > 0 ? (rawMeasurements[0].head_circumference || 0).toString() : "0",
-        status: "NORMAL",
+        status: child.status,
       },
       riwayatPemeriksaan,
       jadwalImunisasi: [],

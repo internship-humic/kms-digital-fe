@@ -87,9 +87,15 @@ export default async function ChildDetailPage({
               <h2 className="text-xl font-medium leading-[24px] text-text-main">
                 {child.name}
               </h2>
-              <div className="bg-status-normal text-white px-2.5 py-1 rounded-full flex items-center justify-center shrink-0 ml-2">
-                <span className="text-xs font-medium tracking-wide">
-                  Normal
+              <div className={`text-white px-2.5 py-1 rounded-full flex items-center justify-center shrink-0 ml-2 ${
+                child.status === "NORMAL"
+                  ? "bg-status-normal"
+                  : child.status === "HIGHRISK" || child.status === "HIGH_RISK"
+                    ? "bg-danger"
+                    : "bg-password-medium"
+              }`}>
+                <span className="text-[10px] font-bold tracking-wide uppercase">
+                  {child.status === "HIGHRISK" || child.status === "HIGH_RISK" ? "HIGH RISK" : child.status === "LOWRISK" || child.status === "LOW_RISK" ? "LOW RISK" : "NORMAL"}
                 </span>
               </div>
             </div>
@@ -102,6 +108,7 @@ export default async function ChildDetailPage({
         <GrowthChart
           data={childDataPoints}
           preCalculatedChartData={preCalculatedChartData}
+          status={child.status}
         />
       </div>
 
