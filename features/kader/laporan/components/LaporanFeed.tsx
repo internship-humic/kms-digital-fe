@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   UploadCloud,
   FileText,
@@ -26,6 +26,10 @@ export default function LaporanFeed({
 }) {
   const [openMenu, setOpenMenu] = useState<number | null>(null);
   const [reportsData, setReportsData] = useState<LaporanItem[]>(initialReports);
+
+  useEffect(() => {
+    setReportsData(initialReports);
+  }, [initialReports]);
 
   const [selectedChild, setSelectedChild] = useState("");
   const [measurementDate, setMeasurementDate] = useState("");

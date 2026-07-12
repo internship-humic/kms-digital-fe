@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -14,6 +14,7 @@ import {
 import type { BalitaData, ChildStatus } from "../types";
 import EditBalitaModal from "./EditBalitaModal";
 import DeleteBalitaModal from "./DeleteBalitaModal";
+import SuccessModal from "./SuccessModal";
 import { deleteChildAction } from "@/app/actions/children";
 
 type BalitaFeedProps = {
@@ -79,6 +80,10 @@ export default function BalitaFeed({
   const [dataBalita, setDataBalita] = useState<BalitaData[]>(initialData);
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState<"ALL" | ChildStatus>("ALL");
+
+  useEffect(() => {
+    setDataBalita(initialData);
+  }, [initialData]);
 
   const [selectedEditData, setSelectedEditData] = useState<BalitaData | null>(
     null,
@@ -154,14 +159,7 @@ export default function BalitaFeed({
   return (
     <>
       <div className="flex flex-col flex-1 px-6 pb-32 pt-5 gap-4">
-        {successMessage && (
-          <div
-            className="rounded-xl border border-status-normal/20 bg-status-normal/10 p-3.5 text-sm font-semibold text-status-normal"
-            role="status"
-          >
-            {successMessage}
-          </div>
-        )}
+
 
         <div className="relative">
           <Search
@@ -325,6 +323,12 @@ export default function BalitaFeed({
           setSelectedDeleteData(null);
         }}
         onConfirm={handleDelete}
+      />
+
+      <SuccessModal
+        isOpen={!!successMessage}
+        message={successMessage || ""}
+        onClose={() => setSuccessMessage(null)}
       />
     </>
   );
