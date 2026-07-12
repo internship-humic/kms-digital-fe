@@ -30,6 +30,7 @@ export const getParentDashboard = async (): Promise<DashboardChildData[]> => {
         age: ageStr.trim(),
         weight: latestMeasurement?.body_weight ? `${latestMeasurement.body_weight} kg` : "-",
         height: latestMeasurement?.body_height ? `${latestMeasurement.body_height} cm` : "-",
+        status: child.status || "NORMAL",
       };
     });
   } catch (error: any) {
