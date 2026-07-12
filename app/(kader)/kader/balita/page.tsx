@@ -7,11 +7,14 @@ export const metadata = {
   description: "Kelola dan pantau seluruh data tumbuh kembang balita.",
 };
 
-export default async function DataBalitaPage() {
-  const dataBalita = await getChildrens();
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
+export default async function DataBalitaPage() {
   const profile = await getProfile<any>();
   const clinicId = profile?.user?.clinic_id || "";
+
+  const dataBalita = await getChildrens(undefined, 1, 50, clinicId);
 
   return (
     <div className="flex-1 bg-background flex flex-col relative overflow-y-auto">

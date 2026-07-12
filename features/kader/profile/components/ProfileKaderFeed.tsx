@@ -4,15 +4,18 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   BadgeCheck,
-  ChevronRight,
   LogOut,
   Loader2,
-  UserPen,
-  KeyRound,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { logoutAction } from "@/app/actions/auth";
 import { getProfile } from "@/services/auth.service";
+import { getKaderDashboard } from "@/services/dashboard.service";
+import { Baby } from "lucide-react";
 import type { KaderProfile } from "../types";
 
 type RawGetMeResponse = {
@@ -29,33 +32,22 @@ type RawGetMeResponse = {
   role: string;
 };
 
-const kaderMenus = [
-  {
-    id: "edit-profile",
-    title: "Edit Profil",
-    description: "Ubah nama, email, dan data lainnya",
-    icon: UserPen,
-    href: "/kader/profile/edit",
-  },
-  {
-    id: "change-password",
-    title: "Ubah Kata Sandi",
-    description: "Perbarui kata sandi akun Anda",
-    icon: KeyRound,
-    href: "/kader/profile/change-password",
-  },
-];
+// Menus removed since cadre cannot edit profile or change password
 
 export default function ProfileKaderFeed() {
   const router = useRouter();
   const [profile, setProfile] = useState<KaderProfile | null>(null);
+  const [totalChildren, setTotalChildren] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
 
-      const res = await getProfile<RawGetMeResponse>();
+      const [res, dashboardRes] = await Promise.all([
+        getProfile<RawGetMeResponse>(),
+        getKaderDashboard(),
+      ]);
 
       if (res?.user) {
         setProfile({
@@ -72,6 +64,10 @@ export default function ProfileKaderFeed() {
         });
       } else {
         setProfile(null);
+      }
+      
+      if (dashboardRes) {
+        setTotalChildren(dashboardRes.total_children || 0);
       }
 
       setIsLoading(false);
@@ -145,44 +141,69 @@ export default function ProfileKaderFeed() {
             {profile.posyandu_name}
           </div>
         )}
+
+        <div className="mt-6 w-full">
+          <div className="flex w-full items-center justify-between rounded-[16px] border border-border-input/30 bg-white p-5 shadow-[0_4px_20px_rgba(15,23,42,0.03)]">
+            <div className="flex items-center gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary-light/60 text-btn-primary">
+                <Baby size={26} strokeWidth={2.5} />
+              </div>
+              <p className="text-[15px] font-bold text-text-main">Total Anak Dipantau</p>
+            </div>
+            <p className="text-4xl font-black text-btn-primary">{totalChildren}</p>
+          </div>
+        </div>
       </section>
 
-      <section className="mb-6 overflow-hidden rounded-[16px] bg-white shadow-[0_10px_28px_rgba(15,23,42,0.04)]">
-        {kaderMenus.map((menu, index) => {
-          const Icon = menu.icon;
+      <section className="mb-6 overflow-hidden rounded-[16px] bg-white shadow-[0_10px_28px_rgba(15,23,42,0.04)] p-5 border border-border-input/30">
+        <h3 className="mb-4 text-[17px] font-bold text-text-main">Informasi Akun</h3>
+        <div className="flex flex-col gap-5">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-light/50 text-btn-primary">
+              <Mail size={18} strokeWidth={2.5} />
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-icon-muted uppercase tracking-wider mb-0.5">Email</p>
+              <p className="text-[15px] font-medium text-text-main">{profile.email}</p>
+            </div>
+          </div>
 
-          return (
-            <button
-              key={menu.id}
-              type="button"
-              onClick={() => router.push(menu.href)}
-              className={`flex w-full cursor-pointer items-center gap-4 px-4 py-4 text-left transition-colors hover:bg-background ${
-                index !== kaderMenus.length - 1
-                  ? "border-b border-border-input/30"
-                  : ""
-              }`}
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-background text-icon-alt">
-                <Icon size={21} strokeWidth={2.3} />
-              </div>
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-light/50 text-btn-primary">
+              <Phone size={18} strokeWidth={2.5} />
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-icon-muted uppercase tracking-wider mb-0.5">No. Telepon</p>
+              <p className="text-[15px] font-medium text-text-main">{profile.phone_number || "-"}</p>
+            </div>
+          </div>
 
-              <div className="min-w-0 flex-1">
-                <h3 className="text-md font-bold text-text-main">
-                  {menu.title}
-                </h3>
-                <p className="mt-0.5 text-base text-icon-muted">
-                  {menu.description}
-                </p>
-              </div>
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-light/50 text-btn-primary">
+              <MapPin size={18} strokeWidth={2.5} />
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-icon-muted uppercase tracking-wider mb-0.5">Alamat Posyandu</p>
+              <p className="text-[15px] font-medium text-text-main">{profile.posyandu_address || "-"}</p>
+            </div>
+          </div>
 
-              <ChevronRight
-                size={22}
-                strokeWidth={2.3}
-                className="text-border-input"
-              />
-            </button>
-          );
-        })}
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-light/50 text-btn-primary">
+              <Calendar size={18} strokeWidth={2.5} />
+            </div>
+            <div>
+              <p className="text-[11px] font-semibold text-icon-muted uppercase tracking-wider mb-0.5">Bergabung Sejak</p>
+              <p className="text-[15px] font-medium text-text-main">
+                {new Date(profile.created_at).toLocaleDateString("id-ID", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
       <Button

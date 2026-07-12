@@ -24,7 +24,10 @@ export default async function DetailBalitaPage({
 }) {
   const { id } = await params;
 
-  const childrenList = await getChildrens();
+  const profile = await getProfile<any>();
+  const clinicId = profile?.user?.clinic_id || "";
+
+  const childrenList = await getChildrens(undefined, 1, 50, clinicId);
   const childInfo = childrenList.find((item) => item.id.toString() === id);
 
   if (!childInfo) {
@@ -42,8 +45,7 @@ export default async function DetailBalitaPage({
     macroStatusInfo,
   } = transformApiToMetrics(childInfo, apiGraphData, rawMeasurements);
 
-  const profile = await getProfile<any>();
-  const clinicId = profile?.user?.clinic_id || "";
+  // removed profile fetch since it is done at the top
 
   return (
     <DetailBalitaFeed

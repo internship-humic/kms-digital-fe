@@ -8,6 +8,7 @@ import {
   Info,
   TriangleAlert,
   UserRoundCheck,
+  Smile,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -81,8 +82,14 @@ export default function TindakanFeed({ initialData }: TindakanFeedProps) {
 
       <section className="flex flex-col gap-4">
         {cases.length === 0 ? (
-          <div className="text-center text-icon-muted py-10 bg-white border border-border-input/30 rounded-2xl">
-            Tidak ada balita yang memerlukan tindakan lanjutan saat ini.
+          <div className="flex flex-col items-center justify-center py-16 px-6 text-center bg-white border border-border-input/30 rounded-[16px] shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-light/60 text-btn-primary mb-4">
+              <Smile size={32} strokeWidth={2.5} />
+            </div>
+            <h3 className="text-[17px] font-bold text-text-main mb-2">Semua Balita Terpantau Baik!</h3>
+            <p className="text-[14.5px] text-icon-muted leading-relaxed max-w-[280px]">
+              Tidak ada balita yang memerlukan tindakan rujukan atau perhatian khusus saat ini. Kerja yang sangat bagus!
+            </p>
           </div>
         ) : (
           cases.map((item: any) => {

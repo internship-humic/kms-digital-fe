@@ -99,6 +99,7 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
     if (!showModal) return;
 
     const timeout = setTimeout(() => {
+      router.refresh();
       router.push("/kader/balita");
     }, 2500);
 

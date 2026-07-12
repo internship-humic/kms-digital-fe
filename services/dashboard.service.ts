@@ -1,3 +1,5 @@
+"use server";
+
 import { fetchWithAuth } from "@/lib/fetcher";
 import type { DashboardChildData } from "@/features/parent/dashboard/types";
 import type { DashboardKaderData } from "@/features/kader/dashboard/types";

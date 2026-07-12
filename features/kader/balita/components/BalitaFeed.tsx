@@ -206,7 +206,7 @@ export default function BalitaFeed({
           </div>
 
           <Link
-            href={`/kader/dashboard/${clinicId}/tambah`}
+            href="/kader/dashboard/tambah"
             className="flex items-center gap-1.5 rounded-full bg-btn-primary px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-btn-primary/90"
           >
             <Plus size={16} strokeWidth={2.5} />

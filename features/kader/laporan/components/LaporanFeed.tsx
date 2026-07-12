@@ -16,7 +16,7 @@ import { createMeasurementAction } from "@/app/actions/measurement";
 import type { BalitaData } from "../../balita/types";
 
 export default function LaporanFeed({
-  initialReports = [],
+  initialReports,
   childrenData = [],
   clinicId = "",
 }: {
@@ -25,10 +25,12 @@ export default function LaporanFeed({
   clinicId?: string;
 }) {
   const [openMenu, setOpenMenu] = useState<number | null>(null);
-  const [reportsData, setReportsData] = useState<LaporanItem[]>(initialReports);
+  const [reportsData, setReportsData] = useState<LaporanItem[]>(initialReports || []);
 
   useEffect(() => {
-    setReportsData(initialReports);
+    if (initialReports) {
+      setReportsData(initialReports);
+    }
   }, [initialReports]);
 
   const [selectedChild, setSelectedChild] = useState("");
@@ -136,6 +138,7 @@ export default function LaporanFeed({
             <input
               type="date"
               value={measurementDate}
+              max={new Date().toISOString().split("T")[0]}
               onChange={(e) => setMeasurementDate(e.target.value)}
               className="rounded-xl border border-border-input/60 px-4 py-3 text-sm font-medium outline-none transition focus:border-btn-primary focus:ring-2 focus:ring-btn-primary/20"
             />

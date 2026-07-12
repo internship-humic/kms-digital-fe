@@ -41,13 +41,27 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
     pemeriksaanTerbaru: Array.isArray(data?.latest_measurements)
       ? data.latest_measurements.map((m: any) => ({
           id: m.id,
-          inisial: m.child_name
-            ? m.child_name.substring(0, 2).toUpperCase()
+          childId: m.children_id,
+          inisial: (m.child_name || m.children?.name)
+            ? (m.child_name || m.children?.name).substring(0, 2).toUpperCase()
             : "XX",
-          nama: m.child_name || "Tanpa Nama",
-          jenisPemeriksaan: m.description || "Pemeriksaan Rutin",
-          waktu: "Baru saja",
-          status: "Normal",
+          nama: (m.child_name || m.children?.name) || "Tanpa Nama",
+          jenisPemeriksaan: m.description ? `Pengukuran - ${m.description}` : "Pemeriksaan Rutin",
+          waktu: m.measurement_date 
+            ? new Date(m.measurement_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) 
+            : "Baru saja",
+          status: (() => {
+            const s = m.status || m.children?.status || "NORMAL";
+            if (s === "LOW RISK" || s === "LOWRISK") return "Risiko Rendah";
+            if (s === "HIGH RISK" || s === "HIGHRISK") return "Risiko Tinggi";
+            return "Normal";
+          })(),
+          statusColor: (() => {
+            const s = m.status || m.children?.status || "NORMAL";
+            if (s === "LOW RISK" || s === "LOWRISK") return "text-warning";
+            if (s === "HIGH RISK" || s === "HIGHRISK") return "text-danger";
+            return "text-status-normal";
+          })(),
         }))
       : [],
   };
@@ -172,7 +186,10 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
             Pemeriksaan Terbaru
           </h2>
 
-          <button className="text-xs font-medium leading-[16px] tracking-[0.48px] text-btn-primary text-center align-middle hover:underline cursor-pointer">
+          <button 
+            onClick={() => router.push("/kader/balita")}
+            className="text-xs font-medium leading-[16px] tracking-[0.48px] text-btn-primary text-center align-middle hover:underline cursor-pointer"
+          >
             Lihat Semua
           </button>
         </div>
@@ -182,7 +199,8 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
             displayData.pemeriksaanTerbaru.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center gap-3 p-4 border border-border-input/30 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.02)] rounded-xl bg-white hover:border-btn-primary/30 transition-colors cursor-pointer"
+                onClick={() => router.push(`/kader/balita/${item.childId}`)}
+                className="flex items-center gap-3 p-4 border border-border-input/30 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.02)] rounded-xl bg-white hover:border-btn-primary/30 transition-colors cursor-pointer active:scale-[0.98]"
               >
                 <div className="w-[48px] h-[48px] bg-primary-light/70 rounded-full flex items-center justify-center text-btn-primary font-bold text-lg tracking-wide shrink-0 border border-primary-light shadow-sm select-none">
                   {item.inisial}
@@ -200,7 +218,7 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
                   </p>
                 </div>
                 <div className="shrink-0 pl-2">
-                  <span className="text-base font-semibold leading-[20px] tracking-[0.14px] text-status-normal text-right align-middle">
+                  <span className={`text-base font-semibold leading-[20px] tracking-[0.14px] text-right align-middle ${item.statusColor}`}>
                     {item.status}
                   </span>
                 </div>

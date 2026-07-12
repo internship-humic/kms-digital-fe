@@ -29,6 +29,7 @@ export const getChildrens = async (
   search?: string,
   page = 1,
   limit = 50,
+  clinicId?: string
 ): Promise<BalitaData[]> => {
   try {
     const queryParams = new URLSearchParams({
@@ -40,9 +41,16 @@ export const getChildrens = async (
       queryParams.append("search", search);
     }
 
-    const children = await fetchWithAuth(`/children?${queryParams.toString()}`);
+    const endpoint = clinicId 
+      ? `/children/clinic/${clinicId}?${queryParams.toString()}` 
+      : `/children?${queryParams.toString()}`;
 
-    const mappedData: BalitaData[] = children.map((item: any) => {
+    const children = await fetchWithAuth(endpoint);
+
+    // Some endpoints return an array directly, others return { items: [...], total_case: ... }
+    const childrenArray = Array.isArray(children) ? children : (children.items || []);
+
+    const mappedData: BalitaData[] = childrenArray.map((item: any) => {
       const diffMonths = calculateAgeInMonths(item.birth_date);
 
       return {
@@ -105,7 +113,12 @@ export const deleteChild = async (id: string) => {
   }
 };
 
-export const getRiskyChildren = async (page = 1, limit = 50, search = "") => {
+export const getRiskyChildren = async (
+  page = 1, 
+  limit = 50, 
+  search = "",
+  clinicId?: string
+) => {
   try {
     const queryParams = new URLSearchParams({
       page: page.toString(),
@@ -116,11 +129,13 @@ export const getRiskyChildren = async (page = 1, limit = 50, search = "") => {
       queryParams.append("search", search);
     }
 
-    const response = await fetchPaginatedWithAuth(
-      `/children/risky?${queryParams.toString()}`,
-    );
+    const endpoint = clinicId 
+      ? `/children/clinic/${clinicId}/risky?${queryParams.toString()}` 
+      : `/children/risky?${queryParams.toString()}`;
+
+    const response = await fetchPaginatedWithAuth(endpoint);
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching risky childrens:", error);
     return {
       data: { items: [], total_case: 0, need_referral: 0 },

@@ -7,6 +7,9 @@ export const metadata = {
     "Halaman ringkasan pemantauan tumbuh kembang Posyandu JagaCilik.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function KaderDashboardPage() {
   const dashboardData = await getKaderDashboard();
 
