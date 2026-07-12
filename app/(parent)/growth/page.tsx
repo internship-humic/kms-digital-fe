@@ -1,6 +1,6 @@
 import Growth from "@/features/parent/growth/components/GrowthTracker";
 import { getParentDashboard } from "@/services/dashboard.service";
-import { getMeasurementGraph } from "@/services/measurement.service";
+import { getMeasurementsByChild } from "@/services/measurement.service";
 
 export const metadata = {
   title: "Tumbuh | JagaCilik",
@@ -11,8 +11,15 @@ export default async function GrowthPage() {
   const dashboardData = await getParentDashboard();
 
   const childrenDataPromises = dashboardData.map(async (child) => {
-    const graphData = await getMeasurementGraph(child.id.toString());
-    const rawMeasurements = Array.isArray(graphData) ? graphData : [];
+    const rawMeasurementsRes = await getMeasurementsByChild(child.id.toString());
+    let rawMeasurements = [];
+    if (Array.isArray(rawMeasurementsRes)) {
+      rawMeasurements = rawMeasurementsRes;
+    } else if (rawMeasurementsRes && Array.isArray(rawMeasurementsRes.data)) {
+      rawMeasurements = rawMeasurementsRes.data;
+    } else if (rawMeasurementsRes?.data && Array.isArray(rawMeasurementsRes.data.items)) {
+      rawMeasurements = rawMeasurementsRes.data.items;
+    }
 
     const riwayatPemeriksaan = rawMeasurements
       .map((m: any) => ({
@@ -26,8 +33,7 @@ export default async function GrowthPage() {
         keterangan: m.description || "Pemeriksaan Rutin",
         bb: m.body_weight,
         tb: m.body_height,
-      }))
-      .reverse();
+      }));
 
     return {
       id: child.id,
@@ -35,14 +41,9 @@ export default async function GrowthPage() {
       details: `${child.gender} • ${child.age}`,
       image: "",
       stats: {
-        weight: child.weight.replace(" kg", ""),
-        height: child.height.replace(" cm", ""),
-        head:
-          rawMeasurements.length > 0
-            ? rawMeasurements[
-                rawMeasurements.length - 1
-              ].head_circumference?.toString() || "0"
-            : "0",
+        weight: rawMeasurements.length > 0 ? rawMeasurements[0].body_weight.toString() : child.weight.replace(" kg", ""),
+        height: rawMeasurements.length > 0 ? rawMeasurements[0].body_height.toString() : child.height.replace(" cm", ""),
+        head: rawMeasurements.length > 0 ? (rawMeasurements[0].head_circumference || 0).toString() : "0",
         status: "NORMAL",
       },
       riwayatPemeriksaan,

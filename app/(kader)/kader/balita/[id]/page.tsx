@@ -36,7 +36,14 @@ export default async function DetailBalitaPage({
 
   const apiGraphData = await getMeasurementGraph(id);
   const rawMeasurementsRes = await getMeasurementsByChild(id);
-  const rawMeasurements = Array.isArray(rawMeasurementsRes) ? rawMeasurementsRes : [];
+  let rawMeasurements = [];
+  if (Array.isArray(rawMeasurementsRes)) {
+    rawMeasurements = rawMeasurementsRes;
+  } else if (rawMeasurementsRes && Array.isArray(rawMeasurementsRes.data)) {
+    rawMeasurements = rawMeasurementsRes.data;
+  } else if (rawMeasurementsRes?.data && Array.isArray(rawMeasurementsRes.data.items)) {
+    rawMeasurements = rawMeasurementsRes.data.items;
+  }
 
   const {
     mappedData,

@@ -107,7 +107,7 @@ export default function ProfileKaderFeed() {
   }
 
   return (
-    <main className="px-6 pt-10 pb-8">
+    <main className="px-6 pt-10 pb-32">
       <header className="mb-6 text-center">
         <h1 className="text-[21px] font-bold text-btn-primary">Profil</h1>
       </header>
@@ -207,12 +207,12 @@ export default function ProfileKaderFeed() {
       </section>
 
       <Button
-        variant="destructive"
+        variant="outline"
         size="lg"
         onClick={handleLogout}
-        className="w-full gap-2 font-bold bg-white text-danger border border-danger hover:bg-danger/5"
+        className="w-full gap-2 rounded-[12px] border border-danger bg-white h-[52px] font-semibold text-danger hover:bg-danger/5 hover:text-danger"
       >
-        <LogOut size={20} strokeWidth={2.4} />
+        <LogOut size={19} strokeWidth={2.2} />
         Keluar
       </Button>
     </main>

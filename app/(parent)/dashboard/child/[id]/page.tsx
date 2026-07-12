@@ -6,7 +6,7 @@ import {
   mapApiToGrowthDataPoints,
 } from "@/features/parent/growth/utils/getChartData";
 import { getParentDashboard } from "@/services/dashboard.service";
-import { getMeasurementGraph } from "@/services/measurement.service";
+import { getMeasurementGraph, getMeasurementsByChild } from "@/services/measurement.service";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 
@@ -44,18 +44,20 @@ export default async function ChildDetailPage({
     notFound();
   }
 
-  const apiGraphDataRaw = await getMeasurementGraph(id);
-  const apiGraphData = apiGraphDataRaw || {
-    weight: [],
-    height: [],
-    head_circumference: [],
-    nutrition: [],
-  };
+  const rawMeasurementsRes = await getMeasurementsByChild(id);
+  let rawMeasurements = [];
+  if (Array.isArray(rawMeasurementsRes)) {
+    rawMeasurements = rawMeasurementsRes;
+  } else if (rawMeasurementsRes && Array.isArray(rawMeasurementsRes.data)) {
+    rawMeasurements = rawMeasurementsRes.data;
+  } else if (rawMeasurementsRes?.data && Array.isArray(rawMeasurementsRes.data.items)) {
+    rawMeasurements = rawMeasurementsRes.data.items;
+  }
 
-  const childDataPoints = mapApiToGrowthDataPoints(apiGraphData);
+  const childDataPoints = mapApiToGrowthDataPoints(rawMeasurements);
   const preCalculatedChartData = getCombinedGrowthDataFromAPI(
     child.gender === "Laki-laki" ? "Laki-laki" : "Perempuan",
-    apiGraphData,
+    rawMeasurements,
   );
 
   return (
