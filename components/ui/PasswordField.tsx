@@ -2,7 +2,6 @@
 
 import React, { forwardRef, useId, useState } from "react";
 import { Lock, Eye, EyeOff } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 interface PasswordFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -33,12 +32,12 @@ const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
             )}
           />
 
-          <Input
+          <input
             id={inputId}
             ref={ref}
             type={showPassword ? "text" : "password"}
             className={cn(
-              "w-full bg-background border rounded-xl pl-11 pr-11 py-3.5 h-auto text-sm placeholder:text-text-placeholder transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0",
+              "h-8 w-full min-w-0 bg-background border rounded-xl pl-11 pr-11 py-3.5 h-auto text-sm placeholder:text-text-placeholder transition-colors outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20",
               error
                 ? "border-danger focus-visible:ring-danger/20 focus-visible:border-danger"
                 : "border-border-input focus-visible:ring-primary/20 focus-visible:border-primary",

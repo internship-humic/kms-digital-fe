@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   BadgeCheck,
   ChevronRight,
@@ -118,12 +119,14 @@ export default function ProfileKaderFeed() {
 
       <section className="mb-8 flex flex-col items-center text-center">
         <div className="relative mb-4">
-          <div className="flex h-24 w-24 items-center justify-center rounded-full border-[4px] border-white bg-primary-light text-7xl font-bold text-btn-primary shadow-[0_8px_24px_rgba(15,23,42,0.12)] overflow-hidden">
+          <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-[4px] border-white bg-primary-light text-7xl font-bold text-btn-primary shadow-[0_8px_24px_rgba(15,23,42,0.12)] overflow-hidden">
             {profile.avatar_url ? (
-              <img
+              <Image
                 src={profile.avatar_url}
                 alt={profile.name}
-                className="h-full w-full object-cover"
+                fill
+                sizes="96px"
+                className="object-cover"
               />
             ) : (
               getInitials(profile.name)

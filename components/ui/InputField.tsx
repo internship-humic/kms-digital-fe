@@ -1,6 +1,5 @@
 import React, { forwardRef, useId } from "react";
 import { LucideIcon } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -10,7 +9,7 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
-  ({ label, icon: Icon, error, className, ...props }, ref) => {
+  ({ label, icon: Icon, error, className, type = "text", ...props }, ref) => {
     const inputId = useId();
 
     return (
@@ -30,11 +29,13 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
               error ? "text-danger" : "text-icon-muted",
             )}
           />
-          <Input
+          <input
             id={inputId}
             ref={ref}
+            type={type}
             className={cn(
-              "w-full bg-background border rounded-xl pl-11 pr-4 py-3.5 h-auto text-sm placeholder:text-text-placeholder transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0",
+              // Gabungan base style shadcn + kustomisasi layout JagaCilik Anda
+              "h-8 w-full min-w-0 bg-background border rounded-xl pl-11 pr-4 py-3.5 h-auto text-sm placeholder:text-text-placeholder transition-colors outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20",
               error
                 ? "border-danger focus-visible:ring-danger/20 focus-visible:border-danger"
                 : "border-border-input focus-visible:ring-primary/20 focus-visible:border-primary",
