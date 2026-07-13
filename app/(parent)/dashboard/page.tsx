@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpDown } from "lucide-react";
-import DashboardActions from "@/features/parent/dashboard/components/FloatingAddButton";
 import ChildOptionButton from "@/features/parent/dashboard/components/ChildCardMenu";
 import { getParentDashboard } from "@/services/dashboard.service";
 import { getProfile } from "@/services/profile.service";
@@ -120,8 +119,6 @@ export default async function DashboardPage() {
           </Link>
         ))}
       </div>
-
-      <DashboardActions />
     </div>
   );
 }

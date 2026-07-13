@@ -6,4 +6,5 @@ export type DashboardChildData = {
   weight: string;
   height: string;
   image: string;
+  status?: string;
 };

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Shield, ArrowRight } from "lucide-react";
+import { HeartPulse, ArrowRight } from "lucide-react";
 
 export default function HeroSection() {
   return (
@@ -11,7 +11,7 @@ export default function HeroSection() {
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[85vh]">
         <div className="flex flex-col items-start z-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-light text-btn-primary mb-6">
-            <Shield size={16} />
+            <HeartPulse size={16} />
             <span className="text-sm font-medium">
               Program Nasional Penurunan Stunting
             </span>
@@ -33,7 +33,7 @@ export default function HeroSection() {
               size="lg"
               className="rounded-xl px-8 font-medium text-[15px] h-14"
             >
-              <Link href="/login" className="flex items-center gap-2">
+              <Link href="/onboarding" className="flex items-center gap-2">
                 Daftar Sekarang <ArrowRight size={18} />
               </Link>
             </Button>
@@ -77,17 +77,14 @@ export default function HeroSection() {
 
         {/* Right Illustration */}
         <div className="relative z-10 h-[500px] lg:h-[600px] w-full flex items-center justify-center">
-          <div className="absolute inset-0 bg-gradient-to-tr from-primary-light to-btn-primary/10 rounded-[40px] transform rotate-3 scale-105 -z-10" />
-          <div className="absolute inset-0 bg-white rounded-[40px] shadow-[0_30px_60px_rgba(0,0,0,0.12)] overflow-hidden">
-            <div className="w-full h-full relative">
-              <Image
-                src="/images/landinghero.svg"
-                alt="Ilustrasi JagaCilik Hero"
-                fill
-                priority
-                className="object-contain p-8"
-              />
-            </div>
+          <div className="w-full h-full relative">
+            <Image
+              src="/images/landinghero.svg"
+              alt="Ilustrasi JagaCilik Hero"
+              fill
+              priority
+              className="object-contain p-8"
+            />
           </div>
         </div>
       </div>

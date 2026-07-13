@@ -8,12 +8,13 @@ import { useRegionData } from "@/features/auth/hooks/useRegionData";
 import { editKaderSchema, EditKaderFormValues } from "../../validations/admin";
 import { updateCadreAction } from "@/app/actions/cadre";
 import { useEffect, useState } from "react";
+import type { StaffData } from "../types";
 
 type EditKaderModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
-  editData: any;
+  editData: StaffData | null;
 };
 
 export default function EditKaderModal({
@@ -59,7 +60,7 @@ export default function EditKaderModal({
 
   useEffect(() => {
     if (editData && isOpen) {
-      setValue("namaLengkap", editData.name || editData.nama || "");
+      setValue("namaLengkap", editData.name || "");
       setValue("email", editData.email || "");
       setGlobalError(null);
     } else if (!isOpen) {
@@ -92,9 +93,11 @@ export default function EditKaderModal({
 
       onSuccess?.();
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Gagal mengubah kader:", error);
-      setGlobalError(error.message || "Gagal mengubah data kader");
+      const errorMessage =
+        error instanceof Error ? error.message : "Gagal mengubah data kader";
+      setGlobalError(errorMessage);
     }
   };
 

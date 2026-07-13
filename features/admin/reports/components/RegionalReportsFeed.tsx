@@ -14,6 +14,22 @@ import { Button } from "@/components/ui/button";
 import { getRegionalReports } from "@/services/region.service";
 import { usePagination } from "@/hooks/usePagination";
 
+interface RegionalReportResponse {
+  data?: {
+    riskRegions: any[];
+    coverage: {
+      totalVillages: number;
+      coveredVillagePercentage: number;
+      totalCoveredVillages: number;
+      uncoveredVillages: number;
+    };
+  };
+  pagination?: {
+    total: number;
+    totalPages: number;
+  };
+}
+
 export default function RegionalReportsFeed() {
   const [searchQuery, setSearchQuery] = useState("");
   const [desaData, setDesaData] = useState<any[]>([]);
@@ -36,8 +52,9 @@ export default function RegionalReportsFeed() {
       setIsLoading(true);
       try {
         const response = await getRegionalReports(page, limit, searchQuery);
+
         if (response?.data) {
-          setDesaData(response.data.riskRegions);
+          setDesaData(response.data.riskRegions || []);
           setCoverageData(response.data.coverage);
           setPaginationData(
             response.pagination?.total || 0,
@@ -45,7 +62,7 @@ export default function RegionalReportsFeed() {
           );
         }
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching regional reports:", error);
       } finally {
         setIsLoading(false);
       }

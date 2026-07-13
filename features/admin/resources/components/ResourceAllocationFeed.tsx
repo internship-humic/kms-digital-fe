@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Search,
   Plus,
@@ -18,8 +18,7 @@ import EditPosyanduModal from "./EditPosyanduModal";
 import DeletePosyanduModal from "./DeletePosyanduModal";
 import DetailPosyanduModal from "./DetailPosyanduModal";
 import { usePagination } from "@/hooks/usePagination";
-import { getAllClinics, deleteClinic } from "@/services/clinic.service";
-import { useCallback } from "react";
+import { getAllClinics } from "@/services/clinic.service";
 
 export default function ResourceAllocationFeed() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,10 +46,10 @@ export default function ResourceAllocationFeed() {
   const fetchPosyanduData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await getAllClinics(page, limit, searchQuery);
+      const res: any = await getAllClinics(page, limit, searchQuery);
 
-      if (res?.data) {
-        setPosyanduData(res.data);
+      if (res && typeof res === "object" && "data" in res) {
+        setPosyanduData(res.data || []);
         setPaginationData(
           res.pagination?.total || 0,
           res.pagination?.totalPages || 1,
@@ -61,6 +60,8 @@ export default function ResourceAllocationFeed() {
       }
     } catch (error) {
       console.error("Gagal mengambil data posyandu:", error);
+      setPosyanduData([]);
+      setPaginationData(0, 1);
     } finally {
       setIsLoading(false);
     }
@@ -221,7 +222,6 @@ export default function ResourceAllocationFeed() {
           </table>
         </div>
 
-        {/* Pagination Controls */}
         <div className="px-6 py-4 border-t border-border-input/30 flex items-center justify-between bg-white">
           <span className="text-sm text-icon-muted">
             Menampilkan {totalItems === 0 ? 0 : (page - 1) * limit + 1} -{" "}

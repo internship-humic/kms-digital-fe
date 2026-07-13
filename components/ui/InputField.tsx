@@ -34,7 +34,6 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             ref={ref}
             type={type}
             className={cn(
-              // Gabungan base style shadcn + kustomisasi layout JagaCilik Anda
               "h-8 w-full min-w-0 bg-background border rounded-xl pl-11 pr-4 py-3.5 h-auto text-sm placeholder:text-text-placeholder transition-colors outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20",
               error
                 ? "border-danger focus-visible:ring-danger/20 focus-visible:border-danger"

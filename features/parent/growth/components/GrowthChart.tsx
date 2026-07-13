@@ -8,11 +8,13 @@ import WHOGrowthChart from "@/features/parent/growth/components/WHOGrowthChart";
 type GrowthChartProps = {
   data: GrowthDataPoint[];
   preCalculatedChartData: { bb: any[]; tb: any[]; lk: any[] };
+  status?: string;
 };
 
 export default function GrowthChart({
   data,
   preCalculatedChartData,
+  status = "NORMAL",
 }: GrowthChartProps) {
   const [activeMetric, setActiveMetric] = useState<"bb" | "tb" | "lk">("bb");
 
@@ -132,16 +134,35 @@ export default function GrowthChart({
             </span>
           </div>
         </div>
-
         <div className="flex-1 bg-background rounded-xl border border-border-input/20 p-3.5 flex flex-col justify-between">
           <p className="font-medium leading-[16px] text-xs tracking-[0.48px] text-icon-muted">
             Status Terkini
           </p>
 
-          <div className="flex items-center gap-2 text-status-normal">
-            <div className="flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-status-normal" />
-            <span className="font-semibold leading-[20px] text-base tracking-[0.14px]">
-              Sesuai Track
+          <div className="flex items-center gap-1.5">
+            <div
+              className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+                status === "NORMAL"
+                  ? "bg-status-normal"
+                  : status === "HIGHRISK" || status === "HIGH_RISK"
+                    ? "bg-danger"
+                    : "bg-password-medium"
+              }`}
+            ></div>
+            <span
+              className={`text-sm font-bold leading-tight ${
+                status === "NORMAL"
+                  ? "text-status-normal"
+                  : status === "HIGHRISK" || status === "HIGH_RISK"
+                    ? "text-danger"
+                    : "text-password-medium"
+              }`}
+            >
+              {status === "HIGHRISK" || status === "HIGH_RISK"
+                ? "Risiko Tinggi"
+                : status === "LOWRISK" || status === "LOW_RISK"
+                  ? "Risiko Rendah"
+                  : "Sesuai Track"}
             </span>
           </div>
         </div>

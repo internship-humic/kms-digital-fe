@@ -71,12 +71,22 @@ export const mapApiToGrowthDataPoints = (
 ): GrowthDataPoint[] => {
   if (!Array.isArray(apiGraphData)) return [];
 
-  return apiGraphData.map((m: any) => {
-    return {
-      month: `Bulan ${m.age_month}`,
-      weight: m.body_weight || 0,
-      height: m.body_height || 0,
-      head: m.head_circumference || 0,
-    };
-  });
+  return [...apiGraphData]
+    .sort((a, b) => {
+      if (a.age_month !== b.age_month) {
+        return a.age_month - b.age_month;
+      }
+      return (
+        new Date(a.measurement_date).getTime() -
+        new Date(b.measurement_date).getTime()
+      );
+    })
+    .map((m: any) => {
+      return {
+        month: `Bulan ${m.age_month}`,
+        weight: m.body_weight || 0,
+        height: m.body_height || 0,
+        head: m.head_circumference || 0,
+      };
+    });
 };

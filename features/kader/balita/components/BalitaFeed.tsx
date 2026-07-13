@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -14,6 +14,7 @@ import {
 import type { BalitaData, ChildStatus } from "../types";
 import EditBalitaModal from "./EditBalitaModal";
 import DeleteBalitaModal from "./DeleteBalitaModal";
+import SuccessModal from "./SuccessModal";
 import { deleteChildAction } from "@/app/actions/children";
 
 type BalitaFeedProps = {
@@ -67,12 +68,22 @@ function getStatusClass(status: ChildStatus) {
   return "bg-status-normal/10 text-status-normal border-status-normal/20";
 }
 
-export default function BalitaFeed({ initialData }: BalitaFeedProps) {
+export default function BalitaFeed({
+  initialData,
+  clinicId,
+}: {
+  initialData: BalitaData[];
+  clinicId: string;
+}) {
   const router = useRouter();
 
   const [dataBalita, setDataBalita] = useState<BalitaData[]>(initialData);
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState<"ALL" | ChildStatus>("ALL");
+
+  useEffect(() => {
+    setDataBalita(initialData);
+  }, [initialData]);
 
   const [selectedEditData, setSelectedEditData] = useState<BalitaData | null>(
     null,
@@ -148,15 +159,6 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
   return (
     <>
       <div className="flex flex-col flex-1 px-6 pb-32 pt-5 gap-4">
-        {successMessage && (
-          <div
-            className="rounded-xl border border-status-normal/20 bg-status-normal/10 p-3.5 text-sm font-semibold text-status-normal"
-            role="status"
-          >
-            {successMessage}
-          </div>
-        )}
-
         <div className="relative">
           <Search
             size={20}
@@ -303,6 +305,7 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
       <EditBalitaModal
         isOpen={!!selectedEditData}
         data={selectedEditData}
+        clinicId={clinicId}
         onClose={() => setSelectedEditData(null)}
         onSuccess={handleEditSuccess}
       />
@@ -318,6 +321,12 @@ export default function BalitaFeed({ initialData }: BalitaFeedProps) {
           setSelectedDeleteData(null);
         }}
         onConfirm={handleDelete}
+      />
+
+      <SuccessModal
+        isOpen={!!successMessage}
+        message={successMessage || ""}
+        onClose={() => setSuccessMessage(null)}
       />
     </>
   );

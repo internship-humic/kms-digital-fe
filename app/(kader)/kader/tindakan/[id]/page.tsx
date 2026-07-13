@@ -3,12 +3,28 @@ import {
   getRiskyChildren,
   getChildIntervention,
 } from "@/services/children.service";
+import { getProfile } from "@/services/auth.service";
 import { notFound } from "next/navigation";
 
-export const metadata = {
-  title: "Detail Tindakan | JagaCilik",
-  description: "Detail kasus dan instruksi tindakan kader.",
-};
+interface RiskyChildrenResponse {
+  data?: {
+    items: any[];
+    total_case?: number;
+    need_referral?: number;
+  };
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return {
+    title: `Detail Tindakan | JagaCilik`,
+    description: "Detail kasus dan instruksi tindakan kader.",
+  };
+}
 
 export default async function DetailTindakanPage({
   params,
@@ -17,7 +33,16 @@ export default async function DetailTindakanPage({
 }) {
   const { id } = await params;
 
-  const riskyData = await getRiskyChildren(1, 100);
+  const profile = await getProfile<any>();
+  const clinicId = profile?.user?.clinic_id || "";
+
+  const riskyData = (await getRiskyChildren(
+    1,
+    100,
+    "",
+    clinicId,
+  )) as RiskyChildrenResponse;
+
   const child = riskyData?.data?.items?.find((item: any) => item.id === id);
 
   if (!child) {

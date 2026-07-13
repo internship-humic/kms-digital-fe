@@ -12,12 +12,13 @@ import {
 } from "../../validations/admin";
 import { updateParentAction } from "@/app/actions/parent";
 import { useEffect, useState } from "react";
+import type { ParentData } from "../types";
 
 type EditParentModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
-  editData: any;
+  editData: ParentData | null;
 };
 
 export default function EditParentModal({

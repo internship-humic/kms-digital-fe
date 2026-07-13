@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { JSX } from "react";
+import Image from "next/image";
 import {
   ArrowLeft,
   Image as ImageIcon,
@@ -11,6 +11,10 @@ import {
 } from "lucide-react";
 import { formatRelativeTime } from "@/lib/utils";
 import type { ArtikelItem } from "../types";
+import { generateHTML } from "@tiptap/html";
+import StarterKit from "@tiptap/starter-kit";
+import ImageExtension from "@tiptap/extension-image";
+import LinkExtension from "@tiptap/extension-link";
 
 export default function ArticleDetail({ article }: { article: ArtikelItem }) {
   const router = useRouter();
@@ -32,18 +36,38 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
     ? `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}${article.cover_image}`
     : null;
 
+  let renderedContent = article.content as string;
+  if (typeof article.content === "object" && article.content !== null) {
+    try {
+      renderedContent = generateHTML(article.content as any, [
+        StarterKit,
+        ImageExtension.configure({
+          inline: true,
+          allowBase64: true,
+        }),
+        LinkExtension,
+      ]);
+    } catch (e) {
+      console.error("Failed to generate HTML from Tiptap JSON", e);
+    }
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Header Floating */}
       <div className="flex items-center justify-between px-6 py-4 bg-background/95 backdrop-blur-md sticky top-0 z-30 border-b border-border-input/10">
         <button
           onClick={() => router.back()}
+          aria-label="Kembali ke halaman sebelumnya"
           className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light transition-colors -ml-2 cursor-pointer"
         >
           <ArrowLeft size={24} className="text-btn-primary" strokeWidth={2.5} />
         </button>
 
-        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light transition-colors -mr-2 cursor-pointer">
+        <button
+          aria-label="Bagikan artikel"
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light transition-colors -mr-2 cursor-pointer"
+        >
           <Share2 size={22} className="text-btn-primary" strokeWidth={2.5} />
         </button>
       </div>
@@ -51,13 +75,16 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
       {/* Hero Image */}
       <div className="relative w-full h-[280px] bg-gray-100 flex items-center justify-center">
         {imageUrl ? (
-          <img
+          <Image
             src={imageUrl}
-            alt={article.title}
-            className="w-full h-full object-cover"
+            alt={`Cover image untuk artikel: ${article.title}`}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
           />
         ) : (
-          <ImageIcon size={50} className="text-gray-300" />
+          <ImageIcon size={50} className="text-gray-300" aria-hidden="true" />
         )}
       </div>
 
@@ -70,7 +97,7 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
             </span>
           </div>
           <span className="text-sm font-medium text-icon-muted flex items-center gap-1.5">
-            <Clock size={14} />
+            <Clock size={14} aria-hidden="true" />
             {formatRelativeTime(article.created_at)}
           </span>
         </div>
@@ -86,6 +113,7 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
               size={24}
               className="text-btn-primary [&>path:first-child]:fill-current [&>path:last-child]:stroke-white"
               strokeWidth={2.5}
+              aria-hidden="true"
             />
           </div>
           <div className="flex-1">
@@ -99,31 +127,13 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
         </div>
 
         {/* Article Prose */}
-        <article className="prose prose-sm max-w-none text-[#434654] text-md leading-relaxed whitespace-pre-line">
-          {typeof article.content === "object" && article.content !== null
-            ? article.content.content?.map((node: any, index: number) => {
-                if (node.type === "paragraph") {
-                  return (
-                    <p key={index} className="mb-5">
-                      {node.content?.[0]?.text}
-                    </p>
-                  );
-                }
-                if (node.type === "heading") {
-                  const Tag =
-                    `h${node.attrs.level || 1}` as keyof JSX.IntrinsicElements;
-                  return (
-                    <Tag
-                      key={index}
-                      className="text-2xl font-bold text-text-main mt-8 mb-3"
-                    >
-                      {node.content?.[0]?.text}
-                    </Tag>
-                  );
-                }
-                return null;
-              })
-            : article.content}
+        <article className="prose prose-sm sm:prose-base max-w-none text-[#434654] text-md leading-relaxed">
+          {typeof renderedContent === "string" &&
+          renderedContent.startsWith("<") ? (
+            <div dangerouslySetInnerHTML={{ __html: renderedContent }} />
+          ) : (
+            <div className="whitespace-pre-line">{renderedContent}</div>
+          )}
         </article>
       </div>
     </div>

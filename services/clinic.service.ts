@@ -3,13 +3,21 @@
 import { fetchWithAuth, fetchPaginatedWithAuth } from "@/lib/fetcher";
 
 export const getAllClinics = async (page = 1, limit = 10, search = "") => {
-  const query = new URLSearchParams({
-    page: page.toString(),
-    limit: limit.toString(),
-    search,
-  });
-  const res = await fetchPaginatedWithAuth(`/clinic?${query.toString()}`);
-  return { success: true, ...res };
+  try {
+    const query = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      search,
+    });
+    const res = await fetchPaginatedWithAuth(`/clinic?${query.toString()}`);
+    return { success: true, ...res };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Terjadi kesalahan yang tidak diketahui";
+    return { success: false, error: errorMessage };
+  }
 };
 
 export const createClinic = async (data: {
@@ -26,8 +34,10 @@ export const createClinic = async (data: {
       body: JSON.stringify(data),
     });
     return { success: true, data: res };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Gagal menambahkan klinik";
+    return { success: false, error: errorMessage };
   }
 };
 
@@ -47,8 +57,10 @@ export const updateClinic = async (
       body: JSON.stringify(data),
     });
     return { success: true, data: res };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Gagal memperbarui klinik";
+    return { success: false, error: errorMessage };
   }
 };
 
@@ -58,7 +70,9 @@ export const deleteClinic = async (id: string) => {
       method: "DELETE",
     });
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Gagal menghapus klinik";
+    return { success: false, error: errorMessage };
   }
 };

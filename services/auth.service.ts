@@ -5,6 +5,81 @@ import { fetchWithAuth } from "@/lib/fetcher";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
+function translateError(msg: string): string {
+  if (!msg) return msg;
+
+  let translated = msg;
+  const mappings = [
+    {
+      en: "Password must contain at least 1 uppercase letter.",
+      id: "Kata sandi harus mengandung minimal 1 huruf kapital.",
+    },
+    {
+      en: "Password must contain at least 1 lowercase letter.",
+      id: "Kata sandi harus mengandung minimal 1 huruf kecil.",
+    },
+    {
+      en: "Password must contain at least 1 number.",
+      id: "Kata sandi harus mengandung minimal 1 angka.",
+    },
+    {
+      en: "Password must contain at least 1 special character.",
+      id: "Kata sandi harus mengandung minimal 1 karakter spesial.",
+    },
+    {
+      en: "Phone number already registered",
+      id: "Nomor telepon sudah terdaftar.",
+    },
+    { en: "Email already registered", id: "Email sudah terdaftar." },
+    { en: "Email is already registered", id: "Email sudah terdaftar." },
+    { en: "Invalid credentials", id: "Email atau kata sandi salah." },
+    { en: "User not found", id: "Pengguna tidak ditemukan." },
+    { en: "Incorrect password", id: "Kata sandi salah." },
+    { en: "must be a valid email", id: "harus berupa alamat email yang valid" },
+    { en: "is required", id: "wajib diisi" },
+    { en: "is not allowed to be empty", id: "tidak boleh kosong" },
+    { en: "length must be at least", id: "panjang minimal harus" },
+    { en: "characters long", id: "karakter" },
+    {
+      en: "fails to match the required pattern",
+      id: "tidak memenuhi format yang ditentukan",
+    },
+    { en: "must match", id: "harus sama dengan" },
+    { en: "must be \\[ref:password\\]", id: "harus sama dengan kata sandi" },
+  ];
+
+  for (const map of mappings) {
+    translated = translated.replace(new RegExp(map.en, "gi"), map.id);
+  }
+
+  return translated.replace(/"/g, "");
+}
+
+function formatErrorMessage(msg: string): string {
+  if (!msg) return "Terjadi kesalahan.";
+  try {
+    const jsonStart = msg.indexOf("{");
+    if (jsonStart !== -1) {
+      const jsonStr = msg.substring(jsonStart);
+      const parsed = JSON.parse(jsonStr);
+      const messages: string[] = [];
+
+      for (const key in parsed) {
+        if (Array.isArray(parsed[key])) {
+          messages.push(...parsed[key].map((m: string) => translateError(m)));
+        } else if (typeof parsed[key] === "string") {
+          messages.push(translateError(parsed[key]));
+        }
+      }
+
+      if (messages.length > 0) {
+        return messages.join(", ");
+      }
+    }
+  } catch (e) {}
+  return translateError(msg);
+}
+
 export type ActivateCadrePayload = {
   name: string;
   email: string;
@@ -28,7 +103,11 @@ export const loginService = async (data: LoginFormValues) => {
     const result = await response.json();
 
     if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Gagal melakukan login.");
+      throw new Error(
+        formatErrorMessage(
+          result.error?.message || result.message || "Gagal melakukan login.",
+        ),
+      );
     }
 
     const normalizedRole = result.data.role.toLowerCase();
@@ -74,7 +153,17 @@ export const registerService = async (data: RegisterFormValues) => {
     const result = await response.json();
 
     if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Gagal melakukan registrasi.");
+      let errorMsg =
+        result.error?.message ||
+        result.message ||
+        "Gagal melakukan registrasi.";
+      if (result.error?.details && Array.isArray(result.error.details)) {
+        errorMsg +=
+          " " + result.error.details.map((d: any) => d.message || d).join(", ");
+      } else if (result.error?.details) {
+        errorMsg += " " + JSON.stringify(result.error.details);
+      }
+      throw new Error(formatErrorMessage(errorMsg));
     }
 
     return result.data;
@@ -96,7 +185,13 @@ export const activateCadreService = async (data: ActivateCadrePayload) => {
     const result = await response.json();
 
     if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Gagal membuat akun kader.");
+      throw new Error(
+        formatErrorMessage(
+          result.error?.message ||
+            result.message ||
+            "Gagal membuat akun kader.",
+        ),
+      );
     }
 
     return result.data;
@@ -130,7 +225,13 @@ export const updateProfileService = async (
     const result = await response.json();
 
     if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Gagal memperbarui profil.");
+      throw new Error(
+        formatErrorMessage(
+          result.error?.message ||
+            result.message ||
+            "Gagal memperbarui profil.",
+        ),
+      );
     }
 
     return result.data;
@@ -162,7 +263,13 @@ export const changePasswordService = async (
     const result = await response.json();
 
     if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Gagal mengubah kata sandi.");
+      throw new Error(
+        formatErrorMessage(
+          result.error?.message ||
+            result.message ||
+            "Gagal mengubah kata sandi.",
+        ),
+      );
     }
 
     return result.data;
@@ -173,7 +280,8 @@ export const changePasswordService = async (
 
 export const getProfile = async <T = unknown>(): Promise<T | null> => {
   try {
-    const data = await fetchWithAuth("/auth/me");
+    const data = await fetchWithAuth<T>("/auth/me");
+
     return data ?? null;
   } catch (error) {
     console.error("Gagal mengambil data profil:", error);
@@ -199,7 +307,11 @@ export const requestPasswordResetService = async (
 
     if (!response.ok || result.success === false) {
       throw new Error(
-        result.message || "Gagal mengirim permintaan reset password.",
+        formatErrorMessage(
+          result.error?.message ||
+            result.message ||
+            "Gagal mengirim permintaan reset password.",
+        ),
       );
     }
 
@@ -226,7 +338,11 @@ export const resetPasswordService = async (data: ResetPasswordPayload) => {
     const result = await response.json();
 
     if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Gagal mereset password.");
+      throw new Error(
+        formatErrorMessage(
+          result.error?.message || result.message || "Gagal mereset password.",
+        ),
+      );
     }
 
     return result.data;

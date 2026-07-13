@@ -10,9 +10,10 @@ import {
   PieChart,
   Pie,
 } from "recharts";
+import type { AdminDashboardDTO } from "../types";
 
 interface AdminDashboardFeedProps {
-  initialData?: any;
+  initialData?: AdminDashboardDTO;
 }
 
 export default function AdminDashboardFeed({
@@ -42,19 +43,6 @@ export default function AdminDashboardFeed({
         );
       default:
         return null;
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "Selesai":
-        return "bg-btn-primary text-white border-transparent";
-      case "Berjalan":
-        return "bg-primary-light text-btn-primary border-transparent";
-      case "Terjadwal":
-        return "bg-border-input/40 text-icon-muted border-transparent";
-      default:
-        return "bg-background text-icon-muted";
     }
   };
 
@@ -90,13 +78,25 @@ export default function AdminDashboardFeed({
   ];
 
   const dynamicBalitaChartData = [
-    { name: "Normal", value: initialData?.childrens?.total_normal_children || 0 },
-    { name: "Beresiko", value: initialData?.childrens?.total_risky_children || 0 },
+    {
+      name: "Normal",
+      value: initialData?.childrens?.total_normal_children || 0,
+    },
+    {
+      name: "Beresiko",
+      value: initialData?.childrens?.total_risky_children || 0,
+    },
   ];
 
   const dynamicWilayahChartData = [
-    { name: "Tercakup", value: initialData?.regions?.total_covered_villages || 0 },
-    { name: "Belum Tercakup", value: initialData?.regions?.total_uncovered_villages || 0 },
+    {
+      name: "Tercakup",
+      value: initialData?.regions?.total_covered_villages || 0,
+    },
+    {
+      name: "Belum Tercakup",
+      value: initialData?.regions?.total_uncovered_villages || 0,
+    },
   ];
 
   return (
@@ -110,7 +110,6 @@ export default function AdminDashboardFeed({
         </p>
       </div>
 
-      {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {dynamicAdminMetrics.map((metric) => (
           <div
@@ -143,9 +142,7 @@ export default function AdminDashboardFeed({
         ))}
       </div>
 
-      {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Bar Chart */}
         <div className="bg-white p-6 rounded-[16px] border border-border-input/40 shadow-sm">
           <h3 className="text-lg font-bold text-text-main mb-8">
             Statistik Kesehatan Balita
@@ -175,7 +172,6 @@ export default function AdminDashboardFeed({
           </div>
         </div>
 
-        {/* Donut Chart */}
         <div className="bg-white p-6 rounded-[16px] border border-border-input/40 shadow-sm">
           <h3 className="text-lg font-bold text-text-main mb-8">
             Distribusi Wilayah
@@ -206,12 +202,9 @@ export default function AdminDashboardFeed({
         </div>
       </div>
 
-      {/* Table Section */}
       <div className="bg-white rounded-[16px] border border-border-input/40 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-border-input/30">
-          <h3 className="text-lg font-bold text-text-main">
-            Posyandu Terbaru
-          </h3>
+          <h3 className="text-lg font-bold text-text-main">Posyandu Terbaru</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
@@ -229,7 +222,7 @@ export default function AdminDashboardFeed({
               </tr>
             </thead>
             <tbody>
-              {initialData?.clinics?.latest_clinics?.map((row: any, index: number) => (
+              {initialData?.clinics?.latest_clinics?.map((row, index) => (
                 <tr
                   key={row.id}
                   className={

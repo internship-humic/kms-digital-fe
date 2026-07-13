@@ -1,6 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import * as htmlToImage from "html-to-image";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -17,6 +20,9 @@ import {
   Plus,
   Edit3,
   Trash2,
+  X,
+  Minimize2,
+  Loader2,
 } from "lucide-react";
 import {
   LineChart,
@@ -36,6 +42,7 @@ import DeletePengukuranModal from "./DeletePengukuranModal";
 export default function DetailBalitaFeed({
   data,
   metrics,
+  clinicId,
 }: {
   data: BalitaDetail;
   metrics: {
@@ -43,6 +50,7 @@ export default function DetailBalitaFeed({
     riwayatDenganZScoreAsli: any[];
     macroStatusInfo: { label: string };
   };
+  clinicId: string;
 }) {
   const router = useRouter();
   const [expandedRow, setExpandedRow] = useState<number | null>(0);
@@ -52,8 +60,285 @@ export default function DetailBalitaFeed({
   const [isDeleteMeasurementOpen, setIsDeleteMeasurementOpen] = useState(false);
   const [selectedMeasurement, setSelectedMeasurement] = useState<any>(null);
 
+  const [isChartExpanded, setIsChartExpanded] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const chartRef = useRef<HTMLDivElement>(null);
+
   const { combinedChartData, riwayatDenganZScoreAsli, macroStatusInfo } =
     metrics;
+
+  const handleDownloadPdf = async () => {
+    if (!chartRef.current) return;
+    try {
+      setIsDownloading(true);
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+
+      pdf.setFontSize(18);
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(30, 58, 138);
+      const title = "LAPORAN TUMBUH KEMBANG BALITA";
+      const titleWidth =
+        (pdf.getStringUnitWidth(title) * 18) / pdf.internal.scaleFactor;
+      pdf.text(title, (pageWidth - titleWidth) / 2, 20);
+
+      pdf.setFontSize(10);
+      pdf.setFont("helvetica", "normal");
+      pdf.setTextColor(100, 116, 139);
+      const subtitle = "JagaCilik - Sistem Informasi KMS Digital Terpadu";
+      const subtitleWidth =
+        (pdf.getStringUnitWidth(subtitle) * 10) / pdf.internal.scaleFactor;
+      pdf.text(subtitle, (pageWidth - subtitleWidth) / 2, 26);
+
+      pdf.setDrawColor(203, 213, 225);
+      pdf.setLineWidth(0.5);
+      pdf.line(15, 32, pageWidth - 15, 32);
+
+      const gender =
+        data.jk?.toLowerCase() === "p" || data.jk?.toLowerCase() === "perempuan"
+          ? "Perempuan"
+          : "Laki-laki";
+
+      let statusLabel = macroStatusInfo.label;
+      if (statusLabel === "LOW RISK") statusLabel = "Risiko Rendah";
+      if (statusLabel === "HIGH RISK") statusLabel = "Risiko Tinggi";
+
+      autoTable(pdf, {
+        startY: 38,
+        theme: "plain",
+        styles: { fontSize: 10, cellPadding: 1.5, textColor: [51, 65, 85] },
+        columnStyles: {
+          0: { fontStyle: "bold", cellWidth: 35 },
+          1: { cellWidth: 60 },
+          2: { fontStyle: "bold", cellWidth: 35 },
+          3: { cellWidth: 60 },
+        },
+        body: [
+          [
+            "Nama Balita",
+            `: ${data.nama}`,
+            "BB Terakhir",
+            `: ${data.stats?.berat || "-"} kg`,
+          ],
+          [
+            "Jenis Kelamin",
+            `: ${gender}`,
+            "TB Terakhir",
+            `: ${data.stats?.tinggi || "-"} cm`,
+          ],
+          [
+            "Usia Saat Ini",
+            `: ${data.usia}`,
+            "Status Gizi",
+            `: ${statusLabel}`,
+          ],
+          [
+            "Tanggal Cetak",
+            `: ${new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}`,
+            "",
+            "",
+          ],
+        ],
+        margin: { left: 15 },
+      });
+
+      const dataUrl = await htmlToImage.toPng(chartRef.current, {
+        quality: 1,
+        pixelRatio: 2,
+        backgroundColor: "#ffffff",
+      });
+
+      const imgProps = pdf.getImageProperties(dataUrl);
+      const pdfWidth = pageWidth - 30;
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      const finalYInfo = (pdf as any).lastAutoTable.finalY + 8;
+
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(15, 23, 42);
+      pdf.text("Grafik Pertumbuhan (BB/U)", 15, finalYInfo);
+
+      pdf.setDrawColor(226, 232, 240);
+      pdf.rect(15, finalYInfo + 3, pdfWidth, pdfHeight);
+      pdf.addImage(dataUrl, "PNG", 15, finalYInfo + 3, pdfWidth, pdfHeight);
+
+      const tableStartY = finalYInfo + 3 + pdfHeight + 10;
+
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Riwayat Pengukuran Detail", 15, tableStartY);
+
+      const tableData = riwayatDenganZScoreAsli.map((row: any) => [
+        row.tanggal,
+        `${row.berat}`,
+        `${row.tinggi}`,
+        row.statusBB,
+        row.statusTB,
+        row.statusBBTB,
+        row.keterangan || "-",
+      ]);
+
+      autoTable(pdf, {
+        startY: tableStartY + 4,
+        head: [
+          [
+            "Tanggal",
+            "Berat (kg)",
+            "Tinggi (cm)",
+            "Status BB/U",
+            "Status TB/U",
+            "Status BB/TB",
+            "Keterangan",
+          ],
+        ],
+        body: tableData,
+        theme: "grid",
+        headStyles: {
+          fillColor: [30, 58, 138],
+          textColor: 255,
+          fontStyle: "bold",
+        },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        styles: { fontSize: 8, lineColor: [226, 232, 240], lineWidth: 0.1 },
+        margin: { left: 15, right: 15 },
+      });
+
+      pdf.save(`Laporan pertumbuhan_${data.nama.replace(/\s+/g, "_")}.pdf`);
+    } catch (error) {
+      console.error("Gagal mengunduh PDF:", error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const renderChart = (isExpanded = false) => (
+    <ResponsiveContainer width="100%" height="100%">
+      <LineChart
+        data={combinedChartData}
+        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+      >
+        <CartesianGrid
+          strokeDasharray="3 3"
+          vertical={false}
+          stroke="#E5E7EB"
+        />
+        <XAxis
+          dataKey="bulan"
+          tick={{ fontSize: isExpanded ? 14 : 11, fill: "#6B7280" }}
+          tickLine={false}
+          axisLine={{ stroke: "#E5E7EB" }}
+          minTickGap={20}
+        />
+        <YAxis
+          tick={{ fontSize: isExpanded ? 14 : 11, fill: "#6B7280" }}
+          tickLine={false}
+          axisLine={false}
+        />
+        <Tooltip
+          contentStyle={{
+            borderRadius: "12px",
+            border: "none",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+          }}
+          labelStyle={{
+            fontWeight: "bold",
+            color: "#374151",
+            marginBottom: "4px",
+          }}
+          itemStyle={{ fontSize: isExpanded ? "14px" : "12px" }}
+        />
+        <Legend
+          content={(props) => {
+            const { payload } = props;
+            return (
+              <ul className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[11px] pt-3 w-full">
+                {payload?.map((entry: any, index: number) => (
+                  <li
+                    key={`item-${index}`}
+                    className="flex items-center gap-1.5"
+                  >
+                    <svg
+                      width="8"
+                      height="8"
+                      viewBox="0 0 8 8"
+                      className="shrink-0"
+                    >
+                      <circle cx="4" cy="4" r="4" fill={entry.color} />
+                    </svg>
+                    <span style={{ color: entry.color }}>{entry.value}</span>
+                  </li>
+                ))}
+              </ul>
+            );
+          }}
+        />
+        <Line
+          type="monotone"
+          name="+3 SD"
+          dataKey="SD3pos"
+          stroke="#EF4444"
+          strokeWidth={isExpanded ? 2 : 1}
+          dot={false}
+          strokeDasharray="4 4"
+        />
+        <Line
+          type="monotone"
+          name="+2 SD"
+          dataKey="SD2pos"
+          stroke="#F59E0B"
+          strokeWidth={isExpanded ? 2.5 : 1.5}
+          dot={false}
+        />
+        <Line
+          type="monotone"
+          name="Median"
+          dataKey="median"
+          stroke="#10B981"
+          strokeWidth={isExpanded ? 3 : 2}
+          dot={false}
+        />
+        <Line
+          type="monotone"
+          name="-2 SD"
+          dataKey="SD2neg"
+          stroke="#F59E0B"
+          strokeWidth={isExpanded ? 2.5 : 1.5}
+          dot={false}
+        />
+        <Line
+          type="monotone"
+          name="-3 SD"
+          dataKey="SD3neg"
+          stroke="#EF4444"
+          strokeWidth={isExpanded ? 2 : 1}
+          dot={false}
+          strokeDasharray="4 4"
+        />
+        <Line
+          type="monotone"
+          name="Data Aktual Anak"
+          dataKey="aktualAnak"
+          stroke="#2563EB"
+          strokeWidth={isExpanded ? 4 : 3}
+          connectNulls={true}
+          dot={{
+            r: isExpanded ? 6 : 4,
+            strokeWidth: 2,
+            fill: "#FFFFFF",
+            stroke: "#2563EB",
+          }}
+          activeDot={{ r: isExpanded ? 8 : 6, strokeWidth: 0, fill: "#1D4ED8" }}
+        />
+      </LineChart>
+    </ResponsiveContainer>
+  );
 
   return (
     <div className="flex flex-col flex-1 bg-background pb-10">
@@ -158,115 +443,36 @@ export default function DetailBalitaFeed({
               Grafik Tren BB/U Otomatis
             </h3>
             <div className="flex gap-2">
-              <button className="w-8 h-8 rounded-full bg-[#E6E8EA] flex items-center justify-center text-text-main hover:bg-gray-200 transition-colors">
-                <Download size={14} />
+              <button
+                onClick={handleDownloadPdf}
+                disabled={isDownloading}
+                className="w-10 h-10 rounded-full bg-[#E6E8EA] flex items-center justify-center text-text-main hover:bg-gray-200 active:bg-gray-300 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:active:scale-100"
+                title="Unduh PDF"
+              >
+                {isDownloading ? (
+                  <Loader2
+                    size={18}
+                    className="animate-spin text-btn-primary"
+                  />
+                ) : (
+                  <Download size={18} />
+                )}
               </button>
-              <button className="w-8 h-8 rounded-full bg-[#E6E8EA] flex items-center justify-center text-text-main hover:bg-gray-200 transition-colors">
-                <Maximize2 size={14} />
+              <button
+                onClick={() => setIsChartExpanded(true)}
+                className="w-10 h-10 rounded-full bg-[#E6E8EA] flex items-center justify-center text-text-main hover:bg-gray-200 active:bg-gray-300 active:scale-95 transition-all duration-200"
+                title="Perbesar Grafik"
+              >
+                <Maximize2 size={18} />
               </button>
             </div>
           </div>
 
-          <div className="bg-white border border-border-input/20 rounded-[16px] p-4 shadow-sm w-full h-[340px] flex flex-col relative overflow-hidden">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={combinedChartData}
-                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#E5E7EB"
-                />
-                <XAxis
-                  dataKey="bulan"
-                  tick={{ fontSize: 11, fill: "#6B7280" }}
-                  tickLine={false}
-                  axisLine={{ stroke: "#E5E7EB" }}
-                  minTickGap={20}
-                />
-                <YAxis
-                  tick={{ fontSize: 11, fill: "#6B7280" }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: "12px",
-                    border: "none",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-                  }}
-                  labelStyle={{
-                    fontWeight: "bold",
-                    color: "#374151",
-                    marginBottom: "4px",
-                  }}
-                  itemStyle={{ fontSize: "12px" }}
-                />
-                <Legend
-                  wrapperStyle={{ fontSize: "11px", paddingTop: "10px" }}
-                  iconType="circle"
-                  iconSize={8}
-                />
-                <Line
-                  type="monotone"
-                  name="+3 SD"
-                  dataKey="SD3pos"
-                  stroke="#EF4444"
-                  strokeWidth={1}
-                  dot={false}
-                  strokeDasharray="4 4"
-                />
-                <Line
-                  type="monotone"
-                  name="+2 SD"
-                  dataKey="SD2pos"
-                  stroke="#F59E0B"
-                  strokeWidth={1.5}
-                  dot={false}
-                />
-                <Line
-                  type="monotone"
-                  name="Median"
-                  dataKey="median"
-                  stroke="#10B981"
-                  strokeWidth={2}
-                  dot={false}
-                />
-                <Line
-                  type="monotone"
-                  name="-2 SD"
-                  dataKey="SD2neg"
-                  stroke="#F59E0B"
-                  strokeWidth={1.5}
-                  dot={false}
-                />
-                <Line
-                  type="monotone"
-                  name="-3 SD"
-                  dataKey="SD3neg"
-                  stroke="#EF4444"
-                  strokeWidth={1}
-                  dot={false}
-                  strokeDasharray="4 4"
-                />
-                <Line
-                  type="monotone"
-                  name="Data Aktual Anak"
-                  dataKey="aktualAnak"
-                  stroke="#2563EB"
-                  strokeWidth={3}
-                  connectNulls={true}
-                  dot={{
-                    r: 4,
-                    strokeWidth: 2,
-                    fill: "#FFFFFF",
-                    stroke: "#2563EB",
-                  }}
-                  activeDot={{ r: 6, strokeWidth: 0, fill: "#1D4ED8" }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+          <div
+            ref={chartRef}
+            className="bg-white border border-border-input/20 rounded-[16px] p-4 shadow-sm w-full h-[340px] flex flex-col relative overflow-hidden"
+          >
+            {renderChart()}
           </div>
         </div>
 
@@ -416,6 +622,18 @@ export default function DetailBalitaFeed({
                             </div>
                           </div>
 
+                          {/* Keterangan Field */}
+                          {row.keterangan && (
+                            <div className="mt-3 p-3 bg-white border border-gray-200/80 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)]">
+                              <p className="text-[10px] text-icon-muted font-bold tracking-wider mb-1 uppercase">
+                                Keterangan
+                              </p>
+                              <p className="text-sm font-medium text-text-main whitespace-pre-wrap leading-relaxed">
+                                {row.keterangan}
+                              </p>
+                            </div>
+                          )}
+
                           {/* Action Buttons inside Expanded row */}
                           <div className="mt-3 pt-3 flex justify-end gap-4 border-t border-gray-200/60">
                             <button
@@ -462,7 +680,7 @@ export default function DetailBalitaFeed({
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         childId={data.id}
-        clinicId="clinic-uuid-1"
+        clinicId={clinicId}
         onSuccess={() => {
           setIsAddModalOpen(false);
           router.refresh();
@@ -475,7 +693,7 @@ export default function DetailBalitaFeed({
         onClose={() => setIsEditMeasurementOpen(false)}
         data={selectedMeasurement}
         childId={data.id}
-        clinicId="clinic-uuid-1"
+        clinicId={clinicId}
         onSuccess={() => {
           setIsEditMeasurementOpen(false);
           router.refresh();
@@ -491,6 +709,34 @@ export default function DetailBalitaFeed({
           router.refresh();
         }}
       />
+
+      {/* Fullscreen Chart Modal */}
+      {isChartExpanded && (
+        <div className="fixed inset-0 z-[1000] bg-white flex flex-col">
+          <div className="flex items-center justify-between p-6 border-b border-gray-100 shadow-sm bg-white">
+            <h2 className="text-xl md:text-3xl font-bold text-text-main">
+              Grafik Tren Pertumbuhan (Detail)
+            </h2>
+            <button
+              onClick={() => setIsChartExpanded(false)}
+              className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors"
+            >
+              <Minimize2 size={24} />
+            </button>
+          </div>
+
+          <div className="flex-1 p-4 md:p-8 w-full h-full bg-gray-50/50">
+            <div className="w-full h-full bg-white rounded-3xl shadow-sm border border-gray-100 p-4 md:p-8">
+              {renderChart(true)}
+            </div>
+          </div>
+
+          {/* Instruksi khusus mobile: Putar HP */}
+          <div className="md:hidden text-center p-4 text-sm text-gray-500 font-medium border-t border-gray-100 bg-white">
+            💡 Putar HP Anda (Landscape) untuk tampilan yang lebih lega.
+          </div>
+        </div>
+      )}
     </div>
   );
 }

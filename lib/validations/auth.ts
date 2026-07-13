@@ -21,7 +21,10 @@ export const registerSchema = z
       .min(9, "Nomor telepon tidak valid")
       .max(15, "Nomor telepon terlalu panjang"),
     address: z.string().min(10, "Alamat terlalu singkat, mohon lengkapi"),
-    password: z.string().min(8, "Password minimal 8 karakter"),
+    password: z
+      .string()
+      .min(8, "Password minimal 8 karakter")
+      .regex(/[A-Z]/, "Password harus mengandung minimal 1 huruf besar"),
     confirmPassword: z.string().min(1, "Konfirmasi password wajib diisi"),
   })
   .refine((data) => data.password === data.confirmPassword, {

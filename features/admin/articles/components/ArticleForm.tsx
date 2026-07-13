@@ -12,6 +12,7 @@ import {
   createArticleAction,
   updateArticleAction,
 } from "@/app/actions/article";
+import TiptapEditor from "./TiptapEditor";
 
 export default function ArticleForm({ initialData }: { initialData?: any }) {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function ArticleForm({ initialData }: { initialData?: any }) {
         typeof initialData.content === "string"
           ? JSON.parse(initialData.content)
           : initialData.content;
-      initialContentStr = contentObj.content?.[0]?.content?.[0]?.text || "";
+      initialContentStr = JSON.stringify(contentObj);
     } catch {
       initialContentStr = initialData.content;
     }
@@ -65,17 +66,7 @@ export default function ArticleForm({ initialData }: { initialData?: any }) {
       formData.append("type", data.type);
       formData.append("writer_name", data.writer_name);
       formData.append("writer_identity", data.writer_identity);
-
-      const contentJson = {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-            content: [{ type: "text", text: data.content }],
-          },
-        ],
-      };
-      formData.append("content", JSON.stringify(contentJson));
+      formData.append("content", data.content);
 
       if (data.cover_image?.[0]) {
         formData.append("cover_image", data.cover_image[0]);
@@ -252,11 +243,16 @@ export default function ArticleForm({ initialData }: { initialData?: any }) {
             <label className="text-sm font-semibold text-text-main">
               Isi Artikel <span className="text-danger">*</span>
             </label>
-            <textarea
-              rows={10}
-              {...register("content")}
-              className="w-full px-4 py-3 rounded-xl border border-border-input/60 focus:ring-2 focus:ring-btn-primary/20 focus:border-btn-primary outline-none"
-              placeholder="Ketik isi artikel disini..."
+            <Controller
+              name="content"
+              control={control}
+              render={({ field }) => (
+                <TiptapEditor
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.content?.message}
+                />
+              )}
             />
             {errors.content && (
               <span className="text-xs text-danger">

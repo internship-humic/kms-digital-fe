@@ -2,10 +2,10 @@ import { cookies } from "next/headers";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
-export async function fetchWithAuth(
+export async function fetchWithAuth<T = unknown>(
   endpoint: string,
   options: RequestInit = {},
-) {
+): Promise<T> {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
@@ -23,7 +23,6 @@ export async function fetchWithAuth(
     const response = await fetch(`${API_URL}${endpoint}`, {
       ...options,
       headers,
-      cache: "no-store",
     });
 
     const result = await response.json();
@@ -34,17 +33,29 @@ export async function fetchWithAuth(
       );
     }
 
-    return result.data;
-  } catch (error: any) {
-    if (error.message === "NO_TOKEN") throw error;
-    throw new Error(error.message || "Gagal terhubung ke server.");
+    return result.data as T;
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === "NO_TOKEN") throw error;
+    throw new Error(
+      error instanceof Error ? error.message : "Gagal terhubung ke server.",
+    );
   }
 }
 
-export async function fetchPaginatedWithAuth(
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    total: number;
+    totalPages: number;
+    currentPage: number;
+    limit: number;
+  };
+}
+
+export async function fetchPaginatedWithAuth<T = unknown>(
   endpoint: string,
   options: RequestInit = {},
-) {
+): Promise<PaginatedResponse<T>> {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
@@ -62,7 +73,6 @@ export async function fetchPaginatedWithAuth(
     const response = await fetch(`${API_URL}${endpoint}`, {
       ...options,
       headers,
-      cache: "no-store",
     });
 
     const result = await response.json();
@@ -74,11 +84,18 @@ export async function fetchPaginatedWithAuth(
     }
 
     return {
-      data: result.data,
-      pagination: result.pagination || {},
+      data: result.data as T[],
+      pagination: result.pagination || {
+        total: 0,
+        totalPages: 1,
+        currentPage: 1,
+        limit: 10,
+      },
     };
-  } catch (error: any) {
-    if (error.message === "NO_TOKEN") throw error;
-    throw new Error(error.message || "Gagal terhubung ke server.");
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === "NO_TOKEN") throw error;
+    throw new Error(
+      error instanceof Error ? error.message : "Gagal terhubung ke server.",
+    );
   }
 }

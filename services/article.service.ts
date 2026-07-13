@@ -22,7 +22,9 @@ export const getArticles = async (
     if (params.category) query.append("category", params.category);
     if (params.search) query.append("search", params.search);
 
-    const data = await fetchWithAuth(`/article?${query.toString()}`);
+    const data = await fetchWithAuth<ArtikelItem[]>(
+      `/article?${query.toString()}`,
+    );
 
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -41,7 +43,9 @@ export const getPaginatedArticles = async (params: GetArticlesParams = {}) => {
     if (params.category) query.append("category", params.category);
     if (params.search) query.append("search", params.search);
 
-    return await fetchPaginatedWithAuth(`/article?${query.toString()}`);
+    return await fetchPaginatedWithAuth<ArtikelItem>(
+      `/article?${query.toString()}`,
+    );
   } catch (error) {
     console.error("Gagal mengambil paginasi artikel:", error);
     return { data: [], pagination: { total: 0, totalPages: 1 } };
@@ -52,8 +56,9 @@ export const getArticleById = async (
   id: string,
 ): Promise<ArtikelItem | null> => {
   try {
-    const data = await fetchWithAuth(`/article/${id}`);
-    return data ?? null;
+    const data = await fetchWithAuth<ArtikelItem>(`/article/${id}`);
+
+    return data ? (data as ArtikelItem) : null;
   } catch (error) {
     console.error("Gagal mengambil detail artikel:", error);
     return null;

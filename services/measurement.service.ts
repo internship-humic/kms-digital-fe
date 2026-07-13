@@ -11,3 +11,15 @@ export const getMeasurementGraph = async (childrenId: string) => {
     return null;
   }
 };
+
+export const getMeasurementsByChild = async (childrenId: string) => {
+  try {
+    const response = await fetchWithAuth(
+      `/measurement?childrenId=${childrenId}&limit=1000`,
+    );
+    return response;
+  } catch (error) {
+    console.error("Gagal mengambil data pengukuran anak:", error);
+    return null;
+  }
+};

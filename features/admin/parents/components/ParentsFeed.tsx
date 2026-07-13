@@ -1,15 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import {
-  Search,
-  Eye,
-  Pencil,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
-  Loader2,
-} from "lucide-react";
+import { Search, Eye, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EditParentModal from "./EditParentModal";
 import DeleteParentModal from "./DeleteParentModal";
@@ -222,18 +214,6 @@ export default function ParentsFeed() {
                         >
                           <Eye size={18} strokeWidth={2.5} />
                         </button>
-                        <button
-                          onClick={() => handleEditClick(row)}
-                          className="text-btn-primary hover:text-btn-hover transition-colors cursor-pointer"
-                        >
-                          <Pencil size={18} strokeWidth={2.5} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClick(row)}
-                          className="text-danger hover:text-danger/80 transition-colors cursor-pointer"
-                        >
-                          <Trash2 size={18} strokeWidth={2.5} />
-                        </button>
                       </div>
                     </td>
                   </tr>
@@ -243,7 +223,6 @@ export default function ParentsFeed() {
           </table>
         </div>
 
-        {/* Pagination Controls */}
         <div className="px-6 py-4 border-t border-border-input/30 flex items-center justify-between bg-white">
           <span className="text-sm text-icon-muted">
             Menampilkan {totalItems === 0 ? 0 : (page - 1) * limit + 1}–
