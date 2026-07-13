@@ -17,21 +17,25 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="flex flex-col flex-1 p-6 sm:p-8 min-h-screen bg-white justify-center">
-      <div className="flex flex-col items-center mb-8">
+      <div className={`flex flex-col items-center ${isSuccess ? 'mb-4' : 'mb-8'}`}>
         <Image
           src="/images/logo.svg"
           alt="JagaCilik Logo"
           width={280}
           height={90}
-          className="mb-6 h-16 sm:h-20 w-auto object-contain"
+          className={`h-16 sm:h-20 w-auto object-contain ${isSuccess ? 'mb-2' : 'mb-6'}`}
           priority
         />
-        <h1 className="text-6xl font-bold text-text-main mb-2 text-center">
-          Lupa Password?
-        </h1>
-        <p className="text-sm font-normal text-text-main text-center w-full">
-          Masukkan email Anda, kami akan mengirimkan tautan reset password.
-        </p>
+        {!isSuccess && (
+          <>
+            <h1 className="text-6xl font-bold text-text-main mb-2 text-center">
+              Lupa Password?
+            </h1>
+            <p className="text-sm font-normal text-text-main text-center w-full">
+              Masukkan email Anda, kami akan mengirimkan tautan reset password.
+            </p>
+          </>
+        )}
       </div>
 
       {isSuccess ? (
@@ -39,13 +43,13 @@ export default function ForgotPasswordPage() {
           <div className="w-16 h-16 rounded-full bg-primary-light/60 flex items-center justify-center text-btn-primary">
             <MailCheck size={28} strokeWidth={2.5} />
           </div>
-          <p className="text-sm font-medium text-text-main/80 leading-relaxed max-w-[300px]">
+          <p className="text-base font-medium text-text-main/80 leading-relaxed max-w-[320px]">
             Jika email terdaftar, tautan reset password telah kami kirim.
             Silakan periksa kotak masuk (atau folder spam) Anda.
           </p>
           <Link
             href="/login"
-            className="text-sm font-semibold text-btn-primary hover:underline mt-2"
+            className="text-base font-semibold text-btn-primary hover:underline mt-2"
           >
             Kembali ke Halaman Masuk
           </Link>

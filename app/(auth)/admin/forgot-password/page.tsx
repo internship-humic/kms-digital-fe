@@ -39,27 +39,29 @@ export default function AdminForgotPasswordPage() {
 
         <div className="flex w-full items-center justify-center px-8 lg:w-1/2">
           <div className="w-full max-w-[360px]">
-            <div className="mb-8 text-center">
-              <h1 className="text-2xl font-bold text-text-main mb-2">
-                Lupa Password?
-              </h1>
-              <p className="text-[13px] text-text-main/70">
-                Masukkan email admin Anda untuk menerima tautan reset password.
-              </p>
-            </div>
+            {!isSuccess && (
+              <div className="mb-8 text-center">
+                <h1 className="text-2xl font-bold text-text-main mb-2">
+                  Lupa Password?
+                </h1>
+                <p className="text-[13px] text-text-main/70">
+                  Masukkan email admin Anda untuk menerima tautan reset password.
+                </p>
+              </div>
+            )}
 
             {isSuccess ? (
               <div className="flex flex-col items-center text-center gap-4 py-2">
                 <div className="w-14 h-14 rounded-full bg-primary-light/60 flex items-center justify-center text-btn-primary">
                   <MailCheck size={24} strokeWidth={2.5} />
                 </div>
-                <p className="text-[13px] font-medium text-text-main/70 leading-relaxed">
+                <p className="text-[15px] font-medium text-text-main/70 leading-relaxed">
                   Jika email terdaftar, tautan reset password telah kami kirim.
                   Silakan periksa kotak masuk (atau folder spam) Anda.
                 </p>
                 <Link
                   href="/admin/login"
-                  className="text-sm font-semibold text-btn-primary hover:underline mt-1"
+                  className="text-[15px] font-semibold text-btn-primary hover:underline mt-1"
                 >
                   Kembali ke Halaman Masuk
                 </Link>

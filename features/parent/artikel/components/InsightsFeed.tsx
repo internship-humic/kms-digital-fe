@@ -23,6 +23,7 @@ export default function InsightsFeed({
   );
   const [isLoading, setIsLoading] = useState(!initialArticles);
   const [activeCategory, setActiveCategory] = useState("Semua");
+  const [showAllArticles, setShowAllArticles] = useState(false);
 
   useEffect(() => {
     if (initialArticles) return;
@@ -40,6 +41,8 @@ export default function InsightsFeed({
   const filteredArticles = articles.filter(
     (art) => activeCategory === "Semua" || art.type === activeCategory,
   );
+
+  const displayedArticles = showAllArticles ? filteredArticles : filteredArticles.slice(0, 3);
 
   return (
     <div className="flex-1 flex flex-col gap-6 pt-6 bg-background min-h-screen">
@@ -61,41 +64,17 @@ export default function InsightsFeed({
       </div>
 
       <div className="px-6 flex flex-col gap-6 pb-12">
-        {/* Featured Tip Card */}
-        <div className="bg-white rounded-[24px] shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-border-input/40 p-6 relative overflow-hidden">
-          <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary-light rounded-full opacity-80"></div>
-
-          <div className="w-14 h-14 bg-primary-light rounded-full flex items-center justify-center mb-5 relative z-10 border border-primary-light/50">
-            <Lightbulb
-              size={24}
-              className="text-btn-primary"
-              strokeWidth={2.5}
-            />
-          </div>
-
-          <h2 className="text-2xl font-bold text-text-main leading-snug mb-3 relative z-10 pr-4">
-            Tips Harian: Jadwal Tidur
-          </h2>
-
-          <p className="text-sm text-icon-muted leading-relaxed mb-5 relative z-10">
-            Pastikan balita usia 1-3 tahun mendapatkan waktu tidur minimal 11-14
-            jam setiap hari untuk mengoptimalkan hormon pertumbuhan mereka.
-          </p>
-
-          <button className="flex items-center gap-2 text-btn-primary font-bold text-sm hover:opacity-80 transition-opacity relative z-10 w-fit cursor-pointer">
-            Baca selengkapnya
-            <ArrowRight size={16} strokeWidth={2.5} />
-          </button>
-        </div>
-
         {/* Articles List */}
         <div className="flex flex-col gap-4">
           <div className="flex justify-between items-center mb-2 mt-2">
             <h2 className="text-xl font-bold text-text-main">
               Artikel Terbaru
             </h2>
-            <button className="text-sm font-semibold tracking-[0.6px] text-btn-primary hover:underline cursor-pointer">
-              Lihat Semua
+            <button 
+              onClick={() => setShowAllArticles(!showAllArticles)}
+              className="text-sm font-semibold tracking-[0.6px] text-btn-primary hover:underline cursor-pointer"
+            >
+              {showAllArticles ? "Sembunyikan" : "Lihat Semua"}
             </button>
           </div>
 
@@ -110,7 +89,7 @@ export default function InsightsFeed({
               </p>
             </div>
           ) : (
-            filteredArticles.map((article) => (
+            displayedArticles.map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))
           )}
