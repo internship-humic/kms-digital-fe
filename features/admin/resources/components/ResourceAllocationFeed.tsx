@@ -184,7 +184,7 @@ export default function ResourceAllocationFeed() {
                       </div>
                     </td>
                     <td className="px-6 py-5 text-[15px] text-icon-muted">
-                      {row.desa ||
+                      {row.village?.name ||
                         (row.village_id
                           ? "Desa ID: " + row.village_id.slice(0, 8)
                           : "-")}

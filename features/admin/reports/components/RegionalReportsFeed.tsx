@@ -123,7 +123,7 @@ export default function RegionalReportsFeed() {
           </div>
           <div>
             <div className="text-[32px] font-bold leading-[40px] tracking-[-0.64px] align-middle text-text-main mb-1.5">
-              {coverageData?.totalVillages || 0}
+              {coverageData?.totalCoveredVillages || 0}
             </div>
             <div className="text-xs font-medium text-icon-muted">
               Total Desa Terdaftar

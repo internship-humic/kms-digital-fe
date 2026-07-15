@@ -33,13 +33,36 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
   };
 
   const imageUrl = article.cover_image
-    ? `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}${article.cover_image}`
+    ? article.cover_image.startsWith("http")
+      ? article.cover_image
+      : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}${article.cover_image}`
     : null;
 
-  let renderedContent = article.content as string;
+  let renderedContent = "";
+
   if (typeof article.content === "object" && article.content !== null) {
     try {
-      renderedContent = generateHTML(article.content as any, [
+      const content = structuredClone(article.content);
+
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "");
+
+      const updateImageSrc = (node: any) => {
+        if (
+          node.type === "image" &&
+          node.attrs?.src &&
+          !node.attrs.src.startsWith("http")
+        ) {
+          node.attrs.src = `${backendUrl}${node.attrs.src}`;
+        }
+
+        if (Array.isArray(node.content)) {
+          node.content.forEach(updateImageSrc);
+        }
+      };
+
+      updateImageSrc(content);
+
+      renderedContent = generateHTML(content, [
         StarterKit,
         ImageExtension.configure({
           inline: true,
@@ -120,7 +143,8 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
 
         {/* Article Prose */}
         <article className="prose prose-sm sm:prose-base max-w-none text-[#434654] text-md leading-relaxed">
-          {typeof renderedContent === "string" && renderedContent.startsWith("<") ? (
+          {typeof renderedContent === "string" &&
+          renderedContent.startsWith("<") ? (
             <div dangerouslySetInnerHTML={{ __html: renderedContent }} />
           ) : (
             <div className="whitespace-pre-line">{renderedContent}</div>

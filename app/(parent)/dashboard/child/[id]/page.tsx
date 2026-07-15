@@ -8,6 +8,7 @@ import {
 import { getParentDashboard } from "@/services/dashboard.service";
 import { getMeasurementGraph, getMeasurementsByChild } from "@/services/measurement.service";
 import { Button } from "@/components/ui/button";
+import DownloadPdfButton from "@/features/parent/growth/components/DownloadPdfButton";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata({
@@ -113,10 +114,7 @@ export default async function ChildDetailPage({
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 w-full max-w-md mx-auto p-6 bg-gradient-to-t from-background via-background/90 to-transparent pb-8 pt-12 pointer-events-none z-30">
-        <Button size="xl" className="w-full gap-2 mx-auto pointer-events-auto">
-          <Download size={20} strokeWidth={2.5} />
-          Unduh Laporan (PDF)
-        </Button>
+        <DownloadPdfButton childId={id} />
       </div>
     </div>
   );

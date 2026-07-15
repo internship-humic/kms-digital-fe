@@ -8,12 +8,11 @@ import {
   TriangleAlert,
   Plus,
   TrendingUp,
-  Layers,
   Download,
-  FileUp,
 } from "lucide-react";
 import { DashboardKaderData } from "../types";
 import { Button } from "@/components/ui/button";
+import ExportClinicPdfButton from "../../balita/components/ExportClinicPdfButton";
 
 type DashboardKaderFeedProps = {
   data: DashboardKaderData;
@@ -142,41 +141,14 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
 
       <div className="mt-8 border border-border-input/30 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.02)] rounded-[16px] p-5 bg-white">
         <div className="flex items-center gap-2 mb-4">
-          <Layers size={20} className="text-btn-primary" strokeWidth={2.5} />
-
+          <Download size={20} className="text-btn-primary" strokeWidth={2.5} />
           <h2 className="text-base font-semibold leading-[20px] tracking-[0.14px] text-icon-muted align-middle">
-            Kelola Data Massal
+            Unduh Laporan PDF
           </h2>
         </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <button className="flex flex-col items-center justify-center gap-2 py-4 px-2 border border-border-input rounded-xl hover:bg-primary-light/20 transition-colors cursor-pointer group">
-            <Download
-              size={20}
-              className="text-btn-primary group-hover:-translate-y-0.5 transition-transform"
-              strokeWidth={2.5}
-            />
-
-            <span className="text-xs font-medium leading-[16px] tracking-[0.48px] text-text-main text-center align-middle">
-              Unduh Template
-              <br />
-              Excel
-            </span>
-          </button>
-
-          <button className="flex flex-col items-center justify-center gap-2 py-4 px-2 border border-border-input rounded-xl hover:bg-primary-light/20 transition-colors cursor-pointer group">
-            <FileUp
-              size={20}
-              className="text-btn-primary group-hover:-translate-y-0.5 transition-transform"
-              strokeWidth={2.5}
-            />
-
-            <span className="text-xs font-medium leading-[16px] tracking-[0.48px] text-text-main text-center align-middle">
-              Impor Data
-              <br />
-              Pemeriksaan
-            </span>
-          </button>
+        
+        <div className="flex w-full">
+          <ExportClinicPdfButton clinicId={data?.cadre?.clinic_id || ""} />
         </div>
       </div>
 

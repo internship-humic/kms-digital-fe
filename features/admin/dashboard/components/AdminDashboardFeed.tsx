@@ -76,7 +76,7 @@ export default function AdminDashboardFeed({
     {
       id: 3,
       title: "Total Desa",
-      value: initialData?.regions?.total_villages?.toLocaleString() || "0",
+      value: initialData?.regions?.total_covered_villages?.toLocaleString() || "0",
       trend: "Terdaftar dalam sistem",
       icon: "building",
     },

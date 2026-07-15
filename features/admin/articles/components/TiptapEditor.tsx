@@ -1,5 +1,7 @@
 "use client";
 
+import { uploadArticleImage } from "@/app/actions/article";
+
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
@@ -24,11 +26,34 @@ interface TiptapEditorProps {
 const MenuBar = ({ editor }: { editor: any }) => {
   if (!editor) return null;
 
-  const addImage = () => {
-    const url = window.prompt("Masukkan URL Gambar:");
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
+  const addImage = async () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      try {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        const result = await uploadArticleImage(formData);
+
+        const imageUrl = `${process.env.NEXT_PUBLIC_API_URL?.replace(
+          "/api",
+          "",
+        )}${result.url}`;
+
+        editor.chain().focus().setImage({ src: imageUrl }).run();
+      } catch (error) {
+        console.error(error);
+        alert("Gagal mengupload gambar");
+      }
+    };
+
+    input.click();
   };
 
   return (

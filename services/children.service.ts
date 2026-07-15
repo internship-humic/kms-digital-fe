@@ -153,3 +153,45 @@ export const getChildIntervention = async (id: string) => {
     return null;
   }
 };
+
+export const exportChildPdf = async (id: string) => {
+  const cookieStore = (await import("next/headers")).cookies;
+  const cookies = await cookieStore();
+  const token = cookies.get("token")?.value;
+
+  if (!token) throw new Error("NO_TOKEN");
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+  const response = await fetch(`${API_URL}/children/${id}/export`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error("Gagal mengekspor data");
+  }
+
+  const arrayBuffer = await response.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  return buffer.toString("base64");
+};
+
+export const exportClinicPdf = async (clinicId: string) => {
+  const cookieStore = (await import("next/headers")).cookies;
+  const cookies = await cookieStore();
+  const token = cookies.get("token")?.value;
+
+  if (!token) throw new Error("NO_TOKEN");
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+  const response = await fetch(`${API_URL}/children/clinic/${clinicId}/export`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error("Gagal mengekspor data");
+  }
+
+  const arrayBuffer = await response.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  return buffer.toString("base64");
+};
