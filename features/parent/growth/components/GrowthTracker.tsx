@@ -216,7 +216,7 @@ export default function GrowthPage({
         </div>
 
         {/* Riwayat Pemeriksaan */}
-        <div className="bg-white rounded-[24px] shadow-sm border border-border-input/20 p-5 pt-6">
+        <div className="bg-white rounded-[24px] shadow-sm border border-border-input/20 p-5 pt-6 mb-24">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-text-main">
               Riwayat Pemeriksaan
@@ -269,77 +269,6 @@ export default function GrowthPage({
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Jadwal Imunisasi */}
-        <div className="mb-24">
-          <h3 className="text-2xl font-bold text-text-main mb-4 px-1">
-            Jadwal Imunisasi
-          </h3>
-
-          <div className="bg-white rounded-[24px] shadow-sm border border-border-input/20 p-5 pt-6 overflow-hidden relative">
-            <div className="absolute top-8 bottom-12 left-[35px] w-[2px] bg-btn-primary/30 z-0" />
-
-            <div className="flex flex-col gap-6 relative z-10">
-              {activeChild?.jadwalImunisasi?.map((item) => (
-                <div key={item.id} className="flex gap-4">
-                  <div className="shrink-0 pt-1 relative bg-white">
-                    <div
-                      className={`w-[30px] h-[30px] rounded-full flex items-center justify-center border-2 ${
-                        item.status === "selesai"
-                          ? "bg-btn-primary border-btn-primary"
-                          : "bg-white border-btn-primary"
-                      }`}
-                    >
-                      {item.status === "selesai" ? (
-                        <Check
-                          size={16}
-                          className="text-white"
-                          strokeWidth={3}
-                        />
-                      ) : (
-                        <Clock
-                          size={16}
-                          className="text-btn-primary"
-                          strokeWidth={2.5}
-                        />
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex-1 pb-6 border-b border-gray-100 last:border-b-0 last:pb-0">
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="text-base font-bold text-text-main leading-snug pr-2">
-                        {item.namaVaksin}
-                      </h4>
-
-                      <span className="bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-[10px] font-bold whitespace-nowrap">
-                        {item.bulanKe}
-                      </span>
-                    </div>
-
-                    {item.keterangan && (
-                      <p className="text-xs text-gray-500 mb-3">
-                        {item.keterangan}
-                      </p>
-                    )}
-
-                    {item.status === "mendatang" ? (
-                      <div className="inline-flex items-center gap-1.5 bg-blue-50 text-btn-primary px-3 py-1.5 rounded-lg border border-blue-100">
-                        <Calendar size={13} strokeWidth={2.5} />
-                        <span className="text-[11px] font-bold">Mendatang</span>
-                      </div>
-                    ) : (
-                      <div className="inline-flex items-center gap-1.5 bg-green-50 text-green-600 px-3 py-1.5 rounded-lg border border-green-100">
-                        <Check size={13} strokeWidth={2.5} />
-                        <span className="text-[11px] font-bold">Selesai</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
