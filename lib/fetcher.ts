@@ -29,7 +29,7 @@ export async function fetchWithAuth<T = unknown>(
 
     if (!response.ok || result.success === false) {
       throw new Error(
-        result.error?.message || result.message || "Terjadi kesalahan saat mengambil data",
+        result.message || "Terjadi kesalahan saat mengambil data",
       );
     }
 
@@ -79,7 +79,7 @@ export async function fetchPaginatedWithAuth<T = unknown>(
 
     if (!response.ok || result.success === false) {
       throw new Error(
-        result.error?.message || result.message || "Terjadi kesalahan saat mengambil data",
+        result.message || "Terjadi kesalahan saat mengambil data",
       );
     }
 
