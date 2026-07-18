@@ -78,11 +78,21 @@ export default function WHOGrowthChart({
                 return (
                   <ul className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[11px] pt-3 w-full">
                     {payload?.map((entry: any, index: number) => (
-                      <li key={`item-${index}`} className="flex items-center gap-1.5">
-                        <svg width="8" height="8" viewBox="0 0 8 8" className="shrink-0">
+                      <li
+                        key={`item-${index}`}
+                        className="flex items-center gap-1.5"
+                      >
+                        <svg
+                          width="8"
+                          height="8"
+                          viewBox="0 0 8 8"
+                          className="shrink-0"
+                        >
                           <circle cx="4" cy="4" r="4" fill={entry.color} />
                         </svg>
-                        <span style={{ color: entry.color }}>{entry.value}</span>
+                        <span style={{ color: entry.color }}>
+                          {entry.value}
+                        </span>
                       </li>
                     ))}
                   </ul>

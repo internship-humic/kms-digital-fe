@@ -36,3 +36,18 @@ export type ChildData = {
   riwayatPemeriksaan?: RiwayatPemeriksaan[];
   jadwalImunisasi?: JadwalImunisasi[];
 };
+
+export interface MeasurementApiDTO {
+  id: number;
+  measurement_date: string;
+  clinic?: { name: string };
+  description?: string;
+  body_weight: number;
+  body_height: number;
+  head_circumference?: number;
+}
+
+export interface MeasurementResponseDTO {
+  data?: MeasurementApiDTO[];
+  items?: MeasurementApiDTO[];
+}

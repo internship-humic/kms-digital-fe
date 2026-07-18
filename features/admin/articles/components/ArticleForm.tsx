@@ -22,7 +22,6 @@ export default function ArticleForm({ initialData }: { initialData?: any }) {
   let initialContentStr = "";
   if (initialData?.content) {
     try {
-      // If it's already a JSON string or object, we'll just stringify it for the editor
       const contentObj =
         typeof initialData.content === "string"
           ? JSON.parse(initialData.content)
@@ -67,8 +66,6 @@ export default function ArticleForm({ initialData }: { initialData?: any }) {
       formData.append("type", data.type);
       formData.append("writer_name", data.writer_name);
       formData.append("writer_identity", data.writer_identity);
-
-      // The content from Tiptap is already a JSON string representation of the document
       formData.append("content", data.content);
 
       if (data.cover_image?.[0]) {

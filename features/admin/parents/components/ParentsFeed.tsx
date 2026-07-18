@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+<<<<<<< HEAD
+import { Search, Eye, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+=======
 import {
   Search,
   Eye,
@@ -8,6 +11,7 @@ import {
   ChevronRight,
   Loader2,
 } from "lucide-react";
+>>>>>>> origin/main
 import { Button } from "@/components/ui/button";
 import EditParentModal from "./EditParentModal";
 import DeleteParentModal from "./DeleteParentModal";
@@ -229,7 +233,6 @@ export default function ParentsFeed() {
           </table>
         </div>
 
-        {/* Pagination Controls */}
         <div className="px-6 py-4 border-t border-border-input/30 flex items-center justify-between bg-white">
           <span className="text-sm text-icon-muted">
             Menampilkan {totalItems === 0 ? 0 : (page - 1) * limit + 1}–

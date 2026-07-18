@@ -1,15 +1,20 @@
 import Link from "next/link";
-import { ArrowLeft, Download } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import GrowthChart from "@/features/parent/growth/components/GrowthChart";
 import {
   getCombinedGrowthDataFromAPI,
   mapApiToGrowthDataPoints,
 } from "@/features/parent/growth/utils/getChartData";
 import { getParentDashboard } from "@/services/dashboard.service";
-import { getMeasurementGraph, getMeasurementsByChild } from "@/services/measurement.service";
-import { Button } from "@/components/ui/button";
+import { getMeasurementsByChild } from "@/services/measurement.service";
+
 import DownloadPdfButton from "@/features/parent/growth/components/DownloadPdfButton";
 import { notFound } from "next/navigation";
+
+interface MeasurementResponse {
+  data?: any[] | { items: any[] };
+  [key: string]: any;
+}
 
 export async function generateMetadata({
   params,
@@ -45,13 +50,22 @@ export default async function ChildDetailPage({
     notFound();
   }
 
-  const rawMeasurementsRes = await getMeasurementsByChild(id);
-  let rawMeasurements = [];
+  const rawMeasurementsRes = (await getMeasurementsByChild(id)) as
+    | MeasurementResponse
+    | any[]
+    | null;
+
+  let rawMeasurements: any[] = [];
+
   if (Array.isArray(rawMeasurementsRes)) {
     rawMeasurements = rawMeasurementsRes;
   } else if (rawMeasurementsRes && Array.isArray(rawMeasurementsRes.data)) {
     rawMeasurements = rawMeasurementsRes.data;
-  } else if (rawMeasurementsRes?.data && Array.isArray(rawMeasurementsRes.data.items)) {
+  } else if (
+    rawMeasurementsRes?.data &&
+    !Array.isArray(rawMeasurementsRes.data) &&
+    Array.isArray(rawMeasurementsRes.data.items)
+  ) {
     rawMeasurements = rawMeasurementsRes.data.items;
   }
 
@@ -88,15 +102,22 @@ export default async function ChildDetailPage({
               <h2 className="text-xl font-medium leading-[24px] text-text-main">
                 {child.name}
               </h2>
-              <div className={`text-white px-2.5 py-1 rounded-full flex items-center justify-center shrink-0 ml-2 ${
-                child.status === "NORMAL"
-                  ? "bg-status-normal"
-                  : child.status === "HIGHRISK" || child.status === "HIGH_RISK"
-                    ? "bg-danger"
-                    : "bg-password-medium"
-              }`}>
+              <div
+                className={`text-white px-2.5 py-1 rounded-full flex items-center justify-center shrink-0 ml-2 ${
+                  child.status === "NORMAL"
+                    ? "bg-status-normal"
+                    : child.status === "HIGHRISK" ||
+                        child.status === "HIGH_RISK"
+                      ? "bg-danger"
+                      : "bg-password-medium"
+                }`}
+              >
                 <span className="text-[10px] font-bold tracking-wide uppercase">
-                  {child.status === "HIGHRISK" || child.status === "HIGH_RISK" ? "HIGH RISK" : child.status === "LOWRISK" || child.status === "LOW_RISK" ? "LOW RISK" : "NORMAL"}
+                  {child.status === "HIGHRISK" || child.status === "HIGH_RISK"
+                    ? "HIGH RISK"
+                    : child.status === "LOWRISK" || child.status === "LOW_RISK"
+                      ? "LOW RISK"
+                      : "NORMAL"}
                 </span>
               </div>
             </div>

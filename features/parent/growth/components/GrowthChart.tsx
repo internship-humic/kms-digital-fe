@@ -140,21 +140,29 @@ export default function GrowthChart({
           </p>
 
           <div className="flex items-center gap-1.5">
-            <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-              status === "NORMAL"
-                ? "bg-status-normal"
-                : status === "HIGHRISK" || status === "HIGH_RISK"
-                  ? "bg-danger"
-                  : "bg-password-medium"
-            }`}></div>
-            <span className={`text-sm font-bold leading-tight ${
-              status === "NORMAL"
-                ? "text-status-normal"
-                : status === "HIGHRISK" || status === "HIGH_RISK"
-                  ? "text-danger"
-                  : "text-password-medium"
-            }`}>
-              {status === "HIGHRISK" || status === "HIGH_RISK" ? "Risiko Tinggi" : status === "LOWRISK" || status === "LOW_RISK" ? "Risiko Rendah" : "Sesuai Track"}
+            <div
+              className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+                status === "NORMAL"
+                  ? "bg-status-normal"
+                  : status === "HIGHRISK" || status === "HIGH_RISK"
+                    ? "bg-danger"
+                    : "bg-password-medium"
+              }`}
+            ></div>
+            <span
+              className={`text-sm font-bold leading-tight ${
+                status === "NORMAL"
+                  ? "text-status-normal"
+                  : status === "HIGHRISK" || status === "HIGH_RISK"
+                    ? "text-danger"
+                    : "text-password-medium"
+              }`}
+            >
+              {status === "HIGHRISK" || status === "HIGH_RISK"
+                ? "Risiko Tinggi"
+                : status === "LOWRISK" || status === "LOW_RISK"
+                  ? "Risiko Rendah"
+                  : "Sesuai Track"}
             </span>
           </div>
         </div>

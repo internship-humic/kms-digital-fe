@@ -1,7 +1,6 @@
 "use client";
 
 import { uploadArticleImage } from "@/app/actions/article";
-
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
@@ -136,13 +135,12 @@ export default function TiptapEditor({
   onChange,
   error,
 }: TiptapEditorProps) {
-  // Parsing the initial value which might be a JSON string from the backend/form
   let initialContent = "";
   try {
     const parsed = JSON.parse(value);
-    initialContent = parsed; // Tiptap accepts JSON object directly
+    initialContent = parsed;
   } catch {
-    initialContent = value; // Fallback to HTML or plain text string
+    initialContent = value;
   }
 
   const editor = useEditor({
@@ -171,7 +169,6 @@ export default function TiptapEditor({
       },
     },
     onUpdate: ({ editor }) => {
-      // Export as JSON string, which is what our backend expects for the 'content' field
       onChange(JSON.stringify(editor.getJSON()));
     },
   });

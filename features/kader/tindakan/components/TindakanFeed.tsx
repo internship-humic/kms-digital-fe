@@ -86,9 +86,12 @@ export default function TindakanFeed({ initialData }: TindakanFeedProps) {
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-light/60 text-btn-primary mb-4">
               <Smile size={32} strokeWidth={2.5} />
             </div>
-            <h3 className="text-[17px] font-bold text-text-main mb-2">Semua Balita Terpantau Baik!</h3>
+            <h3 className="text-[17px] font-bold text-text-main mb-2">
+              Semua Balita Terpantau Baik!
+            </h3>
             <p className="text-[14.5px] text-icon-muted leading-relaxed max-w-[280px]">
-              Tidak ada balita yang memerlukan tindakan rujukan atau perhatian khusus saat ini. Kerja yang sangat bagus!
+              Tidak ada balita yang memerlukan tindakan rujukan atau perhatian
+              khusus saat ini. Kerja yang sangat bagus!
             </p>
           </div>
         ) : (

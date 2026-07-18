@@ -1,9 +1,14 @@
+export type ClinicReference = {
+  id: string;
+  name: string;
+  address?: string;
+};
+
 export type StaffData = {
   id: string;
-  nama: string;
-  inisial: string;
+  name: string;
   email: string;
-  desa: string;
-  posyandu: string;
-  status: string;
+  clinic?: ClinicReference | null;
+  created_at?: string;
+  updated_at?: string;
 };

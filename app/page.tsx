@@ -1,47 +1,40 @@
 "use client";
 
-import Navbar from "@/features/landing/components/Navbar";
+import LandingLayout from "@/features/landing/layout/LandingLayout";
 import HeroSection from "@/features/landing/components/HeroSection";
 import StatsBanner from "@/features/landing/components/StatsBanner";
 import FeaturesSection from "@/features/landing/components/FeaturesSection";
 import SolutionsSection from "@/features/landing/components/SolutionsSection";
 import BenefitsSection from "@/features/landing/components/BenefitsSection";
 import CtaFooter from "@/features/landing/components/CtaFooter";
-import Footer from "@/features/landing/components/Footer";
-import { FadeIn } from "@/features/landing/components/FadeIn";
+import { FadeIn } from "@/components/ui/FadeIn";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white selection:bg-btn-primary/20 selection:text-btn-primary flex flex-col font-sans">
-      <Navbar />
-      
-      <main className="flex-1 overflow-hidden">
-        <FadeIn delay={0.1}>
-          <HeroSection />
-        </FadeIn>
-        
-        <FadeIn delay={0.3}>
-          <StatsBanner />
-        </FadeIn>
-        
-        <FadeIn delay={0.1} direction="up">
-          <FeaturesSection />
-        </FadeIn>
-        
-        <FadeIn delay={0.1} direction="up">
-          <SolutionsSection />
-        </FadeIn>
-        
-        <FadeIn delay={0.1} direction="up">
-          <BenefitsSection />
-        </FadeIn>
-        
-        <FadeIn delay={0.1} direction="up">
-          <CtaFooter />
-        </FadeIn>
-      </main>
+    <LandingLayout>
+      <FadeIn direction="none" duration={0.8}>
+        <HeroSection />
+      </FadeIn>
 
-      <Footer />
-    </div>
+      <FadeIn direction="up" delay={0.2} duration={0.6}>
+        <StatsBanner />
+      </FadeIn>
+
+      <FadeIn direction="up" duration={0.6}>
+        <FeaturesSection />
+      </FadeIn>
+
+      <FadeIn direction="up" duration={0.6}>
+        <SolutionsSection />
+      </FadeIn>
+
+      <FadeIn direction="up" duration={0.6}>
+        <BenefitsSection />
+      </FadeIn>
+
+      <FadeIn direction="up" duration={0.6}>
+        <CtaFooter />
+      </FadeIn>
+    </LandingLayout>
   );
 }

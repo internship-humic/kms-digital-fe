@@ -41,13 +41,20 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
       ? data.latest_measurements.map((m: any) => ({
           id: m.id,
           childId: m.children_id,
-          inisial: (m.child_name || m.children?.name)
-            ? (m.child_name || m.children?.name).substring(0, 2).toUpperCase()
-            : "XX",
-          nama: (m.child_name || m.children?.name) || "Tanpa Nama",
-          jenisPemeriksaan: m.description ? `Pengukuran - ${m.description}` : "Pemeriksaan Rutin",
-          waktu: m.measurement_date 
-            ? new Date(m.measurement_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) 
+          inisial:
+            m.child_name || m.children?.name
+              ? (m.child_name || m.children?.name).substring(0, 2).toUpperCase()
+              : "XX",
+          nama: m.child_name || m.children?.name || "Tanpa Nama",
+          jenisPemeriksaan: m.description
+            ? `Pengukuran - ${m.description}`
+            : "Pemeriksaan Rutin",
+          waktu: m.measurement_date
+            ? new Date(m.measurement_date).toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })
             : "Baru saja",
           status: (() => {
             const s = m.status || m.children?.status || "NORMAL";
@@ -64,6 +71,9 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
         }))
       : [],
   };
+
+  const clinicIdForExport =
+    data?.cadre?.clinic_id || data?.cadre?.clinic?.id || "";
 
   return (
     <div className="flex flex-col flex-1 bg-background relative px-6 pb-32">
@@ -146,9 +156,9 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
             Unduh Laporan PDF
           </h2>
         </div>
-        
+
         <div className="flex w-full">
-          <ExportClinicPdfButton clinicId={data?.cadre?.clinic_id || ""} />
+          <ExportClinicPdfButton clinicId={clinicIdForExport} />
         </div>
       </div>
 
@@ -158,7 +168,7 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
             Pemeriksaan Terbaru
           </h2>
 
-          <button 
+          <button
             onClick={() => router.push("/kader/balita")}
             className="text-xs font-medium leading-[16px] tracking-[0.48px] text-btn-primary text-center align-middle hover:underline cursor-pointer"
           >
@@ -190,7 +200,9 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
                   </p>
                 </div>
                 <div className="shrink-0 pl-2">
-                  <span className={`text-base font-semibold leading-[20px] tracking-[0.14px] text-right align-middle ${item.statusColor}`}>
+                  <span
+                    className={`text-base font-semibold leading-[20px] tracking-[0.14px] text-right align-middle ${item.statusColor}`}
+                  >
                     {item.status}
                   </span>
                 </div>

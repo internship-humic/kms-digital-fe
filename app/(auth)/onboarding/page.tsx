@@ -6,7 +6,6 @@ import { BookOpen, LineChart, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function OnboardingPage() {
-
   return (
     <div className="w-full max-w-md mx-auto min-h-screen bg-white relative shadow-2xl overflow-x-hidden flex flex-col">
       <div className="flex flex-col flex-1 p-6 justify-between">

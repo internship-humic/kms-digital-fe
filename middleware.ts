@@ -8,6 +8,7 @@ export function middleware(request: NextRequest) {
 
   const isPublicRoute =
     path === "/" ||
+    path.startsWith("/onboarding") ||
     path.startsWith("/login") ||
     path.startsWith("/register") ||
     path.startsWith("/forgot-password") ||

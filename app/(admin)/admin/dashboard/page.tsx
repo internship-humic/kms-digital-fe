@@ -9,5 +9,5 @@ export const metadata = {
 export default async function AdminDashboardPage() {
   const adminData = await getAdminDashboard();
 
-  return <AdminDashboardFeed initialData={adminData} />;
+  return <AdminDashboardFeed initialData={adminData ?? undefined} />;
 }

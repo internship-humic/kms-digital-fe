@@ -12,6 +12,7 @@ import type {
 } from "../types";
 
 type EditBalitaModalProps = {
+  isOpen: boolean;
   data: BalitaData | null;
   clinicId: string;
   onClose: () => void;
@@ -77,8 +78,8 @@ export default function EditBalitaModal({
         address: address.trim(),
         status,
         clinic_id: clinicId,
-        body_weight: 1, // Dummy value (ignored by backend)
-        body_height: 50, // Dummy value (ignored by backend)
+        body_weight: 1,
+        body_height: 50,
         head_circumference: null,
       };
 
@@ -198,8 +199,7 @@ export default function EditBalitaModal({
                 <option value="HIGHRISK">Risiko Tinggi</option>
               </select>
             </div>
-
-            </div>
+          </div>
 
           <div className="flex gap-3 border-t border-border-input/30 bg-white px-5 py-4">
             <Button

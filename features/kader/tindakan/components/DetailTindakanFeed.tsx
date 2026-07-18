@@ -61,10 +61,8 @@ export default function DetailTindakanFeed({
 
       if (!result.success) throw new Error(result.error);
 
-      // Tampilkan modal sukses
       setShowSuccessModal(true);
-      
-      // Tunggu 2 detik lalu redirect ke daftar tindakan
+
       setTimeout(() => {
         setShowSuccessModal(false);
         router.push("/kader/tindakan");

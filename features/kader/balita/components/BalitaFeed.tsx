@@ -159,8 +159,6 @@ export default function BalitaFeed({
   return (
     <>
       <div className="flex flex-col flex-1 px-6 pb-32 pt-5 gap-4">
-
-
         <div className="relative">
           <Search
             size={20}

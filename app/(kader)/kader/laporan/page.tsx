@@ -14,7 +14,10 @@ export default async function LaporanPage() {
 
   return (
     <div className="flex-1 bg-white flex flex-col relative overflow-y-auto pb-28">
-      <LaporanFeed childrenData={childrenData || []} clinicId={profile?.user?.clinic?.id || ""} />
+      <LaporanFeed
+        childrenData={childrenData || []}
+        clinicId={profile?.user?.clinic?.id || ""}
+      />
     </div>
   );
 }

@@ -17,13 +17,15 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="flex flex-col flex-1 p-6 sm:p-8 min-h-screen bg-white justify-center">
-      <div className={`flex flex-col items-center ${isSuccess ? 'mb-4' : 'mb-8'}`}>
+      <div
+        className={`flex flex-col items-center ${isSuccess ? "mb-4" : "mb-8"}`}
+      >
         <Image
           src="/images/logo.svg"
           alt="JagaCilik Logo"
           width={280}
           height={90}
-          className={`h-16 sm:h-20 w-auto object-contain ${isSuccess ? 'mb-2' : 'mb-6'}`}
+          className={`h-16 sm:h-20 w-auto object-contain ${isSuccess ? "mb-2" : "mb-6"}`}
           priority
         />
         {!isSuccess && (

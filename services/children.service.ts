@@ -3,6 +3,11 @@
 import { fetchWithAuth, fetchPaginatedWithAuth } from "@/lib/fetcher";
 import type { BalitaData, ChildPayload } from "@/features/kader/balita/types";
 
+interface ChildrenListResponse {
+  items?: any[];
+  [key: string]: any;
+}
+
 function calculateAgeInMonths(birthDateValue: string) {
   const birthDate = new Date(birthDateValue);
   const now = new Date();
@@ -29,7 +34,7 @@ export const getChildrens = async (
   search?: string,
   page = 1,
   limit = 50,
-  clinicId?: string
+  clinicId?: string,
 ): Promise<BalitaData[]> => {
   try {
     const queryParams = new URLSearchParams({
@@ -41,14 +46,17 @@ export const getChildrens = async (
       queryParams.append("search", search);
     }
 
-    const endpoint = clinicId 
-      ? `/children/clinic/${clinicId}?${queryParams.toString()}` 
+    const endpoint = clinicId
+      ? `/children/clinic/${clinicId}?${queryParams.toString()}`
       : `/children?${queryParams.toString()}`;
 
-    const children = await fetchWithAuth(endpoint);
+    const children = await fetchWithAuth<any[] | ChildrenListResponse>(
+      endpoint,
+    );
 
-    // Some endpoints return an array directly, others return { items: [...], total_case: ... }
-    const childrenArray = Array.isArray(children) ? children : (children.items || []);
+    const childrenArray: any[] = Array.isArray(children)
+      ? children
+      : children?.items || [];
 
     const mappedData: BalitaData[] = childrenArray.map((item: any) => {
       const diffMonths = calculateAgeInMonths(item.birth_date);
@@ -114,10 +122,10 @@ export const deleteChild = async (id: string) => {
 };
 
 export const getRiskyChildren = async (
-  page = 1, 
-  limit = 50, 
+  page = 1,
+  limit = 50,
   search = "",
-  clinicId?: string
+  clinicId?: string,
 ) => {
   try {
     const queryParams = new URLSearchParams({
@@ -129,8 +137,8 @@ export const getRiskyChildren = async (
       queryParams.append("search", search);
     }
 
-    const endpoint = clinicId 
-      ? `/children/clinic/${clinicId}/risky?${queryParams.toString()}` 
+    const endpoint = clinicId
+      ? `/children/clinic/${clinicId}/risky?${queryParams.toString()}`
       : `/children/risky?${queryParams.toString()}`;
 
     const response = await fetchPaginatedWithAuth(endpoint);
@@ -161,7 +169,8 @@ export const exportChildPdf = async (id: string) => {
 
   if (!token) throw new Error("NO_TOKEN");
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+  const API_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
   const response = await fetch(`${API_URL}/children/${id}/export`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -182,10 +191,14 @@ export const exportClinicPdf = async (clinicId: string) => {
 
   if (!token) throw new Error("NO_TOKEN");
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
-  const response = await fetch(`${API_URL}/children/clinic/${clinicId}/export`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const API_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+  const response = await fetch(
+    `${API_URL}/children/clinic/${clinicId}/export`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
 
   if (!response.ok) {
     throw new Error("Gagal mengekspor data");

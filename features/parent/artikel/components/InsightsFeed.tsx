@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Lightbulb, ArrowRight } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import ArticleCard from "./ArticleCard";
 import type { ArtikelItem } from "../types";
 import { getArticles } from "@/services/article.service";
@@ -42,7 +42,9 @@ export default function InsightsFeed({
     (art) => activeCategory === "Semua" || art.type === activeCategory,
   );
 
-  const displayedArticles = showAllArticles ? filteredArticles : filteredArticles.slice(0, 3);
+  const displayedArticles = showAllArticles
+    ? filteredArticles
+    : filteredArticles.slice(0, 3);
 
   return (
     <div className="flex-1 flex flex-col gap-6 pt-6 bg-background min-h-screen">
@@ -70,12 +72,6 @@ export default function InsightsFeed({
             <h2 className="text-xl font-bold text-text-main">
               Artikel Terbaru
             </h2>
-            <button 
-              onClick={() => setShowAllArticles(!showAllArticles)}
-              className="text-sm font-semibold tracking-[0.6px] text-btn-primary hover:underline cursor-pointer"
-            >
-              {showAllArticles ? "Sembunyikan" : "Lihat Semua"}
-            </button>
           </div>
 
           {isLoading ? (

@@ -1,7 +1,6 @@
 "use server";
 
 import { RegionResponseDTO } from "@/features/auth/types";
-import { fetchPaginatedWithAuth } from "@/lib/fetcher";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
@@ -48,11 +47,75 @@ export const getVillages = async (districtId: string) =>
 export const getClinics = async (villageId: string) =>
   fetchRegionData(`/clinic/village/${villageId}`);
 
-export const getRegionalReports = async (page = 1, limit = 10, search = "") => {
+export interface RegionalCoverageData {
+  riskRegions: {
+    villageId: string;
+    village: string;
+    district: string;
+    percentage: number;
+    label: string;
+  }[];
+  coverage: {
+    totalVillages: number;
+    coveredVillagePercentage: number;
+    totalCoveredVillages: number;
+    uncoveredVillages: number;
+  };
+}
+
+export interface RegionalReportResponse {
+  data: RegionalCoverageData;
+  pagination: {
+    total: number;
+    totalPages: number;
+    currentPage: number;
+    limit: number;
+  };
+}
+
+export const getRegionalReports = async (
+  page = 1,
+  limit = 10,
+  search = "",
+): Promise<RegionalReportResponse | null> => {
   const query = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
   });
   if (search) query.append("search", search);
-  return fetchPaginatedWithAuth(`/region/covered?${query.toString()}`);
+
+  try {
+    const cookieStore = await (await import("next/headers")).cookies();
+    const token = cookieStore.get("token")?.value;
+    if (!token) throw new Error("NO_TOKEN");
+
+    const response = await fetch(
+      `${API_URL}/region/covered?${query.toString()}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || result.success === false) {
+      throw new Error(result.message || "Gagal mengambil laporan wilayah");
+    }
+
+    return {
+      data: result.data,
+      pagination: result.pagination || {
+        total: 0,
+        totalPages: 1,
+        currentPage: 1,
+        limit,
+      },
+    };
+  } catch (error) {
+    console.error("Gagal mengambil laporan wilayah:", error);
+    return null;
+  }
 };

@@ -18,7 +18,7 @@ import EditPosyanduModal from "./EditPosyanduModal";
 import DeletePosyanduModal from "./DeletePosyanduModal";
 import DetailPosyanduModal from "./DetailPosyanduModal";
 import { usePagination } from "@/hooks/usePagination";
-import { getAllClinics, deleteClinic } from "@/services/clinic.service";
+import { getAllClinics } from "@/services/clinic.service";
 import { useCallback } from "react";
 
 export default function ResourceAllocationFeed() {
@@ -49,14 +49,14 @@ export default function ResourceAllocationFeed() {
     try {
       const res = await getAllClinics(page, limit, searchQuery);
 
-      if (res?.data) {
-        setPosyanduData(res.data);
+      if (res?.success && Array.isArray((res as any).data)) {
+        setPosyanduData((res as any).data);
         setPaginationData(
-          res.pagination?.total || 0,
-          res.pagination?.totalPages || 1,
+          (res as any).pagination?.total || 0,
+          (res as any).pagination?.totalPages || 1,
         );
       } else {
-        setPosyanduData(Array.isArray(res) ? res : []);
+        setPosyanduData([]);
         setPaginationData(0, 1);
       }
     } catch (error) {

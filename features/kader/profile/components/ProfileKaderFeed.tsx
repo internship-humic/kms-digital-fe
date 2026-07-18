@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   BadgeCheck,
   LogOut,
@@ -10,12 +11,12 @@ import {
   Phone,
   MapPin,
   Calendar,
+  Baby,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { logoutAction } from "@/app/actions/auth";
 import { getProfile } from "@/services/auth.service";
 import { getKaderDashboard } from "@/services/dashboard.service";
-import { Baby } from "lucide-react";
 import type { KaderProfile } from "../types";
 
 type RawGetMeResponse = {
@@ -31,8 +32,6 @@ type RawGetMeResponse = {
   };
   role: string;
 };
-
-// Menus removed since cadre cannot edit profile or change password
 
 export default function ProfileKaderFeed() {
   const router = useRouter();
@@ -65,7 +64,7 @@ export default function ProfileKaderFeed() {
       } else {
         setProfile(null);
       }
-      
+
       if (dashboardRes) {
         setTotalChildren(dashboardRes.total_children || 0);
       }
@@ -114,12 +113,14 @@ export default function ProfileKaderFeed() {
 
       <section className="mb-8 flex flex-col items-center text-center">
         <div className="relative mb-4">
-          <div className="flex h-24 w-24 items-center justify-center rounded-full border-[4px] border-white bg-primary-light text-7xl font-bold text-btn-primary shadow-[0_8px_24px_rgba(15,23,42,0.12)] overflow-hidden">
+          <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-[4px] border-white bg-primary-light text-5xl font-bold text-btn-primary shadow-[0_8px_24px_rgba(15,23,42,0.12)] overflow-hidden">
             {profile.avatar_url ? (
-              <img
+              <Image
                 src={profile.avatar_url}
                 alt={profile.name}
-                className="h-full w-full object-cover"
+                fill
+                sizes="96px"
+                className="object-cover"
               />
             ) : (
               getInitials(profile.name)
@@ -131,7 +132,7 @@ export default function ProfileKaderFeed() {
           </div>
         </div>
 
-        <h2 className="text-4xl font-bold text-text-main">{profile.name}</h2>
+        <h2 className="text-3xl font-bold text-text-main">{profile.name}</h2>
 
         <p className="mt-1 text-lg text-icon-muted">Kader Posyandu</p>
 
@@ -148,23 +149,33 @@ export default function ProfileKaderFeed() {
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary-light/60 text-btn-primary">
                 <Baby size={26} strokeWidth={2.5} />
               </div>
-              <p className="text-[15px] font-bold text-text-main">Total Anak Dipantau</p>
+              <p className="text-[15px] font-bold text-text-main">
+                Total Anak Dipantau
+              </p>
             </div>
-            <p className="text-4xl font-black text-btn-primary">{totalChildren}</p>
+            <p className="text-4xl font-black text-btn-primary">
+              {totalChildren}
+            </p>
           </div>
         </div>
       </section>
 
       <section className="mb-6 overflow-hidden rounded-[16px] bg-white shadow-[0_10px_28px_rgba(15,23,42,0.04)] p-5 border border-border-input/30">
-        <h3 className="mb-4 text-[17px] font-bold text-text-main">Informasi Akun</h3>
+        <h3 className="mb-4 text-[17px] font-bold text-text-main">
+          Informasi Akun
+        </h3>
         <div className="flex flex-col gap-5">
           <div className="flex items-center gap-3.5">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-light/50 text-btn-primary">
               <Mail size={18} strokeWidth={2.5} />
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-icon-muted uppercase tracking-wider mb-0.5">Email</p>
-              <p className="text-[15px] font-medium text-text-main">{profile.email}</p>
+              <p className="text-[11px] font-semibold text-icon-muted uppercase tracking-wider mb-0.5">
+                Email
+              </p>
+              <p className="text-[15px] font-medium text-text-main">
+                {profile.email}
+              </p>
             </div>
           </div>
 
@@ -173,8 +184,12 @@ export default function ProfileKaderFeed() {
               <Phone size={18} strokeWidth={2.5} />
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-icon-muted uppercase tracking-wider mb-0.5">No. Telepon</p>
-              <p className="text-[15px] font-medium text-text-main">{profile.phone_number || "-"}</p>
+              <p className="text-[11px] font-semibold text-icon-muted uppercase tracking-wider mb-0.5">
+                No. Telepon
+              </p>
+              <p className="text-[15px] font-medium text-text-main">
+                {profile.phone_number || "-"}
+              </p>
             </div>
           </div>
 
@@ -183,8 +198,12 @@ export default function ProfileKaderFeed() {
               <MapPin size={18} strokeWidth={2.5} />
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-icon-muted uppercase tracking-wider mb-0.5">Alamat Posyandu</p>
-              <p className="text-[15px] font-medium text-text-main">{profile.posyandu_address || "-"}</p>
+              <p className="text-[11px] font-semibold text-icon-muted uppercase tracking-wider mb-0.5">
+                Alamat Posyandu
+              </p>
+              <p className="text-[15px] font-medium text-text-main">
+                {profile.posyandu_address || "-"}
+              </p>
             </div>
           </div>
 
@@ -193,7 +212,9 @@ export default function ProfileKaderFeed() {
               <Calendar size={18} strokeWidth={2.5} />
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-icon-muted uppercase tracking-wider mb-0.5">Bergabung Sejak</p>
+              <p className="text-[11px] font-semibold text-icon-muted uppercase tracking-wider mb-0.5">
+                Bergabung Sejak
+              </p>
               <p className="text-[15px] font-medium text-text-main">
                 {new Date(profile.created_at).toLocaleDateString("id-ID", {
                   day: "numeric",

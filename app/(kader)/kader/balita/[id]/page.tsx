@@ -1,9 +1,20 @@
 import DetailBalitaFeed from "@/features/kader/balita/components/DetailBalitaFeed";
 import { transformApiToMetrics } from "@/features/kader/balita/utils/calculateMetrics";
-import { getChildrens, getChildIntervention } from "@/services/children.service";
-import { getMeasurementGraph, getMeasurementsByChild } from "@/services/measurement.service";
+import {
+  getChildrens,
+  getChildIntervention,
+} from "@/services/children.service";
+import {
+  getMeasurementGraph,
+  getMeasurementsByChild,
+} from "@/services/measurement.service";
 import { getProfile } from "@/services/auth.service";
 import { notFound } from "next/navigation";
+
+interface MeasurementResponse {
+  data?: any[] | { items: any[] };
+  [key: string]: any;
+}
 
 export async function generateMetadata({
   params,
@@ -35,13 +46,22 @@ export default async function DetailBalitaPage({
   }
 
   const apiGraphData = await getMeasurementGraph(id);
-  const rawMeasurementsRes = await getMeasurementsByChild(id);
-  let rawMeasurements = [];
+
+  const rawMeasurementsRes = (await getMeasurementsByChild(
+    id,
+  )) as MeasurementResponse;
+
+  let rawMeasurements: any[] = [];
+
   if (Array.isArray(rawMeasurementsRes)) {
     rawMeasurements = rawMeasurementsRes;
   } else if (rawMeasurementsRes && Array.isArray(rawMeasurementsRes.data)) {
     rawMeasurements = rawMeasurementsRes.data;
-  } else if (rawMeasurementsRes?.data && Array.isArray(rawMeasurementsRes.data.items)) {
+  } else if (
+    rawMeasurementsRes?.data &&
+    !Array.isArray(rawMeasurementsRes.data) &&
+    Array.isArray(rawMeasurementsRes.data.items)
+  ) {
     rawMeasurements = rawMeasurementsRes.data.items;
   }
 
@@ -53,8 +73,6 @@ export default async function DetailBalitaPage({
   } = transformApiToMetrics(childInfo, apiGraphData, rawMeasurements);
 
   const interventionData = await getChildIntervention(id);
-
-  // removed profile fetch since it is done at the top
 
   return (
     <DetailBalitaFeed

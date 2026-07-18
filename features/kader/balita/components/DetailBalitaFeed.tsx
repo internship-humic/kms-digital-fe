@@ -62,7 +62,7 @@ export default function DetailBalitaFeed({
   const [isEditMeasurementOpen, setIsEditMeasurementOpen] = useState(false);
   const [isDeleteMeasurementOpen, setIsDeleteMeasurementOpen] = useState(false);
   const [selectedMeasurement, setSelectedMeasurement] = useState<any>(null);
-  
+
   const [isChartExpanded, setIsChartExpanded] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const chartRef = useRef<HTMLDivElement>(null);
@@ -74,90 +74,110 @@ export default function DetailBalitaFeed({
     if (!chartRef.current) return;
     try {
       setIsDownloading(true);
-      
+
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
       });
-      
+
       const pageWidth = pdf.internal.pageSize.getWidth();
 
-      // 1. Header Laporan (Centered)
       pdf.setFontSize(18);
       pdf.setFont("helvetica", "bold");
-      pdf.setTextColor(30, 58, 138); // blue-900
+      pdf.setTextColor(30, 58, 138);
       const title = "LAPORAN TUMBUH KEMBANG BALITA";
-      const titleWidth = pdf.getStringUnitWidth(title) * 18 / pdf.internal.scaleFactor;
+      const titleWidth =
+        (pdf.getStringUnitWidth(title) * 18) / pdf.internal.scaleFactor;
       pdf.text(title, (pageWidth - titleWidth) / 2, 20);
-      
+
       pdf.setFontSize(10);
       pdf.setFont("helvetica", "normal");
-      pdf.setTextColor(100, 116, 139); // slate-500
+      pdf.setTextColor(100, 116, 139);
       const subtitle = "JagaCilik - Sistem Informasi KMS Digital Terpadu";
-      const subtitleWidth = pdf.getStringUnitWidth(subtitle) * 10 / pdf.internal.scaleFactor;
+      const subtitleWidth =
+        (pdf.getStringUnitWidth(subtitle) * 10) / pdf.internal.scaleFactor;
       pdf.text(subtitle, (pageWidth - subtitleWidth) / 2, 26);
 
-      // Garis Pembatas Header
-      pdf.setDrawColor(203, 213, 225); // slate-300
+      pdf.setDrawColor(203, 213, 225);
       pdf.setLineWidth(0.5);
       pdf.line(15, 32, pageWidth - 15, 32);
-      
-      // 2. Informasi Pasien (menggunakan autoTable agar rapi)
-      const gender = data.jk?.toLowerCase() === "p" || data.jk?.toLowerCase() === "perempuan" ? "Perempuan" : "Laki-laki";
-      
+
+      const gender =
+        data.jk?.toLowerCase() === "p" || data.jk?.toLowerCase() === "perempuan"
+          ? "Perempuan"
+          : "Laki-laki";
+
       let statusLabel = macroStatusInfo.label;
       if (statusLabel === "LOW RISK") statusLabel = "Risiko Rendah";
       if (statusLabel === "HIGH RISK") statusLabel = "Risiko Tinggi";
 
       autoTable(pdf, {
         startY: 38,
-        theme: 'plain',
+        theme: "plain",
         styles: { fontSize: 10, cellPadding: 1.5, textColor: [51, 65, 85] },
         columnStyles: {
-          0: { fontStyle: 'bold', cellWidth: 35 },
+          0: { fontStyle: "bold", cellWidth: 35 },
           1: { cellWidth: 60 },
-          2: { fontStyle: 'bold', cellWidth: 35 },
+          2: { fontStyle: "bold", cellWidth: 35 },
           3: { cellWidth: 60 },
         },
         body: [
-          ['Nama Balita', `: ${data.nama}`, 'BB Terakhir', `: ${data.stats?.berat || "-"} kg`],
-          ['Jenis Kelamin', `: ${gender}`, 'TB Terakhir', `: ${data.stats?.tinggi || "-"} cm`],
-          ['Usia Saat Ini', `: ${data.usia}`, 'Status Gizi', `: ${statusLabel}`],
-          ['Tanggal Cetak', `: ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`, '', ''],
+          [
+            "Nama Balita",
+            `: ${data.nama}`,
+            "BB Terakhir",
+            `: ${data.stats?.berat || "-"} kg`,
+          ],
+          [
+            "Jenis Kelamin",
+            `: ${gender}`,
+            "TB Terakhir",
+            `: ${data.stats?.tinggi || "-"} cm`,
+          ],
+          [
+            "Usia Saat Ini",
+            `: ${data.usia}`,
+            "Status Gizi",
+            `: ${statusLabel}`,
+          ],
+          [
+            "Tanggal Cetak",
+            `: ${new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}`,
+            "",
+            "",
+          ],
         ],
-        margin: { left: 15 }
+        margin: { left: 15 },
       });
 
-      // 3. Tambahkan Grafik
-      const dataUrl = await htmlToImage.toPng(chartRef.current, { 
-        quality: 1, 
+      const dataUrl = await htmlToImage.toPng(chartRef.current, {
+        quality: 1,
         pixelRatio: 2,
-        backgroundColor: '#ffffff'
+        backgroundColor: "#ffffff",
       });
-      
+
       const imgProps = pdf.getImageProperties(dataUrl);
-      const pdfWidth = pageWidth - 30; // margin 15 kiri kanan
+      const pdfWidth = pageWidth - 30;
       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      
+
       const finalYInfo = (pdf as any).lastAutoTable.finalY + 8;
-      
+
       pdf.setFontSize(12);
       pdf.setFont("helvetica", "bold");
-      pdf.setTextColor(15, 23, 42); // slate-900
+      pdf.setTextColor(15, 23, 42);
       pdf.text("Grafik Pertumbuhan (BB/U)", 15, finalYInfo);
-      
+
       pdf.setDrawColor(226, 232, 240);
       pdf.rect(15, finalYInfo + 3, pdfWidth, pdfHeight);
       pdf.addImage(dataUrl, "PNG", 15, finalYInfo + 3, pdfWidth, pdfHeight);
 
-      // 4. Tambahkan Tabel Riwayat Pengukuran
       const tableStartY = finalYInfo + 3 + pdfHeight + 10;
-      
+
       pdf.setFontSize(12);
       pdf.setFont("helvetica", "bold");
       pdf.text("Riwayat Pengukuran Detail", 15, tableStartY);
-      
+
       const tableData = riwayatDenganZScoreAsli.map((row: any) => [
         row.tanggal,
         `${row.berat}`,
@@ -165,18 +185,32 @@ export default function DetailBalitaFeed({
         row.statusBB,
         row.statusTB,
         row.statusBBTB,
-        row.keterangan || "-"
+        row.keterangan || "-",
       ]);
 
       autoTable(pdf, {
         startY: tableStartY + 4,
-        head: [['Tanggal', 'Berat (kg)', 'Tinggi (cm)', 'Status BB/U', 'Status TB/U', 'Status BB/TB', 'Keterangan']],
+        head: [
+          [
+            "Tanggal",
+            "Berat (kg)",
+            "Tinggi (cm)",
+            "Status BB/U",
+            "Status TB/U",
+            "Status BB/TB",
+            "Keterangan",
+          ],
+        ],
         body: tableData,
-        theme: 'grid',
-        headStyles: { fillColor: [30, 58, 138], textColor: 255, fontStyle: 'bold' }, 
+        theme: "grid",
+        headStyles: {
+          fillColor: [30, 58, 138],
+          textColor: 255,
+          fontStyle: "bold",
+        },
         alternateRowStyles: { fillColor: [248, 250, 252] },
         styles: { fontSize: 8, lineColor: [226, 232, 240], lineWidth: 0.1 },
-        margin: { left: 15, right: 15 }
+        margin: { left: 15, right: 15 },
       });
 
       pdf.save(`Laporan pertumbuhan_${data.nama.replace(/\s+/g, "_")}.pdf`);
@@ -229,8 +263,16 @@ export default function DetailBalitaFeed({
             return (
               <ul className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[11px] pt-3 w-full">
                 {payload?.map((entry: any, index: number) => (
-                  <li key={`item-${index}`} className="flex items-center gap-1.5">
-                    <svg width="8" height="8" viewBox="0 0 8 8" className="shrink-0">
+                  <li
+                    key={`item-${index}`}
+                    className="flex items-center gap-1.5"
+                  >
+                    <svg
+                      width="8"
+                      height="8"
+                      viewBox="0 0 8 8"
+                      className="shrink-0"
+                    >
                       <circle cx="4" cy="4" r="4" fill={entry.color} />
                     </svg>
                     <span style={{ color: entry.color }}>{entry.value}</span>
@@ -399,20 +441,27 @@ export default function DetailBalitaFeed({
         </div>
 
         <div className="bg-white p-5 rounded-[20px] border border-border-input/40 shadow-sm">
-            <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-4">
             <h3 className="text-3xl font-semibold leading-[28px] text-text-main">
               Grafik Tren BB/U Otomatis
             </h3>
             <div className="flex gap-2">
-              <button 
+              <button
                 onClick={handleDownloadPdf}
                 disabled={isDownloading}
                 className="w-10 h-10 rounded-full bg-[#E6E8EA] flex items-center justify-center text-text-main hover:bg-gray-200 active:bg-gray-300 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:active:scale-100"
                 title="Unduh PDF"
               >
-                {isDownloading ? <Loader2 size={18} className="animate-spin text-btn-primary" /> : <Download size={18} />}
+                {isDownloading ? (
+                  <Loader2
+                    size={18}
+                    className="animate-spin text-btn-primary"
+                  />
+                ) : (
+                  <Download size={18} />
+                )}
               </button>
-              <button 
+              <button
                 onClick={() => setIsChartExpanded(true)}
                 className="w-10 h-10 rounded-full bg-[#E6E8EA] flex items-center justify-center text-text-main hover:bg-gray-200 active:bg-gray-300 active:scale-95 transition-all duration-200"
                 title="Perbesar Grafik"
@@ -422,7 +471,10 @@ export default function DetailBalitaFeed({
             </div>
           </div>
 
-          <div ref={chartRef} className="bg-white border border-border-input/20 rounded-[16px] p-4 shadow-sm w-full h-[340px] flex flex-col relative overflow-hidden">
+          <div
+            ref={chartRef}
+            className="bg-white border border-border-input/20 rounded-[16px] p-4 shadow-sm w-full h-[340px] flex flex-col relative overflow-hidden"
+          >
             {renderChart()}
           </div>
         </div>
@@ -627,60 +679,105 @@ export default function DetailBalitaFeed({
         </div>
 
         {/* RIWAYAT TINDAKAN DARI API */}
-        {intervention && (intervention.referral || intervention.supplement || intervention.education) && (
-          <div className="flex flex-col gap-4 mt-2 mb-6">
-            <h3 className="text-lg font-bold text-text-main">
-              Riwayat Tindakan & Rujukan
-            </h3>
+        {intervention &&
+          (intervention.referral ||
+            intervention.supplement ||
+            intervention.education) && (
+            <div className="flex flex-col gap-4 mt-2 mb-6">
+              <h3 className="text-lg font-bold text-text-main">
+                Riwayat Tindakan & Rujukan
+              </h3>
 
-            <div className="bg-white border border-border-input/20 rounded-[16px] overflow-hidden shadow-sm flex flex-col p-5">
-              {intervention.supplement && (
-                <div className="flex items-start gap-4 pb-4 border-b border-border-input/30 last:border-0 last:pb-0">
-                  <div className="mt-1 w-10 h-10 rounded-full bg-blue-50 text-btn-primary flex items-center justify-center shrink-0">
-                    <CheckCircle2 size={20} strokeWidth={2.5} />
+              <div className="bg-white border border-border-input/20 rounded-[16px] overflow-hidden shadow-sm flex flex-col p-5">
+                {intervention.supplement && (
+                  <div className="flex items-start gap-4 pb-4 border-b border-border-input/30 last:border-0 last:pb-0">
+                    <div className="mt-1 w-10 h-10 rounded-full bg-blue-50 text-btn-primary flex items-center justify-center shrink-0">
+                      <CheckCircle2 size={20} strokeWidth={2.5} />
+                    </div>
+                    <div>
+                      <h4 className="text-[15px] font-bold text-text-main">
+                        Pemberian Makanan Tambahan (PMT)
+                      </h4>
+                      <p className="text-xs text-icon-muted mt-1 leading-relaxed">
+                        Tindakan berhasil dicatat dan sedang dalam pantauan.{" "}
+                        <br />
+                        <span className="font-medium">
+                          Oleh: Kader Posyandu &bull;{" "}
+                          {intervention.updated_at
+                            ? new Date(
+                                intervention.updated_at,
+                              ).toLocaleDateString("id-ID", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })
+                            : "Terkini"}
+                        </span>
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-[15px] font-bold text-text-main">Pemberian Makanan Tambahan (PMT)</h4>
-                    <p className="text-xs text-icon-muted mt-1 leading-relaxed">
-                      Tindakan berhasil dicatat dan sedang dalam pantauan. <br />
-                      <span className="font-medium">Oleh: Kader Posyandu &bull; {intervention.updated_at ? new Date(intervention.updated_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'}) : "Terkini"}</span>
-                    </p>
-                  </div>
-                </div>
-              )}
+                )}
 
-              {intervention.education && (
-                <div className="flex items-start gap-4 pb-4 border-b border-border-input/30 last:border-0 last:pb-0 pt-4 first:pt-0">
-                  <div className="mt-1 w-10 h-10 rounded-full bg-blue-50 text-btn-primary flex items-center justify-center shrink-0">
-                    <CheckCircle2 size={20} strokeWidth={2.5} />
+                {intervention.education && (
+                  <div className="flex items-start gap-4 pb-4 border-b border-border-input/30 last:border-0 last:pb-0 pt-4 first:pt-0">
+                    <div className="mt-1 w-10 h-10 rounded-full bg-blue-50 text-btn-primary flex items-center justify-center shrink-0">
+                      <CheckCircle2 size={20} strokeWidth={2.5} />
+                    </div>
+                    <div>
+                      <h4 className="text-[15px] font-bold text-text-main">
+                        Edukasi Gizi ke Orang Tua
+                      </h4>
+                      <p className="text-xs text-icon-muted mt-1 leading-relaxed">
+                        Edukasi pola asuh & pemberian makanan bergizi telah
+                        diberikan. <br />
+                        <span className="font-medium">
+                          Oleh: Kader Posyandu &bull;{" "}
+                          {intervention.updated_at
+                            ? new Date(
+                                intervention.updated_at,
+                              ).toLocaleDateString("id-ID", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })
+                            : "Terkini"}
+                        </span>
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-[15px] font-bold text-text-main">Edukasi Gizi ke Orang Tua</h4>
-                    <p className="text-xs text-icon-muted mt-1 leading-relaxed">
-                      Edukasi pola asuh & pemberian makanan bergizi telah diberikan. <br />
-                      <span className="font-medium">Oleh: Kader Posyandu &bull; {intervention.updated_at ? new Date(intervention.updated_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'}) : "Terkini"}</span>
-                    </p>
-                  </div>
-                </div>
-              )}
+                )}
 
-              {intervention.referral && (
-                <div className="flex items-start gap-4 pt-4 first:pt-0">
-                  <div className="mt-1 w-10 h-10 rounded-full bg-blue-50 text-btn-primary flex items-center justify-center shrink-0">
-                    <CheckCircle2 size={20} strokeWidth={2.5} />
+                {intervention.referral && (
+                  <div className="flex items-start gap-4 pt-4 first:pt-0">
+                    <div className="mt-1 w-10 h-10 rounded-full bg-blue-50 text-btn-primary flex items-center justify-center shrink-0">
+                      <CheckCircle2 size={20} strokeWidth={2.5} />
+                    </div>
+                    <div>
+                      <h4 className="text-[15px] font-bold text-text-main">
+                        Rujuk ke Puskesmas
+                      </h4>
+                      <p className="text-xs text-icon-muted mt-1 leading-relaxed">
+                        Surat rujukan telah diberikan dan dikoordinasikan dengan
+                        Bidan Desa. <br />
+                        <span className="font-medium">
+                          Oleh: Kader Posyandu &bull;{" "}
+                          {intervention.updated_at
+                            ? new Date(
+                                intervention.updated_at,
+                              ).toLocaleDateString("id-ID", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })
+                            : "Terkini"}
+                        </span>
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-[15px] font-bold text-text-main">Rujuk ke Puskesmas</h4>
-                    <p className="text-xs text-icon-muted mt-1 leading-relaxed">
-                      Surat rujukan telah diberikan dan dikoordinasikan dengan Bidan Desa. <br />
-                      <span className="font-medium">Oleh: Kader Posyandu &bull; {intervention.updated_at ? new Date(intervention.updated_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'}) : "Terkini"}</span>
-                    </p>
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
 
       <TambahPengukuranModal
@@ -731,13 +828,13 @@ export default function DetailBalitaFeed({
               <Minimize2 size={24} />
             </button>
           </div>
-          
+
           <div className="flex-1 p-4 md:p-8 w-full h-full bg-gray-50/50">
             <div className="w-full h-full bg-white rounded-3xl shadow-sm border border-gray-100 p-4 md:p-8">
               {renderChart(true)}
             </div>
           </div>
-          
+
           {/* Instruksi khusus mobile: Putar HP */}
           <div className="md:hidden text-center p-4 text-sm text-gray-500 font-medium border-t border-gray-100 bg-white">
             💡 Putar HP Anda (Landscape) untuk tampilan yang lebih lega.

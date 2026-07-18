@@ -40,7 +40,7 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
   useEffect(() => {
     const fetchParents = async () => {
       let currentClinicId = clinicId;
-      
+
       try {
         if (!currentClinicId || currentClinicId === "clinic-uuid-1") {
           const profile: any = await getProfile();

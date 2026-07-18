@@ -13,7 +13,7 @@ export default function DownloadPdfButton({ childId }: { childId: string }) {
     setIsDownloading(true);
     try {
       const base64Data = await exportChildPdf(childId);
-      
+
       const linkSource = `data:application/pdf;base64,${base64Data}`;
       const downloadLink = document.createElement("a");
       const fileName = `Laporan_KMS_${childId}_${new Date().toISOString().slice(0, 10)}.pdf`;
@@ -30,8 +30,8 @@ export default function DownloadPdfButton({ childId }: { childId: string }) {
   };
 
   return (
-    <Button 
-      size="xl" 
+    <Button
+      size="xl"
       className="w-full gap-2 mx-auto pointer-events-auto shadow-lg hover:shadow-xl transition-all"
       onClick={handleDownload}
       disabled={isDownloading}

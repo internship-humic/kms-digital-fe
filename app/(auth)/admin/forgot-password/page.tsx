@@ -45,7 +45,8 @@ export default function AdminForgotPasswordPage() {
                   Lupa Password?
                 </h1>
                 <p className="text-[13px] text-text-main/70">
-                  Masukkan email admin Anda untuk menerima tautan reset password.
+                  Masukkan email admin Anda untuk menerima tautan reset
+                  password.
                 </p>
               </div>
             )}

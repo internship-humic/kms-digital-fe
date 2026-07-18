@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { deleteCadreAction } from "@/app/actions/cadre";
+import type { StaffData } from "../types";
 
 type DeleteKaderModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  deleteData: any;  
+  deleteData: StaffData | null;
 };
 
 export default function DeleteKaderModal({
@@ -35,10 +36,13 @@ export default function DeleteKaderModal({
 
       onSuccess();
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      const msg = error.message || "";
-      setErrorMsg(msg || "Terjadi kesalahan saat menghapus kader.");
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan saat menghapus kader.";
+      setErrorMsg(errorMessage);
     } finally {
       setIsDeleting(false);
     }
@@ -63,7 +67,7 @@ export default function DeleteKaderModal({
             <p className="text-[14px] text-icon-muted">
               Apakah Anda yakin ingin menghapus kader{" "}
               <span className="font-semibold text-text-main">
-                "{deleteData?.name || deleteData?.nama}"
+                "{deleteData.name}"
               </span>
               ? Tindakan ini tidak dapat dibatalkan.
             </p>

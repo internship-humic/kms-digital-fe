@@ -7,18 +7,40 @@ export const metadata = {
   description: "Daftar balita yang memerlukan tindakan lanjutan.",
 };
 
+interface RiskyChildrenResponse {
+  data?: {
+    items: any[];
+    total_case: number;
+    need_referral: number;
+  };
+}
+
+interface RiskyChildrenData {
+  items: any[];
+  total_case: number;
+  need_referral: number;
+}
+
 export default async function TindakanPage() {
   const profile = await getProfile<any>();
   const clinicId = profile?.user?.clinic_id || "";
-  const riskyData = await getRiskyChildren(1, 50, "", clinicId);
 
-  return (  
+  const riskyData = (await getRiskyChildren(
+    1,
+    50,
+    "",
+    clinicId,
+  )) as RiskyChildrenResponse;
+
+  const initialData: RiskyChildrenData = {
+    items: riskyData?.data?.items ?? [],
+    total_case: riskyData?.data?.total_case ?? 0,
+    need_referral: riskyData?.data?.need_referral ?? 0,
+  };
+
+  return (
     <div className="flex-1 bg-background flex flex-col relative overflow-y-auto pb-28">
-      <TindakanFeed
-        initialData={
-          riskyData?.data || { items: [], total_case: 0, need_referral: 0 }
-        }
-      />
+      <TindakanFeed initialData={initialData} />
     </div>
   );
 }

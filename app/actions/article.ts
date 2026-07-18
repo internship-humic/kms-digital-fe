@@ -24,7 +24,9 @@ export async function createArticleAction(formData: FormData) {
   });
   const result = await res.json();
   if (!res.ok || result.success === false) {
-    throw new Error(result.error?.message || result.message || "Gagal menambahkan artikel");
+    throw new Error(
+      result.error?.message || result.message || "Gagal menambahkan artikel",
+    );
   }
 
   revalidatePath("/admin/articles");
@@ -39,7 +41,9 @@ export async function updateArticleAction(id: string, formData: FormData) {
   });
   const result = await res.json();
   if (!res.ok || result.success === false) {
-    throw new Error(result.error?.message || result.message || "Gagal mengupdate artikel");
+    throw new Error(
+      result.error?.message || result.message || "Gagal mengupdate artikel",
+    );
   }
 
   revalidatePath("/admin/articles");
@@ -53,7 +57,9 @@ export async function deleteArticleAction(id: string) {
   });
   const result = await res.json();
   if (!res.ok || result.success === false) {
-    throw new Error(result.error?.message || result.message || "Gagal menghapus artikel");
+    throw new Error(
+      result.error?.message || result.message || "Gagal menghapus artikel",
+    );
   }
 
   revalidatePath("/admin/articles");

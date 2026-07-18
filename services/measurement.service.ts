@@ -14,7 +14,9 @@ export const getMeasurementGraph = async (childrenId: string) => {
 
 export const getMeasurementsByChild = async (childrenId: string) => {
   try {
-    const response = await fetchWithAuth(`/measurement?childrenId=${childrenId}&limit=1000`);
+    const response = await fetchWithAuth(
+      `/measurement?childrenId=${childrenId}&limit=1000`,
+    );
     return response;
   } catch (error) {
     console.error("Gagal mengambil data pengukuran anak:", error);

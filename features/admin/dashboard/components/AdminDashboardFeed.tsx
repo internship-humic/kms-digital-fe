@@ -76,7 +76,8 @@ export default function AdminDashboardFeed({
     {
       id: 3,
       title: "Total Desa",
-      value: initialData?.regions?.total_covered_villages?.toLocaleString() || "0",
+      value:
+        initialData?.regions?.total_covered_villages?.toLocaleString() || "0",
       trend: "Terdaftar dalam sistem",
       icon: "building",
     },
@@ -90,13 +91,25 @@ export default function AdminDashboardFeed({
   ];
 
   const dynamicBalitaChartData = [
-    { name: "Normal", value: initialData?.childrens?.total_normal_children || 0 },
-    { name: "Beresiko", value: initialData?.childrens?.total_risky_children || 0 },
+    {
+      name: "Normal",
+      value: initialData?.childrens?.total_normal_children || 0,
+    },
+    {
+      name: "Beresiko",
+      value: initialData?.childrens?.total_risky_children || 0,
+    },
   ];
 
   const dynamicWilayahChartData = [
-    { name: "Tercakup", value: initialData?.regions?.total_covered_villages || 0 },
-    { name: "Belum Tercakup", value: initialData?.regions?.total_uncovered_villages || 0 },
+    {
+      name: "Tercakup",
+      value: initialData?.regions?.total_covered_villages || 0,
+    },
+    {
+      name: "Belum Tercakup",
+      value: initialData?.regions?.total_uncovered_villages || 0,
+    },
   ];
 
   return (
@@ -209,9 +222,7 @@ export default function AdminDashboardFeed({
       {/* Table Section */}
       <div className="bg-white rounded-[16px] border border-border-input/40 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-border-input/30">
-          <h3 className="text-lg font-bold text-text-main">
-            Posyandu Terbaru
-          </h3>
+          <h3 className="text-lg font-bold text-text-main">Posyandu Terbaru</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
@@ -229,30 +240,32 @@ export default function AdminDashboardFeed({
               </tr>
             </thead>
             <tbody>
-              {initialData?.clinics?.latest_clinics?.map((row: any, index: number) => (
-                <tr
-                  key={row.id}
-                  className={
-                    index !== initialData.clinics.latest_clinics.length - 1
-                      ? "border-b border-border-input/20"
-                      : ""
-                  }
-                >
-                  <td className="py-5 px-6 text-sm text-text-main">
-                    {row.name}
-                  </td>
-                  <td className="py-5 px-6 text-sm text-icon-muted">
-                    {row.village?.name || "-"}
-                  </td>
-                  <td className="py-5 px-6 text-sm text-icon-muted">
-                    {new Date(row.created_at).toLocaleDateString("id-ID", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </td>
-                </tr>
-              ))}
+              {initialData?.clinics?.latest_clinics?.map(
+                (row: any, index: number) => (
+                  <tr
+                    key={row.id}
+                    className={
+                      index !== initialData.clinics.latest_clinics.length - 1
+                        ? "border-b border-border-input/20"
+                        : ""
+                    }
+                  >
+                    <td className="py-5 px-6 text-sm text-text-main">
+                      {row.name}
+                    </td>
+                    <td className="py-5 px-6 text-sm text-icon-muted">
+                      {row.village?.name || "-"}
+                    </td>
+                    <td className="py-5 px-6 text-sm text-icon-muted">
+                      {new Date(row.created_at).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </td>
+                  </tr>
+                ),
+              )}
               {!initialData?.clinics?.latest_clinics?.length && (
                 <tr>
                   <td

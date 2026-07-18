@@ -1,12 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { User, Mail, Building2, MapPin, X } from "lucide-react";
+import { Mail, Building2, X } from "lucide-react";
+import type { StaffData } from "../types";
 
 type DetailKaderModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  detailData: any;
+  detailData: StaffData | null;
 };
 
 export default function DetailKaderModal({
@@ -30,7 +31,8 @@ export default function DetailKaderModal({
           </div>
           <button
             onClick={onClose}
-            className="text-icon-muted hover:text-text-main transition-colors"
+            className="text-icon-muted hover:text-text-main transition-colors cursor-pointer"
+            aria-label="Tutup modal"
           >
             <X size={24} />
           </button>
@@ -38,7 +40,7 @@ export default function DetailKaderModal({
 
         <div className="p-6 flex flex-col gap-6">
           <div className="flex items-center gap-4 p-4 rounded-xl bg-primary-light/30 border border-btn-primary/10">
-            <div className="w-16 h-16 rounded-full bg-btn-primary flex items-center justify-center text-white text-[24px] font-bold shrink-0 shadow-md">
+            <div className="w-16 h-16 rounded-full bg-btn-primary flex items-center justify-center text-white text-[24px] font-bold shrink-0 shadow-md select-none">
               {detailData.name
                 ? detailData.name.substring(0, 2).toUpperCase()
                 : "KD"}
@@ -48,7 +50,7 @@ export default function DetailKaderModal({
                 Kader Posyandu
               </p>
               <h3 className="text-[20px] font-bold text-text-main leading-tight">
-                {detailData.name || detailData.nama}
+                {detailData.name}
               </h3>
             </div>
           </div>
@@ -79,12 +81,10 @@ export default function DetailKaderModal({
                   Posyandu Penugasan
                 </p>
                 <p className="text-[15px] font-medium text-text-main">
-                  {detailData.clinic?.name || detailData.posyandu || "-"}
+                  {detailData.clinic?.name || "Belum Diatur"}
                 </p>
               </div>
             </div>
-
-
           </div>
         </div>
 

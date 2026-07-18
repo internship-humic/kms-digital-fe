@@ -76,7 +76,10 @@ export const mapApiToGrowthDataPoints = (
       if (a.age_month !== b.age_month) {
         return a.age_month - b.age_month;
       }
-      return new Date(a.measurement_date).getTime() - new Date(b.measurement_date).getTime();
+      return (
+        new Date(a.measurement_date).getTime() -
+        new Date(b.measurement_date).getTime()
+      );
     })
     .map((m: any) => {
       return {
@@ -87,3 +90,4 @@ export const mapApiToGrowthDataPoints = (
       };
     });
 };
+  

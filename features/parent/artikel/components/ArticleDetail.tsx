@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { JSX } from "react";
 import {
   ArrowLeft,
   Image as ImageIcon,
