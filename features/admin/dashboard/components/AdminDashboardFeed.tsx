@@ -10,10 +10,9 @@ import {
   PieChart,
   Pie,
 } from "recharts";
-import type { AdminDashboardDTO } from "../types";
 
 interface AdminDashboardFeedProps {
-  initialData?: AdminDashboardDTO;
+  initialData?: any;
 }
 
 export default function AdminDashboardFeed({
@@ -46,6 +45,19 @@ export default function AdminDashboardFeed({
     }
   };
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "Selesai":
+        return "bg-btn-primary text-white border-transparent";
+      case "Berjalan":
+        return "bg-primary-light text-btn-primary border-transparent";
+      case "Terjadwal":
+        return "bg-border-input/40 text-icon-muted border-transparent";
+      default:
+        return "bg-background text-icon-muted";
+    }
+  };
+
   const dynamicAdminMetrics = [
     {
       id: 1,
@@ -64,7 +76,8 @@ export default function AdminDashboardFeed({
     {
       id: 3,
       title: "Total Desa",
-      value: initialData?.regions?.total_villages?.toLocaleString() || "0",
+      value:
+        initialData?.regions?.total_covered_villages?.toLocaleString() || "0",
       trend: "Terdaftar dalam sistem",
       icon: "building",
     },
@@ -110,6 +123,7 @@ export default function AdminDashboardFeed({
         </p>
       </div>
 
+      {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {dynamicAdminMetrics.map((metric) => (
           <div
@@ -142,7 +156,9 @@ export default function AdminDashboardFeed({
         ))}
       </div>
 
+      {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Bar Chart */}
         <div className="bg-white p-6 rounded-[16px] border border-border-input/40 shadow-sm">
           <h3 className="text-lg font-bold text-text-main mb-8">
             Statistik Kesehatan Balita
@@ -172,6 +188,7 @@ export default function AdminDashboardFeed({
           </div>
         </div>
 
+        {/* Donut Chart */}
         <div className="bg-white p-6 rounded-[16px] border border-border-input/40 shadow-sm">
           <h3 className="text-lg font-bold text-text-main mb-8">
             Distribusi Wilayah
@@ -202,6 +219,7 @@ export default function AdminDashboardFeed({
         </div>
       </div>
 
+      {/* Table Section */}
       <div className="bg-white rounded-[16px] border border-border-input/40 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-border-input/30">
           <h3 className="text-lg font-bold text-text-main">Posyandu Terbaru</h3>
@@ -222,30 +240,32 @@ export default function AdminDashboardFeed({
               </tr>
             </thead>
             <tbody>
-              {initialData?.clinics?.latest_clinics?.map((row, index) => (
-                <tr
-                  key={row.id}
-                  className={
-                    index !== initialData.clinics.latest_clinics.length - 1
-                      ? "border-b border-border-input/20"
-                      : ""
-                  }
-                >
-                  <td className="py-5 px-6 text-sm text-text-main">
-                    {row.name}
-                  </td>
-                  <td className="py-5 px-6 text-sm text-icon-muted">
-                    {row.village?.name || "-"}
-                  </td>
-                  <td className="py-5 px-6 text-sm text-icon-muted">
-                    {new Date(row.created_at).toLocaleDateString("id-ID", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </td>
-                </tr>
-              ))}
+              {initialData?.clinics?.latest_clinics?.map(
+                (row: any, index: number) => (
+                  <tr
+                    key={row.id}
+                    className={
+                      index !== initialData.clinics.latest_clinics.length - 1
+                        ? "border-b border-border-input/20"
+                        : ""
+                    }
+                  >
+                    <td className="py-5 px-6 text-sm text-text-main">
+                      {row.name}
+                    </td>
+                    <td className="py-5 px-6 text-sm text-icon-muted">
+                      {row.village?.name || "-"}
+                    </td>
+                    <td className="py-5 px-6 text-sm text-icon-muted">
+                      {new Date(row.created_at).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </td>
+                  </tr>
+                ),
+              )}
               {!initialData?.clinics?.latest_clinics?.length && (
                 <tr>
                   <td

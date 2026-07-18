@@ -13,7 +13,9 @@ export type DashboardKaderData = {
   location?: string;
   cadre?: {
     name: string;
+    clinic_id?: string;
     clinic?: {
+      id?: string;
       name: string;
       address: string;
       village_id?: string;

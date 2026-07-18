@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Plus,
@@ -19,6 +19,7 @@ import DeletePosyanduModal from "./DeletePosyanduModal";
 import DetailPosyanduModal from "./DetailPosyanduModal";
 import { usePagination } from "@/hooks/usePagination";
 import { getAllClinics } from "@/services/clinic.service";
+import { useCallback } from "react";
 
 export default function ResourceAllocationFeed() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,22 +47,20 @@ export default function ResourceAllocationFeed() {
   const fetchPosyanduData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res: any = await getAllClinics(page, limit, searchQuery);
+      const res = await getAllClinics(page, limit, searchQuery);
 
-      if (res && typeof res === "object" && "data" in res) {
-        setPosyanduData(res.data || []);
+      if (res?.success && Array.isArray((res as any).data)) {
+        setPosyanduData((res as any).data);
         setPaginationData(
-          res.pagination?.total || 0,
-          res.pagination?.totalPages || 1,
+          (res as any).pagination?.total || 0,
+          (res as any).pagination?.totalPages || 1,
         );
       } else {
-        setPosyanduData(Array.isArray(res) ? res : []);
+        setPosyanduData([]);
         setPaginationData(0, 1);
       }
     } catch (error) {
       console.error("Gagal mengambil data posyandu:", error);
-      setPosyanduData([]);
-      setPaginationData(0, 1);
     } finally {
       setIsLoading(false);
     }
@@ -185,7 +184,7 @@ export default function ResourceAllocationFeed() {
                       </div>
                     </td>
                     <td className="px-6 py-5 text-[15px] text-icon-muted">
-                      {row.desa ||
+                      {row.village?.name ||
                         (row.village_id
                           ? "Desa ID: " + row.village_id.slice(0, 8)
                           : "-")}
@@ -222,6 +221,7 @@ export default function ResourceAllocationFeed() {
           </table>
         </div>
 
+        {/* Pagination Controls */}
         <div className="px-6 py-4 border-t border-border-input/30 flex items-center justify-between bg-white">
           <span className="text-sm text-icon-muted">
             Menampilkan {totalItems === 0 ? 0 : (page - 1) * limit + 1} -{" "}

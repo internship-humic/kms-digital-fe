@@ -1,19 +1,12 @@
 "use client";
 
-import Image from "next/image";
-import { useRef, useState, useEffect } from "react";
-import {
-  UploadCloud,
-  FileText,
-  MoreVertical,
-  Share2,
-  Pencil,
-  Trash2,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { FileText, MoreVertical, Share2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { LaporanItem } from "../types";
 import { createMeasurementAction } from "@/app/actions/measurement";
 import type { BalitaData } from "../../balita/types";
+import SuccessModal from "@/components/ui/SuccessModal";
 
 export default function LaporanFeed({
   initialReports,
@@ -43,6 +36,7 @@ export default function LaporanFeed({
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const handleSubmitPengukuran = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +69,8 @@ export default function LaporanFeed({
       setHeadCirc("");
       setDescription("");
       setSelectedChild("");
-      alert("Data pengukuran berhasil ditambahkan!");
+
+      setIsSuccessModalOpen(true);
     } catch (err: any) {
       setErrorMsg(err.message || "Gagal menyimpan pengukuran.");
     } finally {
@@ -302,6 +297,14 @@ export default function LaporanFeed({
           <Share2 size={34} strokeWidth={2.5} className="text-btn-primary" />
         </div>
       </section>
+
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+        imageSrc="/images/folder1.svg"
+        title="Pengukuran Berhasil!"
+        description="Data pengukuran balita telah berhasil ditambahkan ke dalam sistem."
+      />
     </main>
   );
 }

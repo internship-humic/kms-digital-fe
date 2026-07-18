@@ -1,6 +1,9 @@
 import DetailBalitaFeed from "@/features/kader/balita/components/DetailBalitaFeed";
 import { transformApiToMetrics } from "@/features/kader/balita/utils/calculateMetrics";
-import { getChildrens } from "@/services/children.service";
+import {
+  getChildrens,
+  getChildIntervention,
+} from "@/services/children.service";
 import {
   getMeasurementGraph,
   getMeasurementsByChild,
@@ -52,16 +55,14 @@ export default async function DetailBalitaPage({
 
   if (Array.isArray(rawMeasurementsRes)) {
     rawMeasurements = rawMeasurementsRes;
-  } else if (rawMeasurementsRes && typeof rawMeasurementsRes === "object") {
-    if (Array.isArray(rawMeasurementsRes.data)) {
-      rawMeasurements = rawMeasurementsRes.data;
-    } else if (
-      rawMeasurementsRes.data &&
-      typeof rawMeasurementsRes.data === "object" &&
-      Array.isArray(rawMeasurementsRes.data.items)
-    ) {
-      rawMeasurements = rawMeasurementsRes.data.items;
-    }
+  } else if (rawMeasurementsRes && Array.isArray(rawMeasurementsRes.data)) {
+    rawMeasurements = rawMeasurementsRes.data;
+  } else if (
+    rawMeasurementsRes?.data &&
+    !Array.isArray(rawMeasurementsRes.data) &&
+    Array.isArray(rawMeasurementsRes.data.items)
+  ) {
+    rawMeasurements = rawMeasurementsRes.data.items;
   }
 
   const {
@@ -71,11 +72,14 @@ export default async function DetailBalitaPage({
     macroStatusInfo,
   } = transformApiToMetrics(childInfo, apiGraphData, rawMeasurements);
 
+  const interventionData = await getChildIntervention(id);
+
   return (
     <DetailBalitaFeed
       data={mappedData}
       metrics={{ combinedChartData, riwayatDenganZScoreAsli, macroStatusInfo }}
       clinicId={clinicId}
+      intervention={interventionData}
     />
   );
 }

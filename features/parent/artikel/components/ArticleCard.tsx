@@ -18,7 +18,9 @@ export default function ArticleCard({ article }: { article: ArtikelItem }) {
   };
 
   const imageUrl = article.cover_image
-    ? `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}${article.cover_image}`
+    ? article.cover_image.startsWith("http")
+      ? article.cover_image
+      : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}${article.cover_image}`
     : null;
 
   return (

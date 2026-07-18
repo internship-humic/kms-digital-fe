@@ -23,6 +23,7 @@ import {
   X,
   Minimize2,
   Loader2,
+  CheckCircle2,
 } from "lucide-react";
 import {
   LineChart,
@@ -43,6 +44,7 @@ export default function DetailBalitaFeed({
   data,
   metrics,
   clinicId,
+  intervention,
 }: {
   data: BalitaDetail;
   metrics: {
@@ -51,6 +53,7 @@ export default function DetailBalitaFeed({
     macroStatusInfo: { label: string };
   };
   clinicId: string;
+  intervention?: any;
 }) {
   const router = useRouter();
   const [expandedRow, setExpandedRow] = useState<number | null>(0);
@@ -341,7 +344,7 @@ export default function DetailBalitaFeed({
   );
 
   return (
-    <div className="flex flex-col flex-1 bg-background pb-10">
+    <div className="flex flex-col flex-1 bg-background pb-28">
       <div className="flex items-center px-6 pt-10 pb-5 bg-background/95 backdrop-blur-md sticky top-0 z-30 border-b border-border-input/10">
         <button
           onClick={() => router.back()}
@@ -674,6 +677,107 @@ export default function DetailBalitaFeed({
             </div>
           </div>
         </div>
+
+        {/* RIWAYAT TINDAKAN DARI API */}
+        {intervention &&
+          (intervention.referral ||
+            intervention.supplement ||
+            intervention.education) && (
+            <div className="flex flex-col gap-4 mt-2 mb-6">
+              <h3 className="text-lg font-bold text-text-main">
+                Riwayat Tindakan & Rujukan
+              </h3>
+
+              <div className="bg-white border border-border-input/20 rounded-[16px] overflow-hidden shadow-sm flex flex-col p-5">
+                {intervention.supplement && (
+                  <div className="flex items-start gap-4 pb-4 border-b border-border-input/30 last:border-0 last:pb-0">
+                    <div className="mt-1 w-10 h-10 rounded-full bg-blue-50 text-btn-primary flex items-center justify-center shrink-0">
+                      <CheckCircle2 size={20} strokeWidth={2.5} />
+                    </div>
+                    <div>
+                      <h4 className="text-[15px] font-bold text-text-main">
+                        Pemberian Makanan Tambahan (PMT)
+                      </h4>
+                      <p className="text-xs text-icon-muted mt-1 leading-relaxed">
+                        Tindakan berhasil dicatat dan sedang dalam pantauan.{" "}
+                        <br />
+                        <span className="font-medium">
+                          Oleh: Kader Posyandu &bull;{" "}
+                          {intervention.updated_at
+                            ? new Date(
+                                intervention.updated_at,
+                              ).toLocaleDateString("id-ID", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })
+                            : "Terkini"}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {intervention.education && (
+                  <div className="flex items-start gap-4 pb-4 border-b border-border-input/30 last:border-0 last:pb-0 pt-4 first:pt-0">
+                    <div className="mt-1 w-10 h-10 rounded-full bg-blue-50 text-btn-primary flex items-center justify-center shrink-0">
+                      <CheckCircle2 size={20} strokeWidth={2.5} />
+                    </div>
+                    <div>
+                      <h4 className="text-[15px] font-bold text-text-main">
+                        Edukasi Gizi ke Orang Tua
+                      </h4>
+                      <p className="text-xs text-icon-muted mt-1 leading-relaxed">
+                        Edukasi pola asuh & pemberian makanan bergizi telah
+                        diberikan. <br />
+                        <span className="font-medium">
+                          Oleh: Kader Posyandu &bull;{" "}
+                          {intervention.updated_at
+                            ? new Date(
+                                intervention.updated_at,
+                              ).toLocaleDateString("id-ID", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })
+                            : "Terkini"}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {intervention.referral && (
+                  <div className="flex items-start gap-4 pt-4 first:pt-0">
+                    <div className="mt-1 w-10 h-10 rounded-full bg-blue-50 text-btn-primary flex items-center justify-center shrink-0">
+                      <CheckCircle2 size={20} strokeWidth={2.5} />
+                    </div>
+                    <div>
+                      <h4 className="text-[15px] font-bold text-text-main">
+                        Rujuk ke Puskesmas
+                      </h4>
+                      <p className="text-xs text-icon-muted mt-1 leading-relaxed">
+                        Surat rujukan telah diberikan dan dikoordinasikan dengan
+                        Bidan Desa. <br />
+                        <span className="font-medium">
+                          Oleh: Kader Posyandu &bull;{" "}
+                          {intervention.updated_at
+                            ? new Date(
+                                intervention.updated_at,
+                              ).toLocaleDateString("id-ID", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })
+                            : "Terkini"}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
       </div>
 
       <TambahPengukuranModal

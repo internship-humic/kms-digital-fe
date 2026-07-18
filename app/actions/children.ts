@@ -56,6 +56,7 @@ export async function updateInterventionAction(id: string, payload: any) {
       method: "PATCH",
       body: JSON.stringify(payload),
     });
+
     revalidatePath("/kader/tindakan");
     return { success: true, data: response };
   } catch (error: any) {

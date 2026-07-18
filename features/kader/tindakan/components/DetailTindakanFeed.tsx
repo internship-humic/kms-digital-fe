@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { updateInterventionAction } from "@/app/actions/children";
+import SuccessModal from "../../balita/components/SuccessModal";
 
 const INTERVENTION_STEPS = [
   {
@@ -39,6 +40,7 @@ export default function DetailTindakanFeed({
 }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [referral, setReferral] = useState(intervention?.referral || false);
   const [supplement, setSupplement] = useState(
@@ -59,8 +61,13 @@ export default function DetailTindakanFeed({
 
       if (!result.success) throw new Error(result.error);
 
-      router.push("/kader/tindakan");
-      router.refresh();
+      setShowSuccessModal(true);
+
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        router.push("/kader/tindakan");
+        router.refresh();
+      }, 2000);
     } catch (error) {
       alert("Gagal menyimpan konfirmasi tindakan.");
       console.error(error);
@@ -256,6 +263,15 @@ export default function DetailTindakanFeed({
           {isSubmitting ? "Menyimpan Data..." : "Konfirmasi Tindakan Selesai"}
         </Button>
       </section>
+
+      {showSuccessModal && (
+        <SuccessModal
+          isOpen={showSuccessModal}
+          onClose={() => {}}
+          title="Tindakan Berhasil Disimpan!"
+          message="Data tindakan telah dicatat. Anak ini sekarang berstatus dalam penanganan."
+        />
+      )}
     </main>
   );
 }

@@ -78,8 +78,8 @@ export default function EditBalitaModal({
         address: address.trim(),
         status,
         clinic_id: clinicId,
-        body_weight: 1, // Dummy value (ignored by backend)
-        body_height: 50, // Dummy value (ignored by backend)
+        body_weight: 1,
+        body_height: 50,
         head_circumference: null,
       };
 

@@ -3,6 +3,11 @@
 import { fetchWithAuth, fetchPaginatedWithAuth } from "@/lib/fetcher";
 import type { BalitaData, ChildPayload } from "@/features/kader/balita/types";
 
+interface ChildrenListResponse {
+  items?: any[];
+  [key: string]: any;
+}
+
 function calculateAgeInMonths(birthDateValue: string) {
   const birthDate = new Date(birthDateValue);
   const now = new Date();
@@ -45,9 +50,11 @@ export const getChildrens = async (
       ? `/children/clinic/${clinicId}?${queryParams.toString()}`
       : `/children?${queryParams.toString()}`;
 
-    const children = await fetchWithAuth<any>(endpoint);
+    const children = await fetchWithAuth<any[] | ChildrenListResponse>(
+      endpoint,
+    );
 
-    const childrenArray = Array.isArray(children)
+    const childrenArray: any[] = Array.isArray(children)
       ? children
       : children?.items || [];
 
@@ -153,4 +160,51 @@ export const getChildIntervention = async (id: string) => {
     console.error("Error fetching intervention:", error);
     return null;
   }
+};
+
+export const exportChildPdf = async (id: string) => {
+  const cookieStore = (await import("next/headers")).cookies;
+  const cookies = await cookieStore();
+  const token = cookies.get("token")?.value;
+
+  if (!token) throw new Error("NO_TOKEN");
+
+  const API_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+  const response = await fetch(`${API_URL}/children/${id}/export`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error("Gagal mengekspor data");
+  }
+
+  const arrayBuffer = await response.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  return buffer.toString("base64");
+};
+
+export const exportClinicPdf = async (clinicId: string) => {
+  const cookieStore = (await import("next/headers")).cookies;
+  const cookies = await cookieStore();
+  const token = cookies.get("token")?.value;
+
+  if (!token) throw new Error("NO_TOKEN");
+
+  const API_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+  const response = await fetch(
+    `${API_URL}/children/clinic/${clinicId}/export`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Gagal mengekspor data");
+  }
+
+  const arrayBuffer = await response.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  return buffer.toString("base64");
 };

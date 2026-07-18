@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/button";
 type SuccessModalProps = {
   isOpen: boolean;
   message: string;
+  title?: string;
   onClose: () => void;
 };
 
 export default function SuccessModal({
   isOpen,
   message,
+  title = "Berhasil!",
   onClose,
 }: SuccessModalProps) {
   if (!isOpen) return null;
@@ -24,7 +26,7 @@ export default function SuccessModal({
             <CheckCircle2 size={40} strokeWidth={2.5} />
           </div>
 
-          <h2 className="text-xl font-bold text-text-main mb-2">Berhasil!</h2>
+          <h2 className="text-xl font-bold text-text-main mb-2">{title}</h2>
           <p className="text-sm leading-relaxed text-icon-muted mb-6">
             {message}
           </p>

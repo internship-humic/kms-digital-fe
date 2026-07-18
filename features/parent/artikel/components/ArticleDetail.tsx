@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import {
   ArrowLeft,
   Image as ImageIcon,
@@ -33,13 +32,36 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
   };
 
   const imageUrl = article.cover_image
-    ? `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}${article.cover_image}`
+    ? article.cover_image.startsWith("http")
+      ? article.cover_image
+      : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}${article.cover_image}`
     : null;
 
-  let renderedContent = article.content as string;
+  let renderedContent = "";
+
   if (typeof article.content === "object" && article.content !== null) {
     try {
-      renderedContent = generateHTML(article.content as any, [
+      const content = structuredClone(article.content);
+
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "");
+
+      const updateImageSrc = (node: any) => {
+        if (
+          node.type === "image" &&
+          node.attrs?.src &&
+          !node.attrs.src.startsWith("http")
+        ) {
+          node.attrs.src = `${backendUrl}${node.attrs.src}`;
+        }
+
+        if (Array.isArray(node.content)) {
+          node.content.forEach(updateImageSrc);
+        }
+      };
+
+      updateImageSrc(content);
+
+      renderedContent = generateHTML(content, [
         StarterKit,
         ImageExtension.configure({
           inline: true,
@@ -58,16 +80,12 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
       <div className="flex items-center justify-between px-6 py-4 bg-background/95 backdrop-blur-md sticky top-0 z-30 border-b border-border-input/10">
         <button
           onClick={() => router.back()}
-          aria-label="Kembali ke halaman sebelumnya"
           className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light transition-colors -ml-2 cursor-pointer"
         >
           <ArrowLeft size={24} className="text-btn-primary" strokeWidth={2.5} />
         </button>
 
-        <button
-          aria-label="Bagikan artikel"
-          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light transition-colors -mr-2 cursor-pointer"
-        >
+        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light transition-colors -mr-2 cursor-pointer">
           <Share2 size={22} className="text-btn-primary" strokeWidth={2.5} />
         </button>
       </div>
@@ -75,16 +93,13 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
       {/* Hero Image */}
       <div className="relative w-full h-[280px] bg-gray-100 flex items-center justify-center">
         {imageUrl ? (
-          <Image
+          <img
             src={imageUrl}
-            alt={`Cover image untuk artikel: ${article.title}`}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
+            alt={article.title}
+            className="w-full h-full object-cover"
           />
         ) : (
-          <ImageIcon size={50} className="text-gray-300" aria-hidden="true" />
+          <ImageIcon size={50} className="text-gray-300" />
         )}
       </div>
 
@@ -97,7 +112,7 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
             </span>
           </div>
           <span className="text-sm font-medium text-icon-muted flex items-center gap-1.5">
-            <Clock size={14} aria-hidden="true" />
+            <Clock size={14} />
             {formatRelativeTime(article.created_at)}
           </span>
         </div>
@@ -113,7 +128,6 @@ export default function ArticleDetail({ article }: { article: ArtikelItem }) {
               size={24}
               className="text-btn-primary [&>path:first-child]:fill-current [&>path:last-child]:stroke-white"
               strokeWidth={2.5}
-              aria-hidden="true"
             />
           </div>
           <div className="flex-1">

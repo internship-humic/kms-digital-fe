@@ -65,3 +65,25 @@ export async function deleteArticleAction(id: string) {
   revalidatePath("/admin/articles");
   return result.data;
 }
+
+export async function uploadArticleImage(formData: FormData) {
+  const headers = await getAuthHeaders();
+
+  delete headers["Content-Type"];
+
+  const response = await fetch(`${API_URL}/article/upload-image`, {
+    method: "POST",
+    headers,
+    body: formData,
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || result.success === false) {
+    throw new Error(
+      result.error?.message || result.message || "Gagal upload gambar",
+    );
+  }
+
+  return result.data;
+}
