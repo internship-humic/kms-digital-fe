@@ -23,7 +23,7 @@ async function fetchRegionData(endpoint: string): Promise<RegionResponseDTO[]> {
     }
 
     if (!response.ok || result.success === false) {
-      throw new Error(result.message || `Gagal mengambil data ${endpoint}`);
+      throw new Error(result.error?.message || result.message || `Gagal mengambil data ${endpoint}`);
     }
 
     return result.data || [];

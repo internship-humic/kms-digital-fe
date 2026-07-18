@@ -20,7 +20,9 @@ export function middleware(request: NextRequest) {
     path.startsWith("/kader/login") ||
     path.startsWith("/kader/forgot-password") ||
     path.startsWith("/kader/reset-password") ||
-    path.startsWith("/kader/onboarding");
+    path.startsWith("/kader/onboarding") ||
+    path.startsWith("/onboarding") ||
+    path.startsWith("/role-selection");
 
   const validRoles = ["admin", "kader", "parent"];
 

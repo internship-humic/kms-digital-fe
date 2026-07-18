@@ -1,11 +1,16 @@
 import Growth from "@/features/parent/growth/components/GrowthTracker";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { getParentDashboard } from "@/services/dashboard.service";
 import { getMeasurementsByChild } from "@/services/measurement.service";
+<<<<<<< HEAD
 import type {
   ChildData,
   MeasurementApiDTO,
   MeasurementResponseDTO,
 } from "@/features/parent/growth/types";
+=======
+>>>>>>> origin/main
 
 export const metadata = {
   title: "Tumbuh | JagaCilik",
@@ -15,11 +20,24 @@ export const metadata = {
 export default async function GrowthPage() {
   const dashboardData = await getParentDashboard();
 
+<<<<<<< HEAD
   const childrenDataPromises = dashboardData.map(
     async (child): Promise<ChildData> => {
       const rawMeasurementsRes = (await getMeasurementsByChild(
         child.id.toString(),
       )) as MeasurementApiDTO[] | MeasurementResponseDTO | null;
+=======
+  const childrenDataPromises = dashboardData.map(async (child) => {
+    const rawMeasurementsRes = await getMeasurementsByChild(child.id.toString());
+    let rawMeasurements = [];
+    if (Array.isArray(rawMeasurementsRes)) {
+      rawMeasurements = rawMeasurementsRes;
+    } else if (rawMeasurementsRes && Array.isArray(rawMeasurementsRes.data)) {
+      rawMeasurements = rawMeasurementsRes.data;
+    } else if (rawMeasurementsRes?.data && Array.isArray(rawMeasurementsRes.data.items)) {
+      rawMeasurements = rawMeasurementsRes.data.items;
+    }
+>>>>>>> origin/main
 
       let rawMeasurements: MeasurementApiDTO[] = [];
 
@@ -48,6 +66,7 @@ export default async function GrowthPage() {
           bb: m.body_weight,
           tb: m.body_height,
         }),
+<<<<<<< HEAD
       );
 
       return {
@@ -75,12 +94,44 @@ export default async function GrowthPage() {
       };
     },
   );
+=======
+        lokasi: m.clinic?.name || "Posyandu",
+        keterangan: m.description || "Pemeriksaan Rutin",
+        bb: m.body_weight,
+        tb: m.body_height,
+      }));
+
+    return {
+      id: child.id,
+      name: child.name,
+      details: `${child.gender} • ${child.age}`,
+      image: "",
+      stats: {
+        weight: rawMeasurements.length > 0 ? rawMeasurements[0].body_weight.toString() : child.weight.replace(" kg", ""),
+        height: rawMeasurements.length > 0 ? rawMeasurements[0].body_height.toString() : child.height.replace(" cm", ""),
+        head: rawMeasurements.length > 0 ? (rawMeasurements[0].head_circumference || 0).toString() : "0",
+        status: child.status,
+      },
+      riwayatPemeriksaan,
+      jadwalImunisasi: [],
+    };
+  });
+>>>>>>> origin/main
 
   const childrenData = await Promise.all(childrenDataPromises);
 
   return (
     <div className="flex-1 bg-background flex flex-col relative overflow-y-auto pb-6">
       <div className="flex items-center px-6 pt-10 pb-4 sticky top-0 bg-background/95 backdrop-blur-md z-30 border-b border-border-input/10 relative">
+<<<<<<< HEAD
+=======
+        <Link
+          href="/dashboard"
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light transition-colors -ml-2 absolute left-6 z-40 cursor-pointer"
+        >
+          <ArrowLeft size={24} className="text-btn-primary" strokeWidth={2.5} />
+        </Link>
+>>>>>>> origin/main
         <h1 className="text-3xl font-bold text-btn-primary w-full text-center">
           Pertumbuhan
         </h1>

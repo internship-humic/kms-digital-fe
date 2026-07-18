@@ -65,8 +65,31 @@ export default function OnboardingPage() {
 
         <div className="mt-8 mb-4 flex flex-col gap-3 w-full px-2">
           <Button asChild size="lg" className="w-full">
-            <Link href="/login">Masuk</Link>
+            <Link href="/kader/onboarding/step-1">Mulai</Link>
           </Button>
+
+          <div className="flex items-center justify-center gap-3 mt-4 text-sm font-medium text-text-main/60">
+            <Link
+              href="/login"
+              className="hover:text-btn-primary transition-colors cursor-pointer"
+            >
+              Orang Tua
+            </Link>
+            <div className="w-1 h-1 bg-border-input/60 rounded-full" />
+            <Link
+              href="/kader/login"
+              className="hover:text-btn-primary transition-colors cursor-pointer"
+            >
+              Kader Posyandu
+            </Link>
+            <div className="w-1 h-1 bg-border-input/60 rounded-full" />
+            <Link
+              href="/admin/login"
+              className="hover:text-btn-primary transition-colors cursor-pointer"
+            >
+              Admin Puskesmas
+            </Link>
+          </div>
         </div>
       </div>
     </div>
