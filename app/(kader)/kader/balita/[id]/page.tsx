@@ -1,6 +1,6 @@
 import DetailBalitaFeed from "@/features/kader/balita/components/DetailBalitaFeed";
 import { transformApiToMetrics } from "@/features/kader/balita/utils/calculateMetrics";
-import { getChildrens } from "@/services/children.service";
+import { getChildrens, getChildIntervention } from "@/services/children.service";
 import { getMeasurementGraph, getMeasurementsByChild } from "@/services/measurement.service";
 import { getProfile } from "@/services/auth.service";
 import { notFound } from "next/navigation";
@@ -52,6 +52,8 @@ export default async function DetailBalitaPage({
     macroStatusInfo,
   } = transformApiToMetrics(childInfo, apiGraphData, rawMeasurements);
 
+  const interventionData = await getChildIntervention(id);
+
   // removed profile fetch since it is done at the top
 
   return (
@@ -59,6 +61,7 @@ export default async function DetailBalitaPage({
       data={mappedData}
       metrics={{ combinedChartData, riwayatDenganZScoreAsli, macroStatusInfo }}
       clinicId={clinicId}
+      intervention={interventionData}
     />
   );
 }
