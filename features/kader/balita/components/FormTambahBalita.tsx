@@ -31,7 +31,7 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
     register,
     handleSubmit,
     control,
-    formState: { isValid },
+    formState: { isValid, errors },
   } = useForm<TambahBalitaFormValues>({
     resolver: zodResolver(tambahBalitaSchema),
     mode: "onChange",
@@ -195,6 +195,9 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
               {...register("namaLengkap")}
               className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-base font-medium text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
             />
+            {errors.namaLengkap && (
+              <span className="text-danger text-sm font-medium mt-1">{errors.namaLengkap.message}</span>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -264,6 +267,9 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
                 </div>
               )}
             />
+            {errors.jenisKelamin && (
+              <span className="text-danger text-sm font-medium mt-1">{errors.jenisKelamin.message}</span>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -288,6 +294,9 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
                 strokeWidth={2.5}
               />
             </div>
+            {errors.tanggalLahir && (
+              <span className="text-danger text-sm font-medium mt-1">{errors.tanggalLahir.message}</span>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -306,6 +315,9 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
               {...register("beratLahir")}
               className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-base font-medium text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
             />
+            {errors.beratLahir && (
+              <span className="text-danger text-sm font-medium mt-1">{errors.beratLahir.message}</span>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -324,6 +336,9 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
               {...register("tinggiLahir")}
               className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-base font-medium text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
             />
+            {errors.tinggiLahir && (
+              <span className="text-danger text-sm font-medium mt-1">{errors.tinggiLahir.message}</span>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -341,6 +356,9 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
               {...register("alamatRumah")}
               className="w-full bg-white border border-border-input/60 rounded-xl px-4 py-3.5 text-base font-medium text-text-main placeholder:text-text-placeholder focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm resize-none"
             />
+            {errors.alamatRumah && (
+              <span className="text-danger text-sm font-medium mt-1">{errors.alamatRumah.message}</span>
+            )}
           </div>
         </div>
 
