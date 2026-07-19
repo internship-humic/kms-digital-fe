@@ -702,7 +702,7 @@ export default function DetailBalitaFeed({
                         Tindakan berhasil dicatat dan sedang dalam pantauan.{" "}
                         <br />
                         <span className="font-medium">
-                          Oleh: Kader Posyandu &bull;{" "}
+                          Oleh: {intervention.cadre?.name || "Kader Posyandu"} &bull;{" "}
                           {intervention.updated_at
                             ? new Date(
                                 intervention.updated_at,
@@ -731,7 +731,7 @@ export default function DetailBalitaFeed({
                         Edukasi pola asuh & pemberian makanan bergizi telah
                         diberikan. <br />
                         <span className="font-medium">
-                          Oleh: Kader Posyandu &bull;{" "}
+                          Oleh: {intervention.cadre?.name || "Kader Posyandu"} &bull;{" "}
                           {intervention.updated_at
                             ? new Date(
                                 intervention.updated_at,
@@ -760,7 +760,7 @@ export default function DetailBalitaFeed({
                         Surat rujukan telah diberikan dan dikoordinasikan dengan
                         Bidan Desa. <br />
                         <span className="font-medium">
-                          Oleh: Kader Posyandu &bull;{" "}
+                          Oleh: {intervention.cadre?.name || "Kader Posyandu"} &bull;{" "}
                           {intervention.updated_at
                             ? new Date(
                                 intervention.updated_at,

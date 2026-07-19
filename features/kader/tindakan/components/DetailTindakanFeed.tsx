@@ -65,7 +65,7 @@ export default function DetailTindakanFeed({
 
       setTimeout(() => {
         setShowSuccessModal(false);
-        router.push("/kader/tindakan");
+        router.push(`/kader/balita/${child.id}`);
         router.refresh();
       }, 2000);
     } catch (error) {
@@ -77,7 +77,7 @@ export default function DetailTindakanFeed({
   };
 
   return (
-    <main className="min-h-screen bg-white pb-8">
+    <main className="min-h-screen bg-white pb-28">
       <header className="sticky top-0 z-30 flex items-center justify-center bg-white px-6 pt-10 pb-5 border-b border-border-input/10">
         <button
           onClick={() => router.back()}
