@@ -123,7 +123,7 @@ export default function TambahBalitaForm({ clinicId }: { clinicId: string }) {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col flex-1 px-6 pb-10 pt-6"
+        className="flex flex-col flex-1 px-6 pb-28 pt-6"
       >
         {globalError && (
           <div
