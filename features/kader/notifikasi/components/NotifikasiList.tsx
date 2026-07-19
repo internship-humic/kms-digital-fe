@@ -65,14 +65,21 @@ const getNotifConfig = (category: NotifikasiItem["category"]) => {
 
 export default function NotifikasiList({ items }: { items: NotifikasiItem[] }) {
   const [notifications, setNotifications] = useState(items);
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
+
+  const handleMarkAllRead = () => {
+    const unreadItems = notifications.filter(n => !n.is_read);
+    setNotifications([]);
+
+    startTransition(() => {
+      unreadItems.forEach(item => {
+        markNotificationReadAction(item.id);
+      });
+    });
+  };
 
   const handleClick = (item: NotifikasiItem) => {
-    if (item.is_read) return;
-
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === item.id ? { ...n, is_read: true } : n)),
-    );
+    setNotifications((prev) => prev.filter((n) => n.id !== item.id));
 
     startTransition(() => {
       markNotificationReadAction(item.id);
@@ -83,14 +90,24 @@ export default function NotifikasiList({ items }: { items: NotifikasiItem[] }) {
     return (
       <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
         <p className="text-sm font-medium text-icon-muted">
-          Belum ada notifikasi.
+          Belum ada notifikasi baru.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 px-6 pt-6 pb-10">
+    <div className="flex flex-col gap-4 px-6 pt-2 pb-10">
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={handleMarkAllRead}
+          disabled={isPending}
+          className="text-sm font-semibold text-btn-primary hover:text-btn-primary/80 transition-colors"
+        >
+          Tandai Semua Sudah Dibaca
+        </button>
+      </div>
+
       {notifications.map((item) => {
         const {
           label,
@@ -106,13 +123,9 @@ export default function NotifikasiList({ items }: { items: NotifikasiItem[] }) {
             key={item.id}
             type="button"
             onClick={() => handleClick(item)}
-            className={`relative text-left bg-white p-4 rounded-xl border border-border-input/30 border-l-[4px] ${border} shadow-sm flex gap-4 transition-opacity ${
-              item.is_read ? "opacity-70" : ""
-            }`}
+            className={`relative text-left bg-white p-4 rounded-xl border border-border-input/30 border-l-[4px] ${border} shadow-sm flex gap-4 transition-opacity`}
           >
-            {!item.is_read && (
-              <span className="absolute right-4 top-4 w-2 h-2 rounded-full bg-btn-primary" />
-            )}
+            <span className="absolute right-4 top-4 w-2 h-2 rounded-full bg-danger" />
 
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${bg} ${iconColor}`}

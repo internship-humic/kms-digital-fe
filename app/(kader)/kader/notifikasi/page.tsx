@@ -15,7 +15,7 @@ export default function NotifikasiPage() {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      const data = await getNotifications({ limit: 10 });
+      const data = await getNotifications({ limit: 10, is_read: false });
       setItems(data);
       setIsLoading(false);
     };
