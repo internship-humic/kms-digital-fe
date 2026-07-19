@@ -48,8 +48,8 @@ export default function KaderOnboardingStep2Page() {
           size="lg"
           className="w-full rounded-[16px] py-4 h-auto shadow-[0_8px_24px_-4px_rgba(37,99,235,0.3)]"
         >
-          <Link href="/kader/login">
-            <span className="text-md tracking-wide">Masuk sebagai Kader</span>
+          <Link href="/login">
+            <span className="text-md tracking-wide">Masuk sebagai Orang Tua</span>
           </Link>
         </Button>
       </div>
