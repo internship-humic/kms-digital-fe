@@ -50,7 +50,7 @@ export const getChildrens = async (
       ? `/children/clinic/${clinicId}?${queryParams.toString()}`
       : `/children?${queryParams.toString()}`;
 
-    const children = await fetchWithAuth<any[] | ChildrenListResponse>(
+    const children = await fetchWithAuth(
       endpoint,
     );
 

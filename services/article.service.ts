@@ -22,7 +22,7 @@ export const getArticles = async (
     if (params.category) query.append("category", params.category);
     if (params.search) query.append("search", params.search);
 
-    const data = await fetchWithAuth<ArtikelItem[]>(
+    const data = await fetchWithAuth(
       `/article?${query.toString()}`,
     );
 
@@ -43,7 +43,7 @@ export const getPaginatedArticles = async (params: GetArticlesParams = {}) => {
     if (params.category) query.append("category", params.category);
     if (params.search) query.append("search", params.search);
 
-    return await fetchPaginatedWithAuth<ArtikelItem>(
+    return await fetchPaginatedWithAuth(
       `/article?${query.toString()}`,
     );
   } catch (error) {
@@ -56,7 +56,7 @@ export const getArticleById = async (
   id: string,
 ): Promise<ArtikelItem | null> => {
   try {
-    const data = await fetchWithAuth<ArtikelItem>(`/article/${id}`);
+    const data = await fetchWithAuth(`/article/${id}`);
 
     return data ? (data as ArtikelItem) : null;
   } catch (error) {

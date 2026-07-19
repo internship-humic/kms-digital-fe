@@ -5,7 +5,7 @@ import type { ProfileData } from "@/features/parent/profile/types";
 
 export const getProfile = async (): Promise<ProfileData | null> => {
   try {
-    const data = await fetchWithAuth<any>("/auth/me");
+    const data = await fetchWithAuth("/auth/me");
 
     const user = data.user || data;
 

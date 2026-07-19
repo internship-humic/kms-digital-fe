@@ -7,7 +7,7 @@ import type { DashboardKaderData } from "@/features/kader/dashboard/types";
 
 export const getParentDashboard = async (): Promise<DashboardChildData[]> => {
   try {
-    const data = await fetchWithAuth<any[]>("/dashboard/parent");
+    const data = await fetchWithAuth("/dashboard/parent");
 
     if (!Array.isArray(data)) return [];
 
@@ -59,7 +59,7 @@ export const getParentDashboard = async (): Promise<DashboardChildData[]> => {
 export const getKaderDashboard =
   async (): Promise<DashboardKaderData | null> => {
     try {
-      const data = await fetchWithAuth<DashboardKaderData>("/dashboard/cadre");
+      const data = await fetchWithAuth("/dashboard/cadre");
       return data;
     } catch (error: any) {
       if (error.message !== "NO_TOKEN") {
@@ -72,7 +72,7 @@ export const getKaderDashboard =
 export const getAdminDashboard =
   async (): Promise<AdminDashboardDTO | null> => {
     try {
-      const data = await fetchWithAuth<AdminDashboardDTO>("/dashboard/admin");
+      const data = await fetchWithAuth("/dashboard/admin");
       return data;
     } catch (error: any) {
       if (error.message !== "NO_TOKEN") {

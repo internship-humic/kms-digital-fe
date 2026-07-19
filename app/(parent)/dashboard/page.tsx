@@ -4,6 +4,7 @@ import { ArrowUpDown } from "lucide-react";
 import ChildOptionButton from "@/features/parent/dashboard/components/ChildCardMenu";
 import { getParentDashboard } from "@/services/dashboard.service";
 import { getProfile } from "@/services/profile.service";
+import NotificationBell from "@/components/ui/NotificationBell";
 
 export const metadata = {
   title: "Dashboard | JagaCilik",
@@ -60,13 +61,16 @@ export default async function DashboardPage() {
           />
         </div>
 
-        <Link
-          href="/profile"
-          className="w-10 h-10 rounded-full border border-border-input/40 shadow-sm shrink-0 flex items-center justify-center bg-primary-light/60 text-btn-primary font-bold text-md tracking-wider select-none cursor-pointer hover:bg-primary-light/80 transition-colors"
-          aria-label="Menuju Profil"
-        >
-          {profile ? getInitials(profile.fullName) : "O"}
-        </Link>
+        <div className="flex items-center gap-4">
+          <NotificationBell href="/notifikasi" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light/40 transition-colors cursor-pointer text-text-main/80" />
+          <Link
+            href="/profile"
+            className="w-10 h-10 rounded-full border border-border-input/40 shadow-sm shrink-0 flex items-center justify-center bg-primary-light/60 text-btn-primary font-bold text-md tracking-wider select-none cursor-pointer hover:bg-primary-light/80 transition-colors"
+            aria-label="Menuju Profil"
+          >
+            {profile ? getInitials(profile.fullName) : "O"}
+          </Link>
+        </div>
       </div>
 
       <div className="px-6 mt-6 mb-6">

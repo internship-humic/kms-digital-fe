@@ -13,6 +13,7 @@ import {
 import { DashboardKaderData } from "../types";
 import { Button } from "@/components/ui/button";
 import ExportClinicPdfButton from "../../balita/components/ExportClinicPdfButton";
+import NotificationBell from "@/components/ui/NotificationBell";
 
 type DashboardKaderFeedProps = {
   data: DashboardKaderData;
@@ -89,12 +90,7 @@ export default function DashboardKaderFeed({ data }: DashboardKaderFeedProps) {
           />
         </div>
 
-        <button
-          onClick={() => router.push("/kader/notifikasi")}
-          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary-light/40 transition-colors cursor-pointer text-text-main/80"
-        >
-          <Bell size={22} strokeWidth={2.2} />
-        </button>
+        <NotificationBell href="/kader/notifikasi" />
       </div>
 
       <div className="mt-8 mb-6">

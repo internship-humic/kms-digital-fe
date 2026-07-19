@@ -280,7 +280,7 @@ export const changePasswordService = async (
 
 export const getProfile = async <T = unknown>(): Promise<T | null> => {
   try {
-    const data = await fetchWithAuth<T>("/auth/me");
+    const data = await fetchWithAuth("/auth/me");
 
     return data ?? null;
   } catch (error) {
