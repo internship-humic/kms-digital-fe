@@ -6,7 +6,9 @@ import {
   mapApiToGrowthDataPoints,
 } from "@/features/parent/growth/utils/getChartData";
 import { getParentDashboard } from "@/services/dashboard.service";
-import { getMeasurementsByChild } from "@/services/measurement.service";
+import { getMeasurementsByChild, getMeasurementGraph } from "@/services/measurement.service";
+import { getChildIntervention } from "@/services/children.service";
+import { transformApiToMetrics } from "@/features/kader/balita/utils/calculateMetrics";
 
 import DownloadPdfButton from "@/features/parent/growth/components/DownloadPdfButton";
 import { notFound } from "next/navigation";
@@ -75,6 +77,15 @@ export default async function ChildDetailPage({
     rawMeasurements,
   );
 
+  const apiGraphData = await getMeasurementGraph(id).catch(() => []);
+  const interventionData = await getChildIntervention(id).catch(() => null);
+
+  const { riwayatDenganZScoreAsli, mappedData } = transformApiToMetrics(
+    child,
+    apiGraphData,
+    rawMeasurements
+  );
+
   return (
     <div className="flex flex-col min-h-screen bg-background relative">
       <div className="flex items-center px-6 pt-10 pb-5 bg-background sticky top-0 z-20 relative">
@@ -127,15 +138,34 @@ export default async function ChildDetailPage({
           </div>
         </div>
 
-        <GrowthChart
-          data={childDataPoints}
-          preCalculatedChartData={preCalculatedChartData}
-          status={child.status}
-        />
+        <div id="growth-chart-container" className="w-full">
+          <GrowthChart
+            data={childDataPoints}
+            preCalculatedChartData={preCalculatedChartData}
+            status={child.status}
+          />
+        </div>
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 w-full max-w-md mx-auto p-6 bg-gradient-to-t from-background via-background/90 to-transparent pb-8 pt-12 pointer-events-none z-30">
-        <DownloadPdfButton childId={id} />
+        <DownloadPdfButton 
+          childId={id} 
+          chartId="growth-chart-container"
+          childInfo={{
+            nama: mappedData.nama,
+            jk: mappedData.jk,
+            usia: mappedData.usia,
+            statusLabel: child.status === "HIGHRISK" || child.status === "HIGH_RISK"
+                    ? "Risiko Tinggi"
+                    : child.status === "LOWRISK" || child.status === "LOW_RISK"
+                      ? "Risiko Rendah"
+                      : "Sesuai Track",
+            berat: mappedData.stats.berat,
+            tinggi: mappedData.stats.tinggi,
+          }}
+          riwayat={riwayatDenganZScoreAsli}
+          intervention={interventionData}
+        />
       </div>
     </div>
   );

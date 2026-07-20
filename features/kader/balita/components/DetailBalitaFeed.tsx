@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import * as htmlToImage from "html-to-image";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useRouter } from "next/navigation";
@@ -159,31 +158,19 @@ export default function DetailBalitaFeed({
         margin: { left: 15 },
       });
 
-      const dataUrl = await htmlToImage.toPng(chartRef.current, {
-        quality: 1,
-        pixelRatio: 2,
-        backgroundColor: "#ffffff",
-      });
+      let finalYInfo = (pdf as any).lastAutoTable.finalY + 12;
 
-      const imgProps = pdf.getImageProperties(dataUrl);
-      const pdfWidth = pageWidth - 30;
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      let tableStartY = finalYInfo;
 
-      const finalYInfo = (pdf as any).lastAutoTable.finalY + 8;
+      // Check if we need a new page for the table
+      if (tableStartY > pdf.internal.pageSize.getHeight() - 40) {
+        pdf.addPage();
+        tableStartY = 20;
+      }
 
       pdf.setFontSize(12);
       pdf.setFont("helvetica", "bold");
       pdf.setTextColor(15, 23, 42);
-      pdf.text("Grafik Pertumbuhan (BB/U)", 15, finalYInfo);
-
-      pdf.setDrawColor(226, 232, 240);
-      pdf.rect(15, finalYInfo + 3, pdfWidth, pdfHeight);
-      pdf.addImage(dataUrl, "PNG", 15, finalYInfo + 3, pdfWidth, pdfHeight);
-
-      const tableStartY = finalYInfo + 3 + pdfHeight + 10;
-
-      pdf.setFontSize(12);
-      pdf.setFont("helvetica", "bold");
       pdf.text("Riwayat Pengukuran Detail", 15, tableStartY);
 
       const tableData = riwayatDenganZScoreAsli.map((row: any) => [
@@ -221,7 +208,54 @@ export default function DetailBalitaFeed({
         margin: { left: 15, right: 15 },
       });
 
-      pdf.save(`Laporan pertumbuhan_${data.nama.replace(/\s+/g, "_")}.pdf`);
+      let finalYAfterTable = (pdf as any).lastAutoTable.finalY + 10;
+
+      // Add Intervention History if available
+      if (
+        intervention &&
+        (intervention.supplement ||
+          intervention.education ||
+          intervention.referral)
+      ) {
+        // Check if we need a new page
+        if (finalYAfterTable > pdf.internal.pageSize.getHeight() - 40) {
+          pdf.addPage();
+          finalYAfterTable = 20;
+        }
+
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(15, 23, 42);
+        pdf.text("Riwayat Tindakan & Rujukan", 15, finalYAfterTable);
+        finalYAfterTable += 6;
+
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(51, 65, 85);
+
+        if (intervention.supplement) {
+          pdf.text(
+            "• Pemberian Makanan Tambahan (PMT) - Telah diberikan",
+            15,
+            finalYAfterTable,
+          );
+          finalYAfterTable += 6;
+        }
+        if (intervention.education) {
+          pdf.text(
+            "• Edukasi Gizi ke Orang Tua - Telah diberikan",
+            15,
+            finalYAfterTable,
+          );
+          finalYAfterTable += 6;
+        }
+        if (intervention.referral) {
+          pdf.text("• Rujuk ke Puskesmas - Telah dirujuk", 15, finalYAfterTable);
+          finalYAfterTable += 6;
+        }
+      }
+
+      pdf.save(`Laporan_pertumbuhan_${data.nama.replace(/\s+/g, "_")}.pdf`);
     } catch (error) {
       console.error("Gagal mengunduh PDF:", error);
     } finally {
