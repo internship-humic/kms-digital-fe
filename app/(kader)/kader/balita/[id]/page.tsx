@@ -1,6 +1,10 @@
 import DetailBalitaFeed from "@/features/kader/balita/components/DetailBalitaFeed";
 import { transformApiToMetrics } from "@/features/kader/balita/utils/calculateMetrics";
 import {
+  getCombinedGrowthDataFromAPI,
+  mapApiToGrowthDataPoints,
+} from "@/features/parent/growth/utils/getChartData";
+import {
   getChildrens,
   getChildIntervention,
 } from "@/services/children.service";
@@ -72,12 +76,24 @@ export default async function DetailBalitaPage({
     macroStatusInfo,
   } = transformApiToMetrics(childInfo, apiGraphData, rawMeasurements);
 
+  const childDataPoints = mapApiToGrowthDataPoints(rawMeasurements);
+  const preCalculatedChartData = getCombinedGrowthDataFromAPI(
+    childInfo.gender === "Laki-laki" ? "Laki-laki" : "Perempuan",
+    rawMeasurements,
+  );
+
   const interventionData = await getChildIntervention(id);
 
   return (
     <DetailBalitaFeed
       data={mappedData}
-      metrics={{ combinedChartData, riwayatDenganZScoreAsli, macroStatusInfo }}
+      metrics={{
+        combinedChartData,
+        riwayatDenganZScoreAsli,
+        macroStatusInfo,
+        childDataPoints,
+        preCalculatedChartData,
+      }}
       clinicId={clinicId}
       intervention={interventionData}
     />

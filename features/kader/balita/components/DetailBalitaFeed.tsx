@@ -39,6 +39,7 @@ import { BalitaDetail } from "../types";
 import TambahPengukuranModal from "./TambahPengukuranModal";
 import EditPengukuranModal from "./EditPengukuranModal";
 import DeletePengukuranModal from "./DeletePengukuranModal";
+import GrowthChart from "@/features/parent/growth/components/GrowthChart";
 
 export default function DetailBalitaFeed({
   data,
@@ -51,6 +52,8 @@ export default function DetailBalitaFeed({
     combinedChartData: any[];
     riwayatDenganZScoreAsli: any[];
     macroStatusInfo: { label: string };
+    childDataPoints?: any[];
+    preCalculatedChartData?: any;
   };
   clinicId: string;
   intervention?: any;
@@ -67,8 +70,13 @@ export default function DetailBalitaFeed({
   const [isDownloading, setIsDownloading] = useState(false);
   const chartRef = useRef<HTMLDivElement>(null);
 
-  const { combinedChartData, riwayatDenganZScoreAsli, macroStatusInfo } =
-    metrics;
+  const {
+    combinedChartData,
+    riwayatDenganZScoreAsli,
+    macroStatusInfo,
+    childDataPoints,
+    preCalculatedChartData,
+  } = metrics;
 
   const handleDownloadPdf = async () => {
     if (!chartRef.current) return;
@@ -221,127 +229,6 @@ export default function DetailBalitaFeed({
     }
   };
 
-  const renderChart = (isExpanded = false) => (
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart
-        data={combinedChartData}
-        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-      >
-        <CartesianGrid
-          strokeDasharray="3 3"
-          vertical={false}
-          stroke="#E5E7EB"
-        />
-        <XAxis
-          dataKey="bulan"
-          tick={{ fontSize: isExpanded ? 14 : 11, fill: "#6B7280" }}
-          tickLine={false}
-          axisLine={{ stroke: "#E5E7EB" }}
-          minTickGap={20}
-        />
-        <YAxis
-          tick={{ fontSize: isExpanded ? 14 : 11, fill: "#6B7280" }}
-          tickLine={false}
-          axisLine={false}
-        />
-        <Tooltip
-          contentStyle={{
-            borderRadius: "12px",
-            border: "none",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-          }}
-          labelStyle={{
-            fontWeight: "bold",
-            color: "#374151",
-            marginBottom: "4px",
-          }}
-          itemStyle={{ fontSize: isExpanded ? "14px" : "12px" }}
-        />
-        <Legend
-          content={(props) => {
-            const { payload } = props;
-            return (
-              <ul className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[11px] pt-3 w-full">
-                {payload?.map((entry: any, index: number) => (
-                  <li
-                    key={`item-${index}`}
-                    className="flex items-center gap-1.5"
-                  >
-                    <svg
-                      width="8"
-                      height="8"
-                      viewBox="0 0 8 8"
-                      className="shrink-0"
-                    >
-                      <circle cx="4" cy="4" r="4" fill={entry.color} />
-                    </svg>
-                    <span style={{ color: entry.color }}>{entry.value}</span>
-                  </li>
-                ))}
-              </ul>
-            );
-          }}
-        />
-        <Line
-          type="monotone"
-          name="+3 SD"
-          dataKey="SD3pos"
-          stroke="#EF4444"
-          strokeWidth={isExpanded ? 2 : 1}
-          dot={false}
-          strokeDasharray="4 4"
-        />
-        <Line
-          type="monotone"
-          name="+2 SD"
-          dataKey="SD2pos"
-          stroke="#F59E0B"
-          strokeWidth={isExpanded ? 2.5 : 1.5}
-          dot={false}
-        />
-        <Line
-          type="monotone"
-          name="Median"
-          dataKey="median"
-          stroke="#10B981"
-          strokeWidth={isExpanded ? 3 : 2}
-          dot={false}
-        />
-        <Line
-          type="monotone"
-          name="-2 SD"
-          dataKey="SD2neg"
-          stroke="#F59E0B"
-          strokeWidth={isExpanded ? 2.5 : 1.5}
-          dot={false}
-        />
-        <Line
-          type="monotone"
-          name="-3 SD"
-          dataKey="SD3neg"
-          stroke="#EF4444"
-          strokeWidth={isExpanded ? 2 : 1}
-          dot={false}
-          strokeDasharray="4 4"
-        />
-        <Line
-          type="monotone"
-          name="Data Aktual Anak"
-          dataKey="aktualAnak"
-          stroke="#2563EB"
-          strokeWidth={isExpanded ? 4 : 3}
-          connectNulls={true}
-          dot={{
-            r: isExpanded ? 6 : 4,
-            strokeWidth: 2,
-            fill: "#FFFFFF",
-            stroke: "#2563EB",
-          }}
-          activeDot={{ r: isExpanded ? 8 : 6, strokeWidth: 0, fill: "#1D4ED8" }}
-        />
-      </LineChart>
-    </ResponsiveContainer>
-  );
 
   return (
     <div className="flex flex-col flex-1 bg-background pb-28">
@@ -440,42 +327,42 @@ export default function DetailBalitaFeed({
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-[20px] border border-border-input/40 shadow-sm">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-3xl font-semibold leading-[28px] text-text-main">
-              Grafik Tren BB/U Otomatis
-            </h3>
-            <div className="flex gap-2">
-              <button
-                onClick={handleDownloadPdf}
-                disabled={isDownloading}
-                className="w-10 h-10 rounded-full bg-[#E6E8EA] flex items-center justify-center text-text-main hover:bg-gray-200 active:bg-gray-300 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:active:scale-100"
-                title="Unduh PDF"
-              >
-                {isDownloading ? (
-                  <Loader2
-                    size={18}
-                    className="animate-spin text-btn-primary"
-                  />
-                ) : (
-                  <Download size={18} />
-                )}
-              </button>
-              <button
-                onClick={() => setIsChartExpanded(true)}
-                className="w-10 h-10 rounded-full bg-[#E6E8EA] flex items-center justify-center text-text-main hover:bg-gray-200 active:bg-gray-300 active:scale-95 transition-all duration-200"
-                title="Perbesar Grafik"
-              >
-                <Maximize2 size={18} />
-              </button>
-            </div>
+        {/* GrowthChart replacement */}
+        <div className="flex flex-col gap-2 -mt-2 relative">
+          <div className="flex gap-2 self-end mb-2 mr-1 z-10">
+            <button
+              onClick={handleDownloadPdf}
+              disabled={isDownloading}
+              className="w-10 h-10 rounded-full bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-border-input/10 flex items-center justify-center text-text-main hover:bg-gray-50 active:bg-gray-100 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:active:scale-100"
+              title="Unduh PDF"
+            >
+              {isDownloading ? (
+                <Loader2 size={18} className="animate-spin text-btn-primary" />
+              ) : (
+                <Download size={18} className="text-btn-primary" />
+              )}
+            </button>
+            <button
+              onClick={() => setIsChartExpanded(true)}
+              className="w-10 h-10 rounded-full bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-border-input/10 flex items-center justify-center text-text-main hover:bg-gray-50 active:bg-gray-100 active:scale-95 transition-all duration-200"
+              title="Perbesar Grafik"
+            >
+              <Maximize2 size={18} className="text-btn-primary" />
+            </button>
           </div>
 
-          <div
-            ref={chartRef}
-            className="bg-white border border-border-input/20 rounded-[16px] p-4 shadow-sm w-full h-[340px] flex flex-col relative overflow-hidden"
-          >
-            {renderChart()}
+          <div ref={chartRef} className="w-full">
+            {childDataPoints && preCalculatedChartData ? (
+              <GrowthChart
+                data={childDataPoints}
+                preCalculatedChartData={preCalculatedChartData}
+                status={data.status || macroStatusInfo.label}
+              />
+            ) : (
+              <div className="bg-white p-5 rounded-[20px] border border-border-input/40 shadow-sm text-center">
+                Memuat data grafik...
+              </div>
+            )}
           </div>
         </div>
 
@@ -830,8 +717,20 @@ export default function DetailBalitaFeed({
           </div>
 
           <div className="flex-1 p-4 md:p-8 w-full h-full bg-gray-50/50">
-            <div className="w-full h-full bg-white rounded-3xl shadow-sm border border-gray-100 p-4 md:p-8">
-              {renderChart(true)}
+            <div className="w-full h-[90%] flex flex-col justify-center items-center rounded-3xl p-4 md:p-8">
+              <div className="w-full max-w-4xl h-full mx-auto">
+                {childDataPoints && preCalculatedChartData ? (
+                  <GrowthChart
+                    data={childDataPoints}
+                    preCalculatedChartData={preCalculatedChartData}
+                    status={data.status || macroStatusInfo.label}
+                  />
+                ) : (
+                  <div className="bg-white p-5 rounded-[20px] border border-border-input/40 shadow-sm text-center">
+                    Memuat data grafik...
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
