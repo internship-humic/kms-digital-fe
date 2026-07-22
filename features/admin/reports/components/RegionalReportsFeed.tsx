@@ -11,11 +11,19 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { getRegionalReports } from "@/services/region.service";
 import { usePagination } from "@/hooks/usePagination";
 
 export default function RegionalReportsFeed() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [riskFilter, setRiskFilter] = useState("ALL");
   const [desaData, setDesaData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [coverageData, setCoverageData] = useState<any>(null);
@@ -35,7 +43,12 @@ export default function RegionalReportsFeed() {
     const fetchRegionalData = async () => {
       setIsLoading(true);
       try {
-        const response = await getRegionalReports(page, limit, searchQuery);
+        const response = await getRegionalReports(
+          page,
+          limit,
+          searchQuery,
+          riskFilter,
+        );
         if (response?.data) {
           setDesaData(response.data.riskRegions);
           setCoverageData(response.data.coverage);
@@ -56,10 +69,15 @@ export default function RegionalReportsFeed() {
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [page, limit, searchQuery, setPaginationData]);
+  }, [page, limit, searchQuery, riskFilter, setPaginationData]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+    if (page !== 1) goToPage(1);
+  };
+
+  const handleRiskFilterChange = (value: string) => {
+    setRiskFilter(value);
     if (page !== 1) goToPage(1);
   };
 
@@ -177,32 +195,39 @@ export default function RegionalReportsFeed() {
               className="pl-11 pr-4 py-3 w-full rounded-xl border border-border-input/60 focus:outline-none focus:border-btn-primary focus:ring-1 focus:ring-btn-primary text-[15px] placeholder:text-text-placeholder text-text-main transition-all"
             />
           </div>
-          <Button
-            variant="outline"
-            className="flex items-center gap-2 py-6 px-6 font-semibold text-[15px] border-border-input/60"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="21" y1="4" x2="14" y2="4"></line>
-              <line x1="10" y1="4" x2="3" y2="4"></line>
-              <line x1="21" y1="12" x2="12" y2="12"></line>
-              <line x1="8" y1="12" x2="3" y2="12"></line>
-              <line x1="21" y1="20" x2="16" y2="20"></line>
-              <line x1="12" y1="20" x2="3" y2="20"></line>
-              <line x1="14" y1="1" x2="14" y2="7"></line>
-              <line x1="8" y1="9" x2="8" y2="15"></line>
-              <line x1="16" y1="17" x2="16" y2="23"></line>
-            </svg>
-            Filter
-          </Button>
+          <Select value={riskFilter} onValueChange={handleRiskFilterChange}>
+            <SelectTrigger className="w-[200px] h-full py-3.5 px-4 font-semibold text-[15px] border border-border-input/60 rounded-xl focus:ring-0 focus:ring-offset-0 bg-white">
+              <div className="flex items-center gap-2">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="21" y1="4" x2="14" y2="4"></line>
+                  <line x1="10" y1="4" x2="3" y2="4"></line>
+                  <line x1="21" y1="12" x2="12" y2="12"></line>
+                  <line x1="8" y1="12" x2="3" y2="12"></line>
+                  <line x1="21" y1="20" x2="16" y2="20"></line>
+                  <line x1="12" y1="20" x2="3" y2="20"></line>
+                  <line x1="14" y1="1" x2="14" y2="7"></line>
+                  <line x1="8" y1="9" x2="8" y2="15"></line>
+                  <line x1="16" y1="17" x2="16" y2="23"></line>
+                </svg>
+                <SelectValue placeholder="Filter Resiko" />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="bg-white rounded-xl">
+              <SelectItem value="ALL">Semua Resiko</SelectItem>
+              <SelectItem value="HIGH">Risiko Tinggi</SelectItem>
+              <SelectItem value="MEDIUM">Risiko Sedang</SelectItem>
+              <SelectItem value="LOW">Risiko Rendah</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="relative min-h-[300px]">

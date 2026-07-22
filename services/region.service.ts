@@ -77,12 +77,14 @@ export const getRegionalReports = async (
   page = 1,
   limit = 10,
   search = "",
+  risk = "",
 ): Promise<RegionalReportResponse | null> => {
   const query = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
   });
   if (search) query.append("search", search);
+  if (risk && risk !== "ALL") query.append("risk", risk);
 
   try {
     const cookieStore = await (await import("next/headers")).cookies();
