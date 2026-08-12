@@ -156,72 +156,85 @@ export default function ArticlesFeed() {
                   </td>
                 </tr>
               ) : (
-                articles.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="border-b border-border-input/20 last:border-b-0 hover:bg-background transition-colors"
-                  >
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden relative">
-                          {row.cover_image ? (
-                            <img
-                              src={`${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}${row.cover_image}`}
-                              alt={row.title}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <ImageIcon size={20} className="text-gray-400" />
-                          )}
+                articles.map((row) => {
+                  const coverImage = row.cover_image
+                    ? row.cover_image.startsWith("http")
+                      ? row.cover_image
+                      : `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}${row.cover_image}`
+                    : null;
+
+                  return (
+                    <tr
+                      key={row.id}
+                      className="border-b border-border-input/20 last:border-b-0 hover:bg-background transition-colors"
+                    >
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden relative">
+                            {coverImage ? (
+                              <img
+                                src={coverImage}
+                                alt={row.title}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <ImageIcon size={20} className="text-gray-400" />
+                            )}
+                          </div>
+
+                          <div className="flex flex-col">
+                            <span className="text-[15px] font-semibold text-text-main line-clamp-1">
+                              {row.title}
+                            </span>
+                            <span className="text-[12px] text-icon-muted line-clamp-1 mt-0.5">
+                              {row.description}
+                            </span>
+                          </div>
                         </div>
+                      </td>
+
+                      <td className="px-6 py-5">
+                        <span
+                          className={`inline-flex px-3 py-1 rounded-md text-[11px] font-bold tracking-wide ${getCategoryStyle(row.type)}`}
+                        >
+                          {row.type}
+                        </span>
+                      </td>
+
+                      <td className="px-6 py-5 text-[14px] text-icon-muted">
                         <div className="flex flex-col">
-                          <span className="text-[15px] font-semibold text-text-main line-clamp-1">
-                            {row.title}
+                          <span className="font-semibold text-text-main">
+                            {row.writer_name}
                           </span>
-                          <span className="text-[12px] text-icon-muted line-clamp-1 mt-0.5">
-                            {row.description}
+                          <span className="text-[12px]">
+                            {row.writer_identity}
                           </span>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <span
-                        className={`inline-flex px-3 py-1 rounded-md text-[11px] font-bold tracking-wide ${getCategoryStyle(row.type)}`}
-                      >
-                        {row.type}
-                      </span>
-                    </td>
-                    <td className="px-6 py-5 text-[14px] text-icon-muted">
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-text-main">
-                          {row.writer_name}
-                        </span>
-                        <span className="text-[12px]">
-                          {row.writer_identity}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <div className="flex items-center justify-end gap-3">
-                        <Link
-                          href={`/admin/articles/${row.id}/edit`}
-                          className="text-btn-primary hover:text-btn-hover transition-colors cursor-pointer"
-                        >
-                          <Pencil size={18} strokeWidth={2.5} />
-                        </Link>
-                        <button
-                          onClick={() => {
-                            setSelectedDeleteId(row.id);
-                            setIsDeleteModalOpen(true);
-                          }}
-                          className="text-danger hover:text-danger/80 transition-colors cursor-pointer"
-                        >
-                          <Trash2 size={18} strokeWidth={2.5} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+
+                      <td className="px-6 py-5">
+                        <div className="flex items-center justify-end gap-3">
+                          <Link
+                            href={`/admin/articles/${row.id}/edit`}
+                            className="text-btn-primary hover:text-btn-hover transition-colors cursor-pointer"
+                          >
+                            <Pencil size={18} strokeWidth={2.5} />
+                          </Link>
+
+                          <button
+                            onClick={() => {
+                              setSelectedDeleteId(row.id);
+                              setIsDeleteModalOpen(true);
+                            }}
+                            className="text-danger hover:text-danger/80 transition-colors cursor-pointer"
+                          >
+                            <Trash2 size={18} strokeWidth={2.5} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

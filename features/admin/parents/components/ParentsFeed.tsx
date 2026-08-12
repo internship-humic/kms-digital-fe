@@ -115,28 +115,7 @@ export default function ParentsFeed() {
               className="pl-11 pr-4 py-3 w-full rounded-xl border border-border-input/60 focus:outline-none focus:border-btn-primary focus:ring-1 focus:ring-btn-primary text-[15px] placeholder:text-text-placeholder text-text-main transition-all"
             />
           </div>
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              className="flex items-center gap-2 py-6 px-6 border-border-input/60 font-semibold text-[15px]"
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              Ekspor
-            </Button>
-          </div>
+
         </div>
 
         <div className="relative min-h-[300px]">

@@ -22,7 +22,7 @@ const sidebarMenus = [
   { name: "Manajemen Artikel", href: "/admin/articles", icon: Newspaper },
 ];
 
-const bottomLinks = [{ name: "Logout", href: "/admin/login", icon: LogOut }];
+const bottomLinks = [{ name: "Logout", href: "/onboarding", icon: LogOut }];
 
 export default function Sidebar() {
   const pathname = usePathname();

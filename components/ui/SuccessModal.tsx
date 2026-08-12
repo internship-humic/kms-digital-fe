@@ -32,7 +32,7 @@ export default function SuccessModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="bg-white rounded-[24px] p-8 w-[85%] max-w-[340px] flex flex-col items-center text-center shadow-2xl animate-in zoom-in-95 duration-300 slide-in-from-bottom-2">
         <Image
           src={imageSrc}
